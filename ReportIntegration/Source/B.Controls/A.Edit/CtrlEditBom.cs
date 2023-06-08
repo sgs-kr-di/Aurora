@@ -137,8 +137,8 @@ namespace Sgs.ReportIntegration
             }
             else 
             {
-                set.From = "";
                 set.To = "";
+                set.From = "";                
             }
 
             set.AreaNo = (EReportArea)bomAreaCombo.SelectedValue;
