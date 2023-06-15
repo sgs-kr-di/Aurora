@@ -145,7 +145,16 @@ namespace Sgs.ReportIntegration
             set.JobNo = jobNoEdit.Text.Trim();
             set.OmNo = OmNoEdit.Text.Trim();
             set.ExtendASTM = false;
-            set.Select_Physical_Import();
+
+            if (Type == EReportType.Physical) 
+            {
+                set.Select_Physical_Import();
+            }
+
+            if (Type == EReportType.Chemical)
+            {
+                set.Select_Chemical_Import();
+            }
 
             AppHelper.SetGridDataSource(reportGrid, set);
 

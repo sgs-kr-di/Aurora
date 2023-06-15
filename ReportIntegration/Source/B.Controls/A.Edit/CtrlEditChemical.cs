@@ -315,7 +315,8 @@ namespace Sgs.ReportIntegration
                     }
                     else
                     {
-                        Insert(dialog.AreaNo, dialog.ItemNo.Split(',')[0]);
+                        Insert(dialog.AreaNo, dialog.ItemNo.Split(',')[0], dialog.JobNo);
+                        MessageBox.Show("Chemical Completed!");
                     }
                 }
             }
@@ -387,13 +388,13 @@ namespace Sgs.ReportIntegration
             SetReportView(cheMainSet.AreaNo);
         }
 
-        private void Insert(EReportArea areaNo, string itemNo)
+        private void Insert(EReportArea areaNo, string itemNo, string jobNo)
         {
-            string jobNo = "";
+            //string jobNo = "";
             string extendJobNo = "";
 
             profJobSet.Type = EReportType.Chemical;
-            profJobSet.JobNo = "";
+            profJobSet.JobNo = jobNo;
             profJobSet.AreaNo = areaNo;
             profJobSet.ItemNo = itemNo;
             profJobSet.ExtendASTM = true;
@@ -417,23 +418,24 @@ namespace Sgs.ReportIntegration
                     }
                     else
                     {
-                        if (rowCount > 1)
-                        {
-                            // Find jobno for additional test results
-                            for (int i = 1; i < profJobSet.RowCount; i++)
-                            {
-                                profJobSet.Fetch(i);
+                        //if (rowCount > 1)
+                        //{
+                        //    // Find jobno for additional test results
+                        //    for (int i = 1; i < profJobSet.RowCount; i++)
+                        //    {
+                        //        profJobSet.Fetch(i);
 
-                                if (profJobSet.Image == null)
-                                {
-                                    extendJobNo = profJobSet.JobNo;
-                                    break;
-                                }
-                            }
+                        //        if (profJobSet.Image == null)
+                        //        {
+                        //            extendJobNo = profJobSet.JobNo;
+                        //            break;
+                        //        }
+                        //    }
 
-                            profJobSet.Fetch(0);
-                        }
-                        cheQuery.Insert(areaNo, extendJobNo);
+                        //    profJobSet.Fetch(0);
+                        //}
+                        //cheQuery.Insert(areaNo, extendJobNo);
+                        cheQuery.Insert_Chemical_Import(areaNo, jobNo);
                         //cheQuery.Insert(extendJobNo);
                     }
                 }

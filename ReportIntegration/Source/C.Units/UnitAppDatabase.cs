@@ -6883,7 +6883,8 @@ namespace Sgs.ReportIntegration
                         }
                         else if (AreaNo == EReportArea.EU)
                         {
-                            sql += $" and t1.notes1='HL_EN' ";
+                            //sql += $" and t1.notes1='HL_EN' ";
+                            sql += $" and (t1.notes1 like '%HL_EN%' or t1.notes1='HL EN') ";
                         }
                         if (string.IsNullOrWhiteSpace(ItemNo) == false)
                         {
@@ -6982,7 +6983,7 @@ namespace Sgs.ReportIntegration
                         }
                         else if (AreaNo == EReportArea.EU)
                         {
-                            sql += $" and (t1.notes1='HL_EN' or t1.notes1='HL EN')";
+                            sql += $" and (t1.notes1 like '%HL_EN%' or t1.notes1='HL EN')";
                         }
                         if (string.IsNullOrWhiteSpace(ItemNo) == false)
                         {
@@ -7248,6 +7249,115 @@ namespace Sgs.ReportIntegration
             dataAdapter.Fill(dataSet);
         }
 
+        public void Select_Chemical_Import(SqlTransaction trans = null)
+        {
+            string sql =
+                " SET ARITHABORT ON " +
+                " select top 1 t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
+                "     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
+                "     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
+                "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1,   " +
+                "     t4.sam_remarks, t4.sam_description, t4.description_1,            " +
+                "     t4.description_3, t4.description_4, t5.photo                     " +
+                " from Aurora.dbo.PROFJOB t1                                                      " +
+                "     join Aurora.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
+                "     join Aurora.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
+                "     join Aurora.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
+                "     left join Aurora.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job=t1.pro_job       " +
+                //" from KRCTS01.dbo.PROFJOB t1                                                      " +
+                //"     join KRCTS01.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
+                //"     join KRCTS01.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
+                //"     join KRCTS01.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
+                //"     left join KRCTS01.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job=t1.pro_job       " +
+                " where t1.labcode<>''                                                 ";
+
+            if (string.IsNullOrWhiteSpace(JobNo) == false)
+            {
+                sql += $" and t1.pro_job like '%%{JobNo}' ";
+                sql += $" AND t1.NOTES1 <> '6F'";
+            }
+            else
+            {
+                switch (Type)
+                {
+                    case EReportType.Physical:
+                        if (string.IsNullOrWhiteSpace(ItemNo) == false)
+                        {
+                            sql += $" and t1.orderno like '%%{ItemNo}%%' and (t1.orderno like '%%-ASTM' or t1.orderno like '%%-EN') ";
+                        }
+                        if (string.IsNullOrWhiteSpace(OmNo) == false)
+                        {
+                            sql += $" and t1.PRO_PROJ like '%%{OmNo}' ";
+                        }
+                        if (AreaNo != EReportArea.None)
+                        {
+                            sql += $" and t1.orderno like '%%{AreaNo.ToDescription()}%%' ";
+                        }
+                        //sql += $" and t1.pro_job in (select distinct pro_job from PROFJOB_CUID_SCHEME_ANALYTE where formattedvalue is null and finalvalue is null)";
+                        //sql += $" AND (t1.FINALISED >= '1900-01-01' Or t1.completed >= '1900-01-01')";
+                        break;
+
+                    case EReportType.Chemical:
+                        if (AreaNo == EReportArea.US)
+                        {
+                            if (ExtendASTM == true)
+                            {
+                                sql += $" and t1.notes1<>'HL_EN' ";
+                            }
+                            else
+                            {
+                                sql += $" and t1.notes1='HL_ASTM' ";
+                            }
+                        }
+                        else if (AreaNo == EReportArea.EU)
+                        {
+                            sql += $" and t1.notes1='HL_EN' ";
+                        }
+                        if (string.IsNullOrWhiteSpace(ItemNo) == false)
+                        {
+                            sql += $" and t3.jobcomments like '%%{ItemNo}%%' ";
+                        }
+                        //sql += $" and t1.pro_job not in (select distinct pro_job from PROFJOB_CUID_SCHEME_ANALYTE where formattedvalue is null and finalvalue is null)";
+                        sql += $" AND (t1.FINALISED >= '1900-01-01' Or t1.completed >= '1900-01-01')";
+                        break;
+
+                    case EReportType.Integration:
+                        if (string.IsNullOrWhiteSpace(ItemNo) == false)
+                        {
+                            sql += $" and t1.orderno like '{ItemNo}%%' ";
+                        }
+                        if (AreaNo != EReportArea.None)
+                        {
+                            sql += $" and t1.orderno like '%%{AreaNo.ToDescription()}%%' ";
+                        }
+                        sql += $" and t1.orderno like '%%COMBINE' ";
+                        break;
+                }
+
+                if (string.IsNullOrWhiteSpace(From) == false)
+                {
+                    if (From == To)
+                    {
+                        sql += $" and t1.registered like '{From}%%' ";
+                    }
+                    else
+                    {
+                        sql += $" and (t1.registered>='{From} 00:00:00.000' ";
+                        sql += $" and t1.registered<='{To} 23:59:59.999') ";
+                    }
+                }
+            }
+            sql += $" order by t1.pro_proj desc ";
+            sql += $" SET ARITHABORT OFF ";
+
+            SetTrans(trans);
+            command.CommandText = sql;
+            dataSet.Clear();
+            dataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+
+            dataAdapter.Fill(dataSet);
+        }
+
         public void Fetch(int index = 0, int tableNo = 0, string sQueryCase = "")
         {
             if (index < GetRowCount(tableNo))
@@ -7361,22 +7471,36 @@ namespace Sgs.ReportIntegration
                         break;
 
                     case EReportType.Chemical:
+                        //ItemNo = Convert.ToString(row["orderno"]).Trim();
                         ItemNo = Convert.ToString(row["jobcomments"]).Trim();
 
-                        switch (Convert.ToString(row["notes1"]).Trim())
+                        if (Convert.ToString(row["notes1"]).Trim().ToUpper().Contains("ASTM"))
                         {
-                            case "HL_ASTM":
-                                AreaNo = EReportArea.US;
-                                break;
-
-                            case "HL_EN":
-                                AreaNo = EReportArea.EU;
-                                break;
-
-                            default:
-                                AreaNo = EReportArea.None;
-                                break;
+                            AreaNo = EReportArea.US;
                         }
+                        else if (Convert.ToString(row["notes1"]).Trim().ToUpper().Contains("EN"))
+                        {
+                            AreaNo = EReportArea.EU;
+                        }
+                        else
+                        {
+                            AreaNo = EReportArea.None;
+                        }
+
+                        //switch (Convert.ToString(row["notes1"]).Trim())
+                        //{
+                        //    case "HL_ASTM":
+                        //        AreaNo = EReportArea.US;
+                        //        break;
+
+                        //    case "HL_EN":
+                        //        AreaNo = EReportArea.EU;
+                        //        break;
+
+                        //    default:
+                        //        AreaNo = EReportArea.None;
+                        //        break;
+                        //}
                         break;
 
                     case EReportType.Integration:
@@ -7649,6 +7773,46 @@ namespace Sgs.ReportIntegration
             dataAdapter.Fill(dataSet);
         }
 
+        public void SelectDistinctJob_Aurora(SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+
+            command.CommandText =
+            $"  SELECT distinct t1.pro_job,									" +
+            $"                  t5.SAMPLEIDENT,                             " +
+            $"                  t6.SCH_CODE                                 " +
+            $"	FROM   KRCTS01.dbo.profjob t1                                " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID t5                      " +
+            $"			 ON ( t1.LABCODE = t5.LABCODE                       " +
+            $"				  AND t1.PRO_JOB = t5.PRO_JOB )                 " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID_SCHEME t6               " +
+            $"			 ON ( t5.LABCODE = t6.LABCODE                       " +
+            $"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
+            $"				  AND t5.CUID = t6.CUID )                       " +
+            $"		   JOIN KRCTS01.dbo.profjob_cuid_scheme_analyte t2       " +
+            $"			 ON ( t6.LABCODE = t2.LABCODE                       " +
+            $"				  AND t6.pro_job = t2.pro_job                   " +
+            $"				  AND t6.CUID = t2.CUID                         " +
+            $"				  AND t6.SCH_CODE = t2.SCH_CODE                 " +
+            $"				  AND t6.SCHVERSION = t2.SCHVERSION)            " +
+            $"		   JOIN KRCTS01.dbo.profjob_scheme_analyte t3            " +
+            $"			 ON ( t3.labcode = t2.labcode                       " +
+            $"				  AND t3.pro_job = t2.pro_job                   " +
+            $"				  AND t3.sch_code = t2.sch_code                 " +
+            $"				  AND t3.analytecode = t2.analytecode )         " +
+            $"		   JOIN KRCTS01.dbo.scheme_analyte t4                    " +
+            $"			 ON ( t4.labcode = t2.labcode                       " +
+            $"				  AND t4.sch_code = t2.sch_code                 " +
+            $"				  AND t4.schversion = t2.schversion             " +
+            $"				  AND t4.analytecode = t2.analytecode )         " +
+            $"	WHERE  t1.PRO_JOB like '%%{ProjJobNo}%%'                   " +
+            $"		   AND t1.completed > '2000-01-01'                      " +
+            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
+
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
         public void SelectDistinctSubProjJob_Aurora(SqlTransaction trans = null)
         {
             SetTrans(trans);
@@ -7690,6 +7854,47 @@ namespace Sgs.ReportIntegration
             dataAdapter.Fill(dataSet);
         }
 
+        public void SelectDistinctSubProJob_KRCTS01(SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+
+            command.CommandText =
+            $"  SELECT distinct t1.pro_job,									" +
+            $"                  t5.SAMPLEIDENT,                             " +
+            $"                  t6.SCH_CODE                                 " +
+            $"	FROM   KRCTS01.dbo.profjob t1                                " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID t5                      " +
+            $"			 ON ( t1.LABCODE = t5.LABCODE                       " +
+            $"				  AND t1.PRO_JOB = t5.PRO_JOB )                 " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID_SCHEME t6               " +
+            $"			 ON ( t5.LABCODE = t6.LABCODE                       " +
+            $"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
+            $"				  AND t5.CUID = t6.CUID )                       " +
+            $"		   JOIN KRCTS01.dbo.profjob_cuid_scheme_analyte t2       " +
+            $"			 ON ( t6.LABCODE = t2.LABCODE                       " +
+            $"				  AND t6.pro_job = t2.pro_job                   " +
+            $"				  AND t6.CUID = t2.CUID                         " +
+            $"				  AND t6.SCH_CODE = t2.SCH_CODE                 " +
+            $"				  AND t6.SCHVERSION = t2.SCHVERSION)            " +
+            $"		   JOIN KRCTS01.dbo.profjob_scheme_analyte t3            " +
+            $"			 ON ( t3.labcode = t2.labcode                       " +
+            $"				  AND t3.pro_job = t2.pro_job                   " +
+            $"				  AND t3.sch_code = t2.sch_code                 " +
+            $"				  AND t3.analytecode = t2.analytecode )         " +
+            $"		   JOIN KRCTS01.dbo.scheme_analyte t4                    " +
+            $"			 ON ( t4.labcode = t2.labcode                       " +
+            $"				  AND t4.sch_code = t2.sch_code                 " +
+            $"				  AND t4.schversion = t2.schversion             " +
+            $"				  AND t4.analytecode = t2.analytecode )         " +
+            $"	WHERE  t1.PRO_JOB like '%%{ProjJobNo}%%'                   " +
+            $"		   AND t1.completed > '2000-01-01'                      " +
+            $"	       AND t1.NOTES1 <> '6F'                                 " +
+            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
+
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
         public void SelectDistinctMainProjJob_Aurora(int j, SqlTransaction trans = null)
         {
             SetTrans(trans);
@@ -7723,6 +7928,48 @@ namespace Sgs.ReportIntegration
             $"				  AND t4.schversion = t2.schversion             " +
             $"				  AND t4.analytecode = t2.analytecode )         " +
             $"	WHERE  t1.PRO_PROJ like '%%{ProjJobNo}%%'                   " +
+            $"		   AND t1.completed > '2000-01-01'                      " +
+            $"		   AND t5.sampleident like '%.00{j}%'                   " +
+            $"		   AND t2.formattedvalue <> 'N.A.'                      " +
+            $"	       AND t1.NOTES1 <> '6F'                                 ";
+
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
+        public void SelectDistinctMainProJob_Aurora(int j, SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+
+            command.CommandText =
+            $"  SELECT distinct t1.pro_job,									" +
+            $"                  t5.SAMPLEIDENT,                             " +
+            $"                  t6.sch_code                                 " +
+            $"	FROM   Aurora.dbo.profjob t1                                " +
+            $"		   JOIN Aurora.dbo.PROFJOB_CUID t5                      " +
+            $"			 ON ( t1.LABCODE = t5.LABCODE                       " +
+            $"				  AND t1.PRO_JOB = t5.PRO_JOB )                 " +
+            $"		   JOIN Aurora.dbo.PROFJOB_CUID_SCHEME t6               " +
+            $"			 ON ( t5.LABCODE = t6.LABCODE                       " +
+            $"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
+            $"				  AND t5.CUID = t6.CUID )                       " +
+            $"		   JOIN Aurora.dbo.profjob_cuid_scheme_analyte t2       " +
+            $"			 ON ( t6.LABCODE = t2.LABCODE                       " +
+            $"				  AND t6.pro_job = t2.pro_job                   " +
+            $"				  AND t6.CUID = t2.CUID                         " +
+            $"				  AND t6.SCH_CODE = t2.SCH_CODE                 " +
+            $"				  AND t6.SCHVERSION = t2.SCHVERSION)            " +
+            $"		   JOIN Aurora.dbo.profjob_scheme_analyte t3            " +
+            $"			 ON ( t3.labcode = t2.labcode                       " +
+            $"				  AND t3.pro_job = t2.pro_job                   " +
+            $"				  AND t3.sch_code = t2.sch_code                 " +
+            $"				  AND t3.analytecode = t2.analytecode )         " +
+            $"		   JOIN Aurora.dbo.scheme_analyte t4                    " +
+            $"			 ON ( t4.labcode = t2.labcode                       " +
+            $"				  AND t4.sch_code = t2.sch_code                 " +
+            $"				  AND t4.schversion = t2.schversion             " +
+            $"				  AND t4.analytecode = t2.analytecode )         " +
+            $"	WHERE  t1.PRO_JOB like '%%{ProjJobNo}%%'                   " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"		   AND t5.sampleident like '%.00{j}%'                   " +
             $"		   AND t2.formattedvalue <> 'N.A.'                      " +
@@ -7884,6 +8131,60 @@ namespace Sgs.ReportIntegration
             $"				  AND t4.schversion = t2.schversion             " +
             $"				  AND t4.analytecode = t2.analytecode )         " +
             $"	WHERE  t1.pro_proj like '%%{ProjJobNo}%%'                   " +            
+            $"	       AND t5.SAMPLEIDENT = '{SAMPLEIDENT}'                 " +
+            $"		   AND t1.completed > '2000-01-01'                      " +
+            $"		   AND t2.FORMATTEDVALUE <> 'N.A.'                      " +
+            $"	ORDER  BY t3.repsequence ASC                                ";
+
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
+        public void SelectSampleidentPro_KRCTS01(SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+
+            command.CommandText =
+            $"   SELECT t1.pro_job,											" +
+            $"   t5.CUID,                                                   " +
+            $"   t5.SAMPLEIDENT,                                            " +
+            $"   t1.registered,                                             " +
+            $"   t3.sch_code,                                               " +
+            $"   t4.description,                                            " +
+            $"   t3.lvl1lowerlimit,                                         " +
+            $"   t3.lvl1upperlimit,                                         " +
+            $"   t3.repdetlimit,                                            " +
+            $"   t2.formattedvalue,                                         " +
+            $"   t7.DESCRIPTION_4                                           " +
+            $"	    FROM   KRCTS01.dbo.profjob t1                            " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID t5                      " +
+            $"			 ON ( t1.LABCODE = t5.LABCODE                       " +
+            $"				  AND t1.PRO_JOB = t5.PRO_JOB )                 " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID_SCHEME t6               " +
+            $"			 ON ( t5.LABCODE = t6.LABCODE                       " +
+            $"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
+            $"				  AND t5.CUID = t6.CUID )                       " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUIDUSER t7                  " +
+            $"			 ON ( t7.labcode = t5.labcode                       " +
+            $"				  AND t7.PRO_JOB = t5.PRO_JOB                   " +
+            $"				  AND t7.CUID = t5.CUID )                       " +
+            $"		   JOIN KRCTS01.dbo.profjob_cuid_scheme_analyte t2       " +
+            $"			 ON ( t6.LABCODE = t2.LABCODE                       " +
+            $"				  AND t6.pro_job = t2.pro_job                   " +
+            $"				  AND t6.CUID = t2.CUID                         " +
+            $"				  AND t6.SCH_CODE = t2.SCH_CODE                 " +
+            $"				  AND t6.SCHVERSION = t2.SCHVERSION)            " +
+            $"		   JOIN KRCTS01.dbo.profjob_scheme_analyte t3            " +
+            $"			 ON ( t3.labcode = t2.labcode                       " +
+            $"				  AND t3.pro_job = t2.pro_job                   " +
+            $"				  AND t3.sch_code = t2.sch_code                 " +
+            $"				  AND t3.analytecode = t2.analytecode )         " +
+            $"		   JOIN KRCTS01.dbo.scheme_analyte t4                    " +
+            $"			 ON ( t4.labcode = t2.labcode                       " +
+            $"				  AND t4.sch_code = t2.sch_code                 " +
+            $"				  AND t4.schversion = t2.schversion             " +
+            $"				  AND t4.analytecode = t2.analytecode )         " +
+            $"	WHERE  t1.pro_pro like '%%{ProjJobNo}%%'                   " +
             $"	       AND t5.SAMPLEIDENT = '{SAMPLEIDENT}'                 " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"		   AND t2.FORMATTEDVALUE <> 'N.A.'                      " +

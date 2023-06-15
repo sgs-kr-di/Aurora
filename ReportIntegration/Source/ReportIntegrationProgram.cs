@@ -2,9 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-
 using DevExpress.XtraEditors;
-
 using Ulee.Utils;
 
 namespace Sgs.ReportIntegration
@@ -71,7 +69,7 @@ namespace Sgs.ReportIntegration
         [STAThread]
         static void Main()
         {
-            bool isAlone;            
+            bool isAlone;
             
             Mutex mutex = new Mutex(true, @"Global\Sgs.ReportIntegration", out isAlone);
 

@@ -264,6 +264,217 @@ namespace Sgs.ReportIntegration
             }
         }
 
+        public void Insert_Chemical_Import(EReportArea AreaNo, string JobNo, SqlTransaction trans = null)
+        {
+            string sSchemCode = "";
+            string sSubJobNo = "";
+            int iChemRowCount = 0;
+            int iChemSubJobRowCount = 0;
+            List<string> sListSchem = new List<string>();
+            List<string> sListSubJobNo = new List<string>();
+
+            //string val = sListSchem[0];
+
+            EReportArea area = AreaNo;
+
+            if (local == false)
+            {
+                trans = AppRes.DB.BeginTrans();
+            }
+
+            try
+            {
+                //ProfJobSchemeSet.JobNo = extendJobNo;
+                ProfJobSchemeSet.ProjJobNo = JobNo;
+
+                //if (ProfJobSchemeSet.ProjJobNo.Contains("AYHA21-06897"))
+                //if (ProfJobSchemeSet.ProjJobNo.Contains("AYHA21-17276") || ProfJobSchemeSet.ProjJobNo.Contains("AYHA21-11157"))
+                // {
+                //   string test = "";
+                //}
+
+                //ProfJobSchemeSet.SelectDistinct_Aurora(trans);
+                ProfJobSchemeSet.SelectDistinctJob_Aurora(trans);
+                //ProfJobSchemeSet.Fetch();
+                iChemRowCount = ProfJobSchemeSet.RowCount;
+
+                //MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
+                //MainSet.SelectRecno(trans);
+
+                if (iChemRowCount == 1)
+                {
+                    ProfJobSchemeSet.SelectDistinctJob_Aurora(trans);
+                    ProfJobSchemeSet.Fetch(0);
+
+                    MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
+                    MainSet.SelectRecno(trans);
+
+                    //ProfJobSchemeSet.SelectSampleident(trans);
+                    //ProfJobSchemeSet.SelectSampleident_Aurora(trans);
+                    ProfJobSchemeSet.SelectSampleidentPro_KRCTS01(trans);
+                    ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
+
+                    //InsertPage2Extend(area, extendJobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
+                    if (MainSet.Empty == true)
+                    {
+                        InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, trans);
+                        InsertJoin(trans);
+                    }
+                    InsertImage(trans);
+                    InsertPage2(area, trans);
+                }
+                else if (iChemRowCount > 1)
+                {
+                    // Count SubJob
+                    ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
+                    iChemSubJobRowCount = ProfJobSchemeSet.RowCount;
+
+                    // Insert SubJob
+                    for (int i = 0; i < iChemSubJobRowCount; i++)
+                    {
+                        ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
+                        ProfJobSchemeSet.Fetch(i, 0, "check", "");
+                        sSchemCode = ProfJobSchemeSet.Sch_Code;
+                        sSubJobNo = ProfJobSchemeSet.SAMPLEIDENT;
+                        sListSchem.Add(sSchemCode);
+                        sListSubJobNo.Add(sSubJobNo);
+
+                        MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
+                        MainSet.SelectRecno(trans);
+
+                        if (sSchemCode.Substring(0, 8) == "HCEECPSC")
+                        {
+                            if (sSchemCode.Equals("HCEECPSC07"))
+                            {
+                                InsertPage2Extend(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
+                            }
+                            else if (sSchemCode.Equals("HCEECPSC08"))
+                            {
+                                InsertPage2Extend(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
+                            }
+                            else if (sSchemCode.Equals("HCEECPSC09"))
+                            {
+                                InsertPage2Extend(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, "surface", trans);
+                            }
+                            else
+                            {
+                                InsertPage2Extend(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
+                            }
+                        }
+
+                        if (MainSet.Empty == true)
+                        {
+                            InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, trans);
+                            InsertJoin(trans);
+                        }
+                        /*
+                        InsertImage(trans);
+                        InsertPage2(area, trans);
+                        */
+                    }
+
+                    // Insert MainJob - Matching Job
+                    for (int j = 0; j < iChemSubJobRowCount; j++)
+                    {
+                        ProfJobSchemeSet.SelectDistinctMainProJob_Aurora(j + 1, trans);
+                        ProfJobSchemeSet.Fetch(0, 0, "check", "");
+
+                        MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
+                        MainSet.SelectRecno(trans);
+
+                        /*
+                        if (ProfJobSchemeSet.SAMPLEIDENT.Contains("AYN21-051339")) 
+                        {
+                            string test = "";
+                        }
+                        */
+
+                        if (sListSchem[j].Substring(0, 8) == "HCEECPSC")
+                        {
+                            if (sListSchem[j].Equals("HCEECPSC07"))
+                            {
+                                UpdatePage2Extend(sListSubJobNo[j], ProfJobSchemeSet.SAMPLEIDENT, trans);
+                                ProfJobSchemeSet.SelectSampleidentProj_Aurora(trans);
+                                ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
+                            }
+                            else if (sListSchem[j].Equals("HCEECPSC08"))
+                            {
+                                UpdatePage2Extend(sListSubJobNo[j], ProfJobSchemeSet.SAMPLEIDENT, trans);
+                                ProfJobSchemeSet.SelectSampleidentProj_Aurora(trans);
+                                ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
+                            }
+                            else if (sListSchem[j].Equals("HCEECPSC09"))
+                            {
+                                UpdatePage2Extend(sListSubJobNo[j], ProfJobSchemeSet.SAMPLEIDENT, trans);
+                                ProfJobSchemeSet.SelectSampleidentProj_Aurora(trans);
+                                ProfJobSchemeSet.Fetch(0, 0, "no", "surface");
+                            }
+                            else
+                            {
+                                UpdatePage2Extend(sListSubJobNo[j], ProfJobSchemeSet.SAMPLEIDENT, trans);
+                                ProfJobSchemeSet.SelectSampleidentProj_Aurora(trans);
+                                ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
+                            }
+                        }
+                        if (MainSet.Empty == true)
+                        {
+                            ProfJobSet.JobNo = ProfJobSchemeSet.SAMPLEIDENT;
+                            ProfJobSet.Select_Distinct_Sampleident_Profjob_Aurora(trans);
+                            ProfJobSet.Fetch(j);
+
+                            InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, trans);
+                            InsertJoin(trans);
+                        }
+                        InsertImage(trans);
+                        InsertPage2(area, trans);
+                    }
+
+                    // Insert Another MainJob - Non Matching Job
+                    for (int k = 0; k < iChemRowCount - (iChemSubJobRowCount * 2); k++)
+                    {
+                        //ProfJobSchemeSet.SelectDistinctMainProjJob_Aurora(k + iChemSubJobRowCount, trans);
+                        //ProfJobSchemeSet.Fetch(0, 0, "check", "");
+                        ProfJobSchemeSet.SelectSampleidentProj_Aurora(k + 1, trans);
+                        ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
+
+                        MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
+                        MainSet.SelectRecno(trans);
+
+                        //InsertPage2Extend(area, extendJobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
+                        if (MainSet.Empty == true)
+                        {
+                            InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, trans);
+                            InsertJoin(trans);
+                        }
+                        InsertImage(trans);
+                        InsertPage2(area, trans);
+                    }
+                }
+                // Else Case - Nothing
+                else
+                {
+                    Console.WriteLine("Chemical Insert : " + JobNo + " - Else Case!");
+                }
+
+                if (local == false)
+                {
+                    SetReportValidation(trans);
+                    AppRes.DB.CommitTrans();
+                }
+            }
+            catch (Exception e)
+            {
+                if (local == false)
+                {
+                    AppRes.DB.RollbackTrans();
+                }
+                else
+                {
+                    throw e;
+                }
+            }
+        }
+
         public void Update()
         {
             if (local == true)

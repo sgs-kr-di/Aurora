@@ -135,10 +135,10 @@ namespace Sgs.ReportIntegration
                 set.From = bomFromDateEdit.Value.ToString(AppRes.csDateFormat);
                 set.To = bomToDateEdit.Value.ToString(AppRes.csDateFormat);
             }
-            else 
+            else
             {
                 set.To = "";
-                set.From = "";                
+                set.From = "";
             }
 
             set.AreaNo = (EReportArea)bomAreaCombo.SelectedValue;
