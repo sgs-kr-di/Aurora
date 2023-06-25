@@ -418,6 +418,10 @@
     <Compile Include="Source\C.Units\UnitGridBookmark.cs" />
     <Compile Include="Source\C.Units\UnitIntegrationQuery.cs" />
     <Compile Include="Source\C.Units\UnitPhysicalQuery.cs" />
+    <Compile Include="Source\D.Reports\ReportEuChemical_org.cs" />
+    <Compile Include="Source\D.Reports\ReportEuChemical_org.Designer.cs">
+      <DependentUpon>ReportEuChemical_org.cs</DependentUpon>
+    </Compile>
     <Compile Include="Source\D.Reports\ReportEuChemical.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -550,6 +554,9 @@
     <EmbeddedResource Include="Source\B.Controls\D.Log\CtrlSysLogView.resx">
       <DependentUpon>CtrlSysLogView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Source\D.Reports\ReportEuChemical_org.resx">
+      <DependentUpon>ReportEuChemical_org.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Source\D.Reports\ReportEuChemical.resx">
       <DependentUpon>ReportEuChemical.cs</DependentUpon>
     </EmbeddedResource>
@@ -612,6 +619,7 @@
     <None Include="Resources\sign_aurora.png" />
     <EmbeddedResource Include="license.elic.xml" />
     <Content Include="Image\Signature_Leeminok.jpg" />
+    <None Include="Resources\sign.jpg" />
     <Content Include="Resources\Signature_Leeminok.jpg" />
     <Content Include="SgsLogo48.ico" />
   </ItemGroup>

@@ -2834,6 +2834,7 @@
             this.DetailReport3,
             this.ReportFooter3});
             this.DetailReport2.Dpi = 254F;
+            this.DetailReport2.Expanded = false;
             this.DetailReport2.Level = 3;
             this.DetailReport2.Name = "DetailReport2";
             this.DetailReport2.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -2843,6 +2844,7 @@
             this.Detail3.Controls.AddRange(new DevExpress.XtraReports.UI.XRControl[] {
             this.xrTable8});
             this.Detail3.Dpi = 254F;
+            this.Detail3.Expanded = false;
             this.Detail3.HeightF = 52.91666F;
             this.Detail3.HierarchyPrintOptions.Indent = 50.8F;
             this.Detail3.Name = "Detail3";
@@ -3034,6 +3036,7 @@
             this.DetailReport4,
             this.GroupHeader8});
             this.DetailReport3.Dpi = 254F;
+            this.DetailReport3.Expanded = false;
             this.DetailReport3.Level = 0;
             this.DetailReport3.Name = "DetailReport3";
             // 
@@ -3382,7 +3385,6 @@
             this.Detail6.Controls.AddRange(new DevExpress.XtraReports.UI.XRControl[] {
             this.xrTable12});
             this.Detail6.Dpi = 254F;
-            this.Detail6.Expanded = false;
             this.Detail6.HeightF = 52.91666F;
             this.Detail6.HierarchyPrintOptions.Indent = 50.8F;
             this.Detail6.Name = "Detail6";
@@ -3655,6 +3657,7 @@
             this.xrLabel27,
             this.xrLabel26});
             this.GroupHeader6.Dpi = 254F;
+            this.GroupHeader6.Expanded = false;
             this.GroupHeader6.HeightF = 254.881F;
             this.GroupHeader6.KeepTogether = true;
             this.GroupHeader6.Name = "GroupHeader6";
@@ -5672,7 +5675,6 @@
             this.ReportFooter5.Controls.AddRange(new DevExpress.XtraReports.UI.XRControl[] {
             this.xrRichText8});
             this.ReportFooter5.Dpi = 254F;
-            this.ReportFooter5.Expanded = false;
             this.ReportFooter5.HeightF = 316.101F;
             this.ReportFooter5.Name = "ReportFooter5";
             this.ReportFooter5.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -5697,7 +5699,6 @@
             this.ReportFooter11});
             this.DetailReport7.DataMember = "T7";
             this.DetailReport7.Dpi = 254F;
-            this.DetailReport7.Expanded = false;
             this.DetailReport7.Level = 11;
             this.DetailReport7.Name = "DetailReport7";
             this.DetailReport7.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -8186,6 +8187,7 @@
             this.ReportFooter7});
             this.DetailReport10.DataMember = "RT_EU11";
             this.DetailReport10.Dpi = 254F;
+            this.DetailReport10.Expanded = false;
             this.DetailReport10.Level = 7;
             this.DetailReport10.Name = "DetailReport10";
             this.DetailReport10.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;

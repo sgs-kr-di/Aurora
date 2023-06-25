@@ -1773,7 +1773,7 @@ namespace Sgs.ReportIntegration
                             iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
                             InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
                         }
-                    } 
+                    }
                     else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 20)
                     {
                         iSaveLoopHyphenCnt = 20 - iSaveLoopResultCnt;

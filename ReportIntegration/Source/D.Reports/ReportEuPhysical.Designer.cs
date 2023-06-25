@@ -148,6 +148,7 @@
             this.xrTableCell57 = new DevExpress.XtraReports.UI.XRTableCell();
             this.xrTableCell1 = new DevExpress.XtraReports.UI.XRTableCell();
             this.GroupHeader2 = new DevExpress.XtraReports.UI.GroupHeaderBand();
+            this.xrLabelReportView5 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel12 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel13 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrTable5 = new DevExpress.XtraReports.UI.XRTable();
@@ -361,7 +362,6 @@
             this.xrLabel37 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel35 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel36 = new DevExpress.XtraReports.UI.XRLabel();
-            this.xrLabelReportView5 = new DevExpress.XtraReports.UI.XRLabel();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xrRichText16)).BeginInit();
@@ -1392,7 +1392,6 @@
             this.ReportFooter1});
             this.DetailReport.DataMember = "P2";
             this.DetailReport.Dpi = 254F;
-            this.DetailReport.Expanded = false;
             this.DetailReport.Level = 1;
             this.DetailReport.Name = "DetailReport";
             this.DetailReport.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -1620,6 +1619,7 @@
             this.ReportFooter2});
             this.DetailReport1.DataMember = "P3";
             this.DetailReport1.Dpi = 254F;
+            this.DetailReport1.Expanded = false;
             this.DetailReport1.Level = 2;
             this.DetailReport1.Name = "DetailReport1";
             this.DetailReport1.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -1719,6 +1719,21 @@
             this.GroupHeader2.Dpi = 254F;
             this.GroupHeader2.HeightF = 286.87F;
             this.GroupHeader2.Name = "GroupHeader2";
+            // 
+            // xrLabelReportView5
+            // 
+            this.xrLabelReportView5.Dpi = 254F;
+            this.xrLabelReportView5.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[PReportView_Page5].[reportview]")});
+            this.xrLabelReportView5.Font = new System.Drawing.Font("Arial", 10F);
+            this.xrLabelReportView5.LocationFloat = new DevExpress.Utils.PointFloat(0.0006459553F, 11.33733F);
+            this.xrLabelReportView5.Multiline = true;
+            this.xrLabelReportView5.Name = "xrLabelReportView5";
+            this.xrLabelReportView5.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
+            this.xrLabelReportView5.Scripts.OnBeforePrint = "xrLabelReportView_BeforePrint";
+            this.xrLabelReportView5.SizeF = new System.Drawing.SizeF(1880F, 48.45844F);
+            this.xrLabelReportView5.StylePriority.UseFont = false;
+            this.xrLabelReportView5.Visible = false;
             // 
             // xrLabel12
             // 
@@ -1844,6 +1859,7 @@
             this.GroupFooter6});
             this.DetailReport2.DataMember = "P40";
             this.DetailReport2.Dpi = 254F;
+            this.DetailReport2.Expanded = false;
             this.DetailReport2.Level = 3;
             this.DetailReport2.Name = "DetailReport2";
             this.DetailReport2.Scripts.OnAfterPrint = "DetailReport2_AfterPrint";
@@ -2421,6 +2437,7 @@
             this.ReportFooter4});
             this.DetailReport3.DataMember = "P41";
             this.DetailReport3.Dpi = 254F;
+            this.DetailReport3.Expanded = false;
             this.DetailReport3.Level = 4;
             this.DetailReport3.Name = "DetailReport3";
             this.DetailReport3.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -3187,6 +3204,7 @@
             this.Detail8,
             this.ReportFooter});
             this.DetailReport6.Dpi = 254F;
+            this.DetailReport6.Expanded = false;
             this.DetailReport6.Level = 0;
             this.DetailReport6.Name = "DetailReport6";
             // 
@@ -3202,6 +3220,7 @@
             this.xrTable16,
             this.xrLabel29});
             this.Detail8.Dpi = 254F;
+            this.Detail8.Expanded = false;
             this.Detail8.HeightF = 1390.203F;
             this.Detail8.HierarchyPrintOptions.Indent = 50.8F;
             this.Detail8.Name = "Detail8";
@@ -4291,21 +4310,6 @@
             this.xrLabel36.StylePriority.UseTextAlignment = false;
             this.xrLabel36.Text = resources.GetString("xrLabel36.Text");
             this.xrLabel36.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopLeft;
-            // 
-            // xrLabelReportView5
-            // 
-            this.xrLabelReportView5.Dpi = 254F;
-            this.xrLabelReportView5.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[PReportView_Page5].[reportview]")});
-            this.xrLabelReportView5.Font = new System.Drawing.Font("Arial", 10F);
-            this.xrLabelReportView5.LocationFloat = new DevExpress.Utils.PointFloat(0.0006459553F, 11.33733F);
-            this.xrLabelReportView5.Multiline = true;
-            this.xrLabelReportView5.Name = "xrLabelReportView5";
-            this.xrLabelReportView5.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
-            this.xrLabelReportView5.Scripts.OnBeforePrint = "xrLabelReportView_BeforePrint";
-            this.xrLabelReportView5.SizeF = new System.Drawing.SizeF(1880F, 48.45844F);
-            this.xrLabelReportView5.StylePriority.UseFont = false;
-            this.xrLabelReportView5.Visible = false;
             // 
             // ReportEuPhysical
             // 

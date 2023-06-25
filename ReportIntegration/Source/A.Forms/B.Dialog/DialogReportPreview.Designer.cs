@@ -48,6 +48,7 @@
             this.printPreviewBarItem21 = new DevExpress.XtraPrinting.Preview.PrintPreviewBarItem();
             this.printPreviewBarItem24 = new DevExpress.XtraPrinting.Preview.PrintPreviewBarItem();
             this.barBtnWordtoWord = new DevExpress.XtraBars.BarButtonItem();
+            this.barButtonItem2 = new DevExpress.XtraBars.BarButtonItem();
             this.reportPreviewStatusBar = new DevExpress.XtraPrinting.Preview.PreviewBar();
             this.printPreviewStaticItem1 = new DevExpress.XtraPrinting.Preview.PrintPreviewStaticItem();
             this.barStaticItem1 = new DevExpress.XtraBars.BarStaticItem();
@@ -98,7 +99,6 @@
             this.printPreviewBarCheckItem15 = new DevExpress.XtraPrinting.Preview.PrintPreviewBarCheckItem();
             this.printPreviewBarCheckItem16 = new DevExpress.XtraPrinting.Preview.PrintPreviewBarCheckItem();
             this.printPreviewBarCheckItem17 = new DevExpress.XtraPrinting.Preview.PrintPreviewBarCheckItem();
-            this.barButtonItem2 = new DevExpress.XtraBars.BarButtonItem();
             ((System.ComponentModel.ISupportInitialize)(this.docViewerManager)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.printPreviewRepositoryItemComboBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemProgressBar1)).BeginInit();
@@ -375,6 +375,13 @@
             this.barBtnWordtoWord.Id = 73;
             this.barBtnWordtoWord.Name = "barBtnWordtoWord";
             this.barBtnWordtoWord.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barBtnWordtoWord_ItemClick);
+            // 
+            // barButtonItem2
+            // 
+            this.barButtonItem2.Caption = "WordToPDF";
+            this.barButtonItem2.Id = 74;
+            this.barButtonItem2.Name = "barButtonItem2";
+            this.barButtonItem2.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem2_ItemClick);
             // 
             // reportPreviewStatusBar
             // 
@@ -870,13 +877,6 @@
             this.printPreviewBarCheckItem17.Hint = "Image File";
             this.printPreviewBarCheckItem17.Id = 56;
             this.printPreviewBarCheckItem17.Name = "printPreviewBarCheckItem17";
-            // 
-            // barButtonItem2
-            // 
-            this.barButtonItem2.Caption = "WordToPDF";
-            this.barButtonItem2.Id = 74;
-            this.barButtonItem2.Name = "barButtonItem2";
-            this.barButtonItem2.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem2_ItemClick);
             // 
             // DialogReportPreview
             // 

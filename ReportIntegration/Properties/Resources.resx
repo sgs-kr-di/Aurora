@@ -127,11 +127,11 @@
   <data name="footer5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\footer5.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Signature_Leeminok" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Signature_Leeminok.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Footer7" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Footer7.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="footer3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\footer3.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="footer4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\footer4.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -148,10 +148,13 @@
   <data name="footer2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\footer2.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="footer3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\footer3.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Footer1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Footer1.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Signature_Leeminok" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Signature_Leeminok.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="sign" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sign.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

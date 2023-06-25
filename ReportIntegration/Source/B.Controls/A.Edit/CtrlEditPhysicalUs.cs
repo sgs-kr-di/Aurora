@@ -1436,6 +1436,7 @@ namespace Sgs.ReportIntegration
                         P2Set.sTestAge = row["Age Group Applied in Testing"].ToString();
                         P2Set.sSampleDescription = row["Sample description"].ToString();
                         P2Set.sDetailOfSample = row["Detail of sample"].ToString();
+                        P2Set.sReportComments = "--";
                         P2Set.Update_Main();
                     }
                 }

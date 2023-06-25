@@ -340,12 +340,60 @@ namespace Sgs.ReportIntegration
             this.Cursor = Cursors.WaitCursor;
 
             cheReportSet.RecNo = cheMainSet.RecNo;
+            //cheReportSet.SampleIdent = profJobSchemeSet.SAMPLEIDENT;
             cheReportSet.Select();
 
             cheReportSet.DataSet.Tables[0].TableName = "P1";
             cheReportSet.DataSet.Tables[1].TableName = "P2";
             cheReportSet.DataSet.Tables[2].TableName = "P2EXTEND";
             cheReportSet.DataSet.Tables[3].TableName = "Image";
+
+            cheReportSet.DataSet.Tables[4].TableName = "RT_EU";
+            cheReportSet.DataSet.Tables[5].TableName = "RT_EU6";
+            cheReportSet.DataSet.Tables[6].TableName = "RT_EU11";
+            cheReportSet.DataSet.Tables[7].TableName = "RT_EU16";
+            cheReportSet.DataSet.Tables[8].TableName = "RT_EU21";
+            cheReportSet.DataSet.Tables[9].TableName = "RT_EU26";
+
+            cheReportSet.DataSet.Tables[10].TableName = "LT_Al";
+            cheReportSet.DataSet.Tables[11].TableName = "LT_As";
+            cheReportSet.DataSet.Tables[12].TableName = "LT_B";
+            cheReportSet.DataSet.Tables[13].TableName = "LT_Ba";
+            cheReportSet.DataSet.Tables[14].TableName = "LT_Cd";
+            cheReportSet.DataSet.Tables[15].TableName = "LT_Co";
+            cheReportSet.DataSet.Tables[16].TableName = "LT_Cr";
+            cheReportSet.DataSet.Tables[17].TableName = "LT_lll";
+            cheReportSet.DataSet.Tables[18].TableName = "LT_Vl";
+            cheReportSet.DataSet.Tables[19].TableName = "LT_Cu";
+            cheReportSet.DataSet.Tables[20].TableName = "LT_Hg";
+            cheReportSet.DataSet.Tables[21].TableName = "LT_Mn";
+            cheReportSet.DataSet.Tables[22].TableName = "LT_Ni";
+            cheReportSet.DataSet.Tables[23].TableName = "LT_Pb";
+            cheReportSet.DataSet.Tables[24].TableName = "LT_Sb";
+            cheReportSet.DataSet.Tables[25].TableName = "LT_Se";
+            cheReportSet.DataSet.Tables[26].TableName = "LT_Sn";
+            cheReportSet.DataSet.Tables[27].TableName = "LT_Sr";
+            cheReportSet.DataSet.Tables[28].TableName = "LT_Zn";
+            cheReportSet.DataSet.Tables[29].TableName = "LT_Organic";
+
+            cheReportSet.DataSet.Tables[30].TableName = "RT_TIN";
+            cheReportSet.DataSet.Tables[31].TableName = "RT_TIN6";
+            cheReportSet.DataSet.Tables[32].TableName = "RT_TIN11";
+            cheReportSet.DataSet.Tables[33].TableName = "RT_TIN16";
+            cheReportSet.DataSet.Tables[34].TableName = "RT_TIN21";
+            cheReportSet.DataSet.Tables[35].TableName = "RT_TIN26";
+
+            cheReportSet.DataSet.Tables[36].TableName = "LT_MET";
+            cheReportSet.DataSet.Tables[37].TableName = "LT_DBT";
+            cheReportSet.DataSet.Tables[38].TableName = "LT_TBT";
+            cheReportSet.DataSet.Tables[39].TableName = "LT_TeBT";
+            cheReportSet.DataSet.Tables[40].TableName = "LT_MOT";
+            cheReportSet.DataSet.Tables[41].TableName = "LT_DOT";
+            cheReportSet.DataSet.Tables[42].TableName = "LT_DProT";
+            cheReportSet.DataSet.Tables[43].TableName = "LT_DPhT";
+            cheReportSet.DataSet.Tables[44].TableName = "LT_TPhT";
+            cheReportSet.DataSet.Tables[45].TableName = "LT_DMT";
+            cheReportSet.DataSet.Tables[46].TableName = "LT_MBT";
 
             BindingSource bind = new BindingSource();
             bind.DataSource = cheReportSet.DataSet;
@@ -398,7 +446,7 @@ namespace Sgs.ReportIntegration
             profJobSet.AreaNo = areaNo;
             profJobSet.ItemNo = itemNo;
             profJobSet.ExtendASTM = true;
-            profJobSet.Select();
+            profJobSet.Select_KRSCT01();
 
             int rowCount = profJobSet.RowCount;
             if (rowCount > 0)
