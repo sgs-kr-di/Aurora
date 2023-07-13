@@ -1435,8 +1435,8 @@ namespace Sgs.ReportIntegration
                         P2Set.sRequestAge = row["Requested Age Grading"].ToString();
                         P2Set.sTestAge = row["Age Group Applied in Testing"].ToString();
                         P2Set.sSampleDescription = row["Sample description"].ToString();
-                        P2Set.sDetailOfSample = row["Detail of sample"].ToString();
-                        P2Set.sReportComments = "--";
+                        P2Set.sDetailOfSample = row["Detail of sample"].ToString();                        
+                        P2Set.sReportComments = row["Report Comments"].ToString();
                         P2Set.Update_Main();
                     }
                 }
@@ -1608,7 +1608,8 @@ namespace Sgs.ReportIntegration
                     {
                         if (!P2Set.sColumnDesc_4_3_7_Result.Equals("None"))
                         {
-                            P2Set.sP5desc2 = row["what kind of stuffing"].ToString();
+                            //P2Set.sP5desc2 = row["what kind of stuffing"].ToString();
+                            P2Set.sP5desc2 = row["Stuffing materials"].ToString();
                             P2Set.sColumnDesc_4_3_7_Report_View = "0";
 
                             P2Set.Update_Polyester();

@@ -66,10 +66,32 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
 
             }
 
+            return dtr;
+
+        }
+        private DataRow Readvaluefordt1_2(Table cellTable, DataRow dtr)
+        {
+            //get nested table
+
+
+            for (int n = 0; n < cellTable.Rows[0].Cells[1].Paragraphs.Count; n++)
+            {
+                Paragraph p = cellTable.Rows[0].Cells[1].Paragraphs[n];
+                if (n == 0)
+                {
+                    dtr[6] += p.Text;
+
+                }
+                else
+                { dtr[6] += "\n" + p.Text; }
+            }
+
+
 
             return dtr;
 
         }
+
 
         private DataRow Readvaluefordt2(TableRow row, DataRow dtrow)
         {
@@ -190,8 +212,9 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
 
         private DataRow Readvaluefordt4(DataRow dtr, TableRow row)
         {
-            for (int c = 0; c < 10; c++)
+            for (int c = 0; c < 11; c++)
             {
+
                 for (int n = 0; n < row.Cells[c].Paragraphs.Count; n++)
                 {
                     Paragraph p = row.Cells[c].Paragraphs[n];
@@ -241,7 +264,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             dt1.Columns.Add(new DataColumn("Age Group Applied in Testing", typeof(string)));
             dt1.Columns.Add(new DataColumn("Sample description", typeof(string)));
             dt1.Columns.Add(new DataColumn("Detail of sample", typeof(string)));
-
+            dt1.Columns.Add(new DataColumn("Report Comments", typeof(string)));
 
             foreach (Section sec in document.Sections)
             {
@@ -262,6 +285,12 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                                     {
                                         DataRow dtr = dt1.Rows.Add();
                                         dtr = Readvaluefordt1(cellTable, dtr);
+                                    }
+
+                                    if (cellTable.Rows[0].Cells[0].Paragraphs[0].Text.Trim() == "Report Comments")
+                                    {
+
+                                        Readvaluefordt1_2(cellTable, dt1.Rows[0]);
                                     }
 
 
@@ -424,6 +453,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             dt4.Columns.Add(new DataColumn("Time(s)", typeof(string)));
             dt4.Columns.Add(new DataColumn("Actual Burn Rate (in./s)", typeof(string)));
             dt4.Columns.Add(new DataColumn("Round up* Burn Rate (in./s)", typeof(string)));
+            dt4.Columns.Add(new DataColumn("Burnning Rate (in./s))", typeof(string)));
             dt4.Columns.Add(new DataColumn("Result", typeof(string)));
             bool hasStrikeOut = false;
 
@@ -436,11 +466,11 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                     {
                         foreach (TableRow row in table.Rows)
                         {
-                            if (row.GetRowIndex() == 0 || row.GetRowIndex() == 1)
+                            if (row.GetRowIndex() == 0 || row.GetRowIndex() == 1 || row.GetRowIndex() == 2)
                             {
                                 continue;
                             }
-                            if (row.Cells.Count != 10)
+                            if (row.Cells.Count != 11)
                             {
                                 break;
                             }
@@ -496,7 +526,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
         {  //-	What kinds of stuffing
             DataTable dt5 = new DataTable();
             dt5.Locale = CultureInfo.InvariantCulture;
-            dt5.Columns.Add(new DataColumn("what kind of stuffing", typeof(string)));
+            dt5.Columns.Add(new DataColumn("Stuffing materials", typeof(string)));
             foreach (Section sec in document.Sections)
             {
                 for (int i = 0; i < sec.Tables.Count; i++)
@@ -507,7 +537,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                     {
                         foreach (TableCell tableCell in tableRow.Cells)
                         {
-                            if (tableCell.Paragraphs[0].Text.Trim() == "a) What kinds of stuffing?")
+                            if (tableCell.Paragraphs[0].Text.Trim() == "a) Stuffing materials")
                             {
                                 foreach (DocumentObject documentObject in tableCell.ChildObjects)
                                 {
@@ -516,22 +546,32 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                                         Table cellTable = (Table)documentObject;
                                         DataRow dtr = dt5.Rows.Add();
                                         dtr = Readvaluefordt5(cellTable, dtr);
+
+
                                     }
                                 }
+
+
+
                             }
                         }
+
                     }
                 }
+
+
             }
+
+
             return dt5;
+
+
         }
 
 
 
         private DataTable getdt6(Document document)
         {
-
-
             //PAGE COMPLETE
             DataTable dt6 = new DataTable();
             dt6.Locale = CultureInfo.InvariantCulture;

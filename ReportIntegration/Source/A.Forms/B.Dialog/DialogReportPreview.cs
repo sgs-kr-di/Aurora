@@ -51,7 +51,7 @@ namespace Sgs.ReportIntegration
         {
             //폴더 경로를 입력
             string Path_EN   = @"C:\Projects\Projects\Sgs\Remote_One\ReportIntegration\ReportIntegration\Bom\EN_Physical";
-            string Path_ASTM = @"C:\Projects\Projects\Sgs\Remote_One\ReportIntegration\ReportIntegration\Bom\\ASTM_Physical";
+            string Path_ASTM = @"C:\Projects\Projects\Sgs\Remote_One\ReportIntegration\ReportIntegration\Bom\ASTM_Physical";
             string[] files_EN = Directory.GetFiles(@"C:\Projects\Projects\Sgs\Remote_One\ReportIntegration\ReportIntegration\Bom\\EN_Physical_pdf", "*.pdf");
             string[] files_ASTM = Directory.GetFiles(@"C:\Projects\Projects\Sgs\Remote_One\ReportIntegration\ReportIntegration\Bom\\ASTM_Physical_pdf", "*.pdf");
             string FileExtension = "";
@@ -145,7 +145,7 @@ namespace Sgs.ReportIntegration
                     }
                 }
             }
-            MessageBox.Show("PDF 변환이 완료되었습니다.");            
+            MessageBox.Show("PDF 변환이 완료되었습니다.");
         }
     }
 }

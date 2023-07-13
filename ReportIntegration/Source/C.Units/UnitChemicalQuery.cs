@@ -593,7 +593,7 @@ namespace Sgs.ReportIntegration
             MainSet.P1ClientName = ProfJobSet.ClientName;            
             MainSet.P1ClientAddress = ProfJobSet.ClientAddress;
             MainSet.P1FileNo = ProfJobSet.FileNo;
-            MainSet.P1SampleDescription = ProfJobSet.ItemNo;
+            MainSet.P1SampleDescription = ProfJobSet.TESTCOMMENTS;
             //MainSet.P1SampleDescription = ProfJobSet.SampleRemark;
             MainSet.P1ItemNo = ProfJobSet.ItemNo;
             MainSet.P1OrderNo = "-";
@@ -654,20 +654,24 @@ namespace Sgs.ReportIntegration
                                      "This test report is not related to Korea Laboratory Accreditation Scheme.\r\n" +
                                      "The statement of conformity was made on the requested specification or standard. The decision rule would be based on the binary statement (Pass/Fail) according to ILAC-G8:09/2019 guideline 4.2.1 without taking measurement uncertainty into account by applicant's agreement.";
 
+                //MainSet.P1Comments = "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 -\r\n" +
+                //                     "EN71-3:2019+A1:2021 – Migration of certain elements\r\n" +
+                //                     "(By first action method testing only)";
+
                 //MainSet.P1TestRequested =
                 //"EN71-3:2013+A3:2018-Migration of certain elements\r\n" +
                 //"(By first action method testing only)";
 
                 MainSet.P1TestRequested =
                 "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements\r\n" +
-                "(By first action method and confirmation test if necessary)";
+                "(By first action method testing only)";
                 MainSet.P1Conclusion = "PASS";
                 //MainSet.P2Description1 = "EN71-3:2013+A3:2018 - Migration of certain elements";
                 MainSet.P2Description1 = "Directive 2009/48/EC and its Amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements";
                 //MainSet.P2Description2 = "Method : With reference to EN71-3:2013+A3:2018. Analysis of general elements was performed by ICP-OES.";
                 if (bChkTin)
                 {
-                    MainSet.P2Description2 = "Method : With reference to EN71-3:2019+A1:2021. Analysis of general elements was performed by ICP-OES and Chromium (III) was obtained by calculation, chromium (VI) was analyzed by IC-UV/VIS. Tin was analyzed by GC-MS.";
+                    MainSet.P2Description2 = "Method : With reference to EN71-3:2019+A1:2021. Analysis of general elements was performed by ICP-OES and Chromium (III) was obtained by calculation, chromium (VI) was analyzed by IC-UV/VIS. Organic Tin was analyzed by GC-MS.";
                 }
                 else
                 {
@@ -685,17 +689,27 @@ namespace Sgs.ReportIntegration
                     //"      4. Soluble Chromium(III) = Soluble Total Chromium – Soluble Chromium(VI)\r\n" +
                     //"      5. ^ = Confirmation test of soluble organic tin is not required in case of soluble tin, after conversion, does not exceed the soluble organic tin requirement as specified in EN71-3:2019.";
 
-                    "Note. 1. mg/kg = milligram per kilogram\r\n" +
+                    //"Note. 1. mg/kg = milligram per kilogram\r\n" +
+                    //    "      2. MDL = Method Detection Limit\r\n" +
+                    //    "      3. ND = Not Detected (< MDL)\r\n" +
+                    //    "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
+                    //    "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n";
+                        "      1. mg/kg = milligram per kilogram\r\n" +
                         "      2. MDL = Method Detection Limit\r\n" +
                         "      3. ND = Not Detected (< MDL)\r\n" +
                         "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
                         "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n";
-                        
                 }
                 else
                 {
                     MainSet.P3Description1 =
-                        "Note. 1. mg/kg = milligram per kilogram\r\n" +
+                        //"Note. 1. mg/kg = milligram per kilogram\r\n" +
+                        //    "      2. MDL = Method Detection Limit\r\n" +
+                        //    "      3. ND = Not Detected (< MDL)\r\n" +
+                        //    "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
+                        //    "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n" +
+                        //    "      6. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test for soluble organic tin on component exceeding the screening limit of 4.9mg/kg soluble Sn.";
+                            "      1. mg/kg = milligram per kilogram\r\n" +
                             "      2. MDL = Method Detection Limit\r\n" +
                             "      3. ND = Not Detected (< MDL)\r\n" +
                             "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
@@ -786,6 +800,13 @@ namespace Sgs.ReportIntegration
                     P2Set.FormatValue = ProfJobSchemeSet.FormatValue;
                     P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
                     P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
+
+                    if (ProfJobSchemeSet.Sch_Code.Equals("HCEEENICP_15_02") && ProfJobSchemeSet.Name.Equals("Organic Tin^"))
+                    {
+                        P2Set.HiValue = "12";
+                        P2Set.ReportValue = "--";
+                    }
+
                     P2Set.Insert(trans);
                 }
             }
@@ -888,7 +909,7 @@ namespace Sgs.ReportIntegration
                             }
                             else if (P2Set.Name.Contains("Organic Tin"))
                             {
-                                if (P2Set.FormatValue.Equals("ND"))
+                                if (P2Set.FormatValue.Equals("ND") || P2Set.FormatValue.Equals("0.00"))
                                 {
                                     P2Set.OrgTin = "--";
                                 }

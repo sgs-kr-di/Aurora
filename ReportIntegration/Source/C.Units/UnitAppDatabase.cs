@@ -5897,7 +5897,7 @@ namespace Sgs.ReportIntegration
                 $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Sn)%'; " +
                 $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Sr)%'; " +
                 $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Zn)%'; " +
-                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name = 'Organic Tin'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name = 'Organic Tin^'; " +
                 // Report limit  출력 - 끝
 
                 //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and (no>=1 and no<=4);   " +
@@ -7052,6 +7052,8 @@ namespace Sgs.ReportIntegration
         // PROFJOB_CUIDUSER.DESCRIPTION_3
         public string CountryOfOrigin { get; set; }
 
+        public string TESTCOMMENTS { get; set; }
+
         // USERPROFJOB_PHOTORTF.PHOTO
         public Bitmap Image { get; set; }
 
@@ -7185,7 +7187,7 @@ namespace Sgs.ReportIntegration
                 " select t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
                 "     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
                 "     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
-                "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1,   " +
+                "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1, t3.TESTCOMMENTS,  " +
                 "     t4.sam_remarks, t4.sam_description, t4.description_1,            " +
                 "     t4.description_3, t4.description_4, t5.photo                     " +
                 " from KRCTS01.dbo.PROFJOB t1                                                      " +
@@ -7604,7 +7606,7 @@ namespace Sgs.ReportIntegration
                 " select top 1 t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
                 "     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
                 "     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
-                "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1,   " +
+                "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1, t3.TESTCOMMENTS,   " +
                 "     t4.sam_remarks, t4.sam_description, t4.description_1,            " +
                 "     t4.description_3, t4.description_4, t5.photo                     " +
                 " from Aurora.dbo.PROFJOB t1                                                      " +
@@ -7755,10 +7757,10 @@ namespace Sgs.ReportIntegration
                 ClientName = Convert.ToString(row["cli_name"]).Trim();
                 //ClientAddress = Convert.ToString(row["address1"]) + ", " +
                 ClientAddress = Convert.ToString(row["address1"]) + "\r\n" +
-                    Convert.ToString(row["address2"]) + ", " +
-                    Convert.ToString(row["address3"]) + "\r\n" +
+                    Convert.ToString(row["address2"]) + "\r\n" +
+                    Convert.ToString(row["address3"]);
                     //Convert.ToString(row["state"]) + "\r\n" +
-                    Convert.ToString(row["country"]);
+                    //Convert.ToString(row["country"]);
                 JobNo = Convert.ToString(row["pro_job"]).Trim();
                 FileNo = Convert.ToString(row["pro_proj"]).Trim();
                 OmNo = Convert.ToString(row["pro_proj"]).Trim();
@@ -7773,6 +7775,7 @@ namespace Sgs.ReportIntegration
                 DetailOfSample = Convert.ToString(row["description_1"]);
                 Manufacturer = Convert.ToString(row["description_4"]);
                 CountryOfOrigin = Convert.ToString(row["description_3"]);
+                TESTCOMMENTS = Convert.ToString(row["TESTCOMMENTS"]);
 
                 switch (Type)
                 {
@@ -8757,5 +8760,6 @@ namespace Sgs.ReportIntegration
         }
     }
 }
+
 
 
