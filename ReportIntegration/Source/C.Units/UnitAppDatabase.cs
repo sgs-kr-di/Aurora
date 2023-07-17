@@ -7497,7 +7497,7 @@ namespace Sgs.ReportIntegration
                 " select t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
                 "     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
                 "     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
-                "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1,   " +
+                "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1, t3.TESTCOMMENTS,   " +
                 "     t4.sam_remarks, t4.sam_description, t4.description_1,            " +
                 "     t4.description_3, t4.description_4, t5.photo                     " +
                 " from Aurora.dbo.PROFJOB t1                                                      " +
