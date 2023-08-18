@@ -5897,7 +5897,7 @@ namespace Sgs.ReportIntegration
                 $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Sn)%'; " +
                 $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Sr)%'; " +
                 $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Zn)%'; " +
-                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name = 'Organic Tin^'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%Organic Tin%'; " +
                 // Report limit  출력 - 끝
 
                 //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and (no>=1 and no<=4);   " +
@@ -6638,6 +6638,28 @@ namespace Sgs.ReportIntegration
                 $" update TB_CHEP2 set " +
                 $" formatvalue='{FormatValue}' " +
                 $" where pk_recno={RecNo} ";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Update_TB_CHEP2_HYPHEN_EN(SqlTransaction trans = null)
+        {
+            string sql =
+                $" update TB_CHEP2_HYPHEN_EN set " +
+                $" orgtin = '{OrgTin}' " +
+                $" where sampleident = '{Sampleident}' ";
 
             SetTrans(trans);
 
@@ -8086,6 +8108,46 @@ namespace Sgs.ReportIntegration
             dataAdapter.Fill(dataSet);
         }
 
+        public void SelectDistinctProjJob_KRSEC001(SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+
+            command.CommandText =
+            $"  SELECT distinct t1.pro_job,									" +
+            $"                  t5.SAMPLEIDENT,                             " +
+            $"                  t6.SCH_CODE                                 " +
+            $"	FROM   Aurora.dbo.profjob t1                                " +
+            $"		   JOIN Aurora.dbo.PROFJOB_CUID t5                      " +
+            $"			 ON ( t1.LABCODE = t5.LABCODE                       " +
+            $"				  AND t1.PRO_JOB = t5.PRO_JOB )                 " +
+            $"		   JOIN Aurora.dbo.PROFJOB_CUID_SCHEME t6               " +
+            $"			 ON ( t5.LABCODE = t6.LABCODE                       " +
+            $"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
+            $"				  AND t5.CUID = t6.CUID )                       " +
+            $"		   JOIN Aurora.dbo.profjob_cuid_scheme_analyte t2       " +
+            $"			 ON ( t6.LABCODE = t2.LABCODE                       " +
+            $"				  AND t6.pro_job = t2.pro_job                   " +
+            $"				  AND t6.CUID = t2.CUID                         " +
+            $"				  AND t6.SCH_CODE = t2.SCH_CODE                 " +
+            $"				  AND t6.SCHVERSION = t2.SCHVERSION)            " +
+            $"		   JOIN Aurora.dbo.profjob_scheme_analyte t3            " +
+            $"			 ON ( t3.labcode = t2.labcode                       " +
+            $"				  AND t3.pro_job = t2.pro_job                   " +
+            $"				  AND t3.sch_code = t2.sch_code                 " +
+            $"				  AND t3.analytecode = t2.analytecode )         " +
+            $"		   JOIN Aurora.dbo.scheme_analyte t4                    " +
+            $"			 ON ( t4.labcode = t2.labcode                       " +
+            $"				  AND t4.sch_code = t2.sch_code                 " +
+            $"				  AND t4.schversion = t2.schversion             " +
+            $"				  AND t4.analytecode = t2.analytecode )         " +
+            $"	WHERE  t1.PRO_PROJ like '%%{ProjJobNo}%%'                   " +
+            $"		   AND t1.completed > '2000-01-01'                      " +
+            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
+
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
         public void SelectDistinctProjJob_Aurora(SqlTransaction trans = null)
         {
             SetTrans(trans);
@@ -8242,7 +8304,7 @@ namespace Sgs.ReportIntegration
             $"	WHERE  t1.PRO_JOB = '{JobNo}'                               " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"	       AND t1.NOTES1 <> '6F'                                " +
-            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
+            $"		   --AND t2.formattedvalue <> 'N.A.'                      ";
 
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
@@ -8529,6 +8591,61 @@ namespace Sgs.ReportIntegration
             $"	       AND t5.SAMPLEIDENT = '{SAMPLEIDENT}'                 " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"		   AND t2.FORMATTEDVALUE <> 'N.A.'                      " +
+            $"	ORDER  BY t3.repsequence ASC                                ";
+
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
+        public void SelectSampleidentProAll_KRCTS01(SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+
+            command.CommandText =
+            $"   SELECT t1.pro_job,											" +
+            $"   t5.CUID,                                                   " +
+            $"   t5.SAMPLEIDENT,                                            " +
+            $"   t1.registered,                                             " +
+            $"   t3.sch_code,                                               " +
+            $"   t4.description,                                            " +
+            $"   t3.lvl1lowerlimit,                                         " +
+            $"   t3.lvl1upperlimit,                                         " +
+            $"   t3.repdetlimit,                                            " +
+            $"   t2.formattedvalue,                                         " +
+            $"   t7.sam_description,                                        " +
+            $"   t7.DESCRIPTION_4                                           " +
+            $"	    FROM   KRCTS01.dbo.profjob t1                           " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID t5                     " +
+            $"			 ON ( t1.LABCODE = t5.LABCODE                       " +
+            $"				  AND t1.PRO_JOB = t5.PRO_JOB )                 " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID_SCHEME t6              " +
+            $"			 ON ( t5.LABCODE = t6.LABCODE                       " +
+            $"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
+            $"				  AND t5.CUID = t6.CUID )                       " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUIDUSER t7                 " +
+            $"			 ON ( t7.labcode = t5.labcode                       " +
+            $"				  AND t7.PRO_JOB = t5.PRO_JOB                   " +
+            $"				  AND t7.CUID = t5.CUID )                       " +
+            $"		   JOIN KRCTS01.dbo.profjob_cuid_scheme_analyte t2      " +
+            $"			 ON ( t6.LABCODE = t2.LABCODE                       " +
+            $"				  AND t6.pro_job = t2.pro_job                   " +
+            $"				  AND t6.CUID = t2.CUID                         " +
+            $"				  AND t6.SCH_CODE = t2.SCH_CODE                 " +
+            $"				  AND t6.SCHVERSION = t2.SCHVERSION)            " +
+            $"		   JOIN KRCTS01.dbo.profjob_scheme_analyte t3           " +
+            $"			 ON ( t3.labcode = t2.labcode                       " +
+            $"				  AND t3.pro_job = t2.pro_job                   " +
+            $"				  AND t3.sch_code = t2.sch_code                 " +
+            $"				  AND t3.analytecode = t2.analytecode )         " +
+            $"		   JOIN KRCTS01.dbo.scheme_analyte t4                   " +
+            $"			 ON ( t4.labcode = t2.labcode                       " +
+            $"				  AND t4.sch_code = t2.sch_code                 " +
+            $"				  AND t4.schversion = t2.schversion             " +
+            $"				  AND t4.analytecode = t2.analytecode )         " +
+            $"	WHERE  t1.pro_job = '{JobNo}'                               " +
+            $"	       AND t5.SAMPLEIDENT = '{SAMPLEIDENT}'                 " +
+            $"		   AND t1.completed > '2000-01-01'                      " +
+            $"		   AND t2.FORMATTEDVALUE <> 'N.A.'                      " +            
             $"	ORDER  BY t3.repsequence ASC                                ";
 
             dataSet.Clear();

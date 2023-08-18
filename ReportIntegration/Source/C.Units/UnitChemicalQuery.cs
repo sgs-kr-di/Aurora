@@ -84,7 +84,7 @@ namespace Sgs.ReportIntegration
                 //}
 
                 //ProfJobSchemeSet.SelectDistinct_Aurora(trans);
-                ProfJobSchemeSet.SelectDistinctProjJob_Aurora(trans);
+                ProfJobSchemeSet.SelectDistinctProjJob_KRSEC001(trans);
                 //ProfJobSchemeSet.Fetch();
                 iChemRowCount = ProfJobSchemeSet.RowCount;
 
@@ -662,9 +662,19 @@ namespace Sgs.ReportIntegration
                 //"EN71-3:2013+A3:2018-Migration of certain elements\r\n" +
                 //"(By first action method testing only)";
 
-                MainSet.P1TestRequested =
-                "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements\r\n" +
-                "(By first action method testing only)";
+                if (bChkTin)
+                {
+                    MainSet.P1TestRequested =
+                    "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements\r\n" +
+                    "(By first action method and confirmation test if necessary)";
+                }
+                else
+                {
+                    MainSet.P1TestRequested =
+                    "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements\r\n" +
+                    "(By first action method testing only)";
+                }
+                
                 MainSet.P1Conclusion = "PASS";
                 //MainSet.P2Description1 = "EN71-3:2013+A3:2018 - Migration of certain elements";
                 MainSet.P2Description1 = "Directive 2009/48/EC and its Amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements";
@@ -793,7 +803,7 @@ namespace Sgs.ReportIntegration
                     }
 
                     P2Set.MainNo = ProfJobSchemeSet.JobNo;
-                    P2Set.Name = ProfJobSchemeSet.Name;
+                    P2Set.Name = ProfJobSchemeSet.Name.Trim();
                     P2Set.LoValue = ProfJobSchemeSet.LoValue;
                     P2Set.HiValue = ProfJobSchemeSet.HiValue;
                     P2Set.ReportValue = ProfJobSchemeSet.ReportValue;
@@ -801,12 +811,11 @@ namespace Sgs.ReportIntegration
                     P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
                     P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
 
-                    if (ProfJobSchemeSet.Sch_Code.Equals("HCEEENICP_15_02") && ProfJobSchemeSet.Name.Equals("Organic Tin^"))
+                    if (P2Set.Name.Trim().Contains("Organic Tin"))
                     {
                         P2Set.HiValue = "12";
                         P2Set.ReportValue = "--";
                     }
-
                     P2Set.Insert(trans);
                 }
             }
@@ -980,6 +989,12 @@ namespace Sgs.ReportIntegration
                             else if (P2Set.Name.Contains("(TPhT)"))
                             {
                                 P2Set.TPhT = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.Contains("Organic Tin"))
+                            {
+                                P2Set.OrgTin = P2Set.FormatValue;
+
+                                P2Set.Update_TB_CHEP2_HYPHEN_EN(trans);
                             }
                             else
                             {

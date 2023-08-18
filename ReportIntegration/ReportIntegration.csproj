@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>101</ApplicationRevision>
+    <ApplicationRevision>105</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -440,6 +440,10 @@
     <Compile Include="Source\D.Reports\ReportEuPhysical.Designer.cs">
       <DependentUpon>ReportEuPhysical.cs</DependentUpon>
     </Compile>
+    <Compile Include="Source\D.Reports\ReportUsChemical_org.cs" />
+    <Compile Include="Source\D.Reports\ReportUsChemical_org.Designer.cs">
+      <DependentUpon>ReportUsChemical_org.cs</DependentUpon>
+    </Compile>
     <Compile Include="Source\D.Reports\ReportUsChemical.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -565,6 +569,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Source\D.Reports\ReportEuPhysical.resx">
       <DependentUpon>ReportEuPhysical.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Source\D.Reports\ReportUsChemical_org.resx">
+      <DependentUpon>ReportUsChemical_org.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Source\D.Reports\ReportUsChemical.resx">
       <DependentUpon>ReportUsChemical.cs</DependentUpon>
