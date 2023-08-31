@@ -33,6 +33,8 @@ namespace Sgs.ReportIntegration
 
         private ChemicalReportDataSet cheReportSet;
 
+        private ChemicalReportDataSet cheReportUsSet;
+
         private ProfJobDataSet profJobSet;
 
         private ProfJobSchemeDataSet profJobSchemeSet;
@@ -60,6 +62,7 @@ namespace Sgs.ReportIntegration
             cheP2Set = new ChemicalP2DataSet(AppRes.DB.Connect, null, null);
             cheP2ExtendSet = new ChemicalP2ExtendDataSet(AppRes.DB.Connect, null, null);
             cheReportSet = new ChemicalReportDataSet(AppRes.DB.Connect, null, null);
+            cheReportUsSet = new ChemicalReportDataSet(AppRes.DB.Connect, null, null);
             profJobSet = new ProfJobDataSet(AppRes.DB.Connect, null, null);
             profJobSchemeSet = new ProfJobSchemeDataSet(AppRes.DB.Connect, null, null);
 
@@ -339,61 +342,135 @@ namespace Sgs.ReportIntegration
 
             this.Cursor = Cursors.WaitCursor;
 
-            cheReportSet.RecNo = cheMainSet.RecNo;
-            //cheReportSet.SampleIdent = profJobSchemeSet.SAMPLEIDENT;
-            cheReportSet.Select();
+            if (cheMainSet.AreaNo == EReportArea.EU) 
+            {
+                cheReportSet.RecNo = cheMainSet.RecNo;
+                //cheReportSet.SampleIdent = profJobSchemeSet.SAMPLEIDENT;
+                cheReportSet.Select();
 
-            cheReportSet.DataSet.Tables[0].TableName = "P1";
-            cheReportSet.DataSet.Tables[1].TableName = "P2";
-            cheReportSet.DataSet.Tables[2].TableName = "P2EXTEND";
-            cheReportSet.DataSet.Tables[3].TableName = "Image";
+                cheReportSet.DataSet.Tables[0].TableName = "P1";
+                cheReportSet.DataSet.Tables[1].TableName = "P2";
+                cheReportSet.DataSet.Tables[2].TableName = "P2EXTEND";
+                cheReportSet.DataSet.Tables[3].TableName = "Image";
 
-            cheReportSet.DataSet.Tables[4].TableName = "RT_EU";
-            cheReportSet.DataSet.Tables[5].TableName = "RT_EU6";
-            cheReportSet.DataSet.Tables[6].TableName = "RT_EU11";
-            cheReportSet.DataSet.Tables[7].TableName = "RT_EU16";
-            cheReportSet.DataSet.Tables[8].TableName = "RT_EU21";
-            cheReportSet.DataSet.Tables[9].TableName = "RT_EU26";
+                cheReportSet.DataSet.Tables[4].TableName = "RT_EU";
+                cheReportSet.DataSet.Tables[5].TableName = "RT_EU6";
+                cheReportSet.DataSet.Tables[6].TableName = "RT_EU11";
+                cheReportSet.DataSet.Tables[7].TableName = "RT_EU16";
+                cheReportSet.DataSet.Tables[8].TableName = "RT_EU21";
+                cheReportSet.DataSet.Tables[9].TableName = "RT_EU26";
 
-            cheReportSet.DataSet.Tables[10].TableName = "LT_Al";
-            cheReportSet.DataSet.Tables[11].TableName = "LT_As";
-            cheReportSet.DataSet.Tables[12].TableName = "LT_B";
-            cheReportSet.DataSet.Tables[13].TableName = "LT_Ba";
-            cheReportSet.DataSet.Tables[14].TableName = "LT_Cd";
-            cheReportSet.DataSet.Tables[15].TableName = "LT_Co";
-            cheReportSet.DataSet.Tables[16].TableName = "LT_Cr";
-            cheReportSet.DataSet.Tables[17].TableName = "LT_lll";
-            cheReportSet.DataSet.Tables[18].TableName = "LT_Vl";
-            cheReportSet.DataSet.Tables[19].TableName = "LT_Cu";
-            cheReportSet.DataSet.Tables[20].TableName = "LT_Hg";
-            cheReportSet.DataSet.Tables[21].TableName = "LT_Mn";
-            cheReportSet.DataSet.Tables[22].TableName = "LT_Ni";
-            cheReportSet.DataSet.Tables[23].TableName = "LT_Pb";
-            cheReportSet.DataSet.Tables[24].TableName = "LT_Sb";
-            cheReportSet.DataSet.Tables[25].TableName = "LT_Se";
-            cheReportSet.DataSet.Tables[26].TableName = "LT_Sn";
-            cheReportSet.DataSet.Tables[27].TableName = "LT_Sr";
-            cheReportSet.DataSet.Tables[28].TableName = "LT_Zn";
-            cheReportSet.DataSet.Tables[29].TableName = "LT_Organic";
+                cheReportSet.DataSet.Tables[10].TableName = "LT_Al";
+                cheReportSet.DataSet.Tables[11].TableName = "LT_As";
+                cheReportSet.DataSet.Tables[12].TableName = "LT_B";
+                cheReportSet.DataSet.Tables[13].TableName = "LT_Ba";
+                cheReportSet.DataSet.Tables[14].TableName = "LT_Cd";
+                cheReportSet.DataSet.Tables[15].TableName = "LT_Co";
+                cheReportSet.DataSet.Tables[16].TableName = "LT_Cr";
+                cheReportSet.DataSet.Tables[17].TableName = "LT_lll";
+                cheReportSet.DataSet.Tables[18].TableName = "LT_Vl";
+                cheReportSet.DataSet.Tables[19].TableName = "LT_Cu";
+                cheReportSet.DataSet.Tables[20].TableName = "LT_Hg";
+                cheReportSet.DataSet.Tables[21].TableName = "LT_Mn";
+                cheReportSet.DataSet.Tables[22].TableName = "LT_Ni";
+                cheReportSet.DataSet.Tables[23].TableName = "LT_Pb";
+                cheReportSet.DataSet.Tables[24].TableName = "LT_Sb";
+                cheReportSet.DataSet.Tables[25].TableName = "LT_Se";
+                cheReportSet.DataSet.Tables[26].TableName = "LT_Sn";
+                cheReportSet.DataSet.Tables[27].TableName = "LT_Sr";
+                cheReportSet.DataSet.Tables[28].TableName = "LT_Zn";
+                cheReportSet.DataSet.Tables[29].TableName = "LT_Organic";
 
-            cheReportSet.DataSet.Tables[30].TableName = "RT_TIN";
-            cheReportSet.DataSet.Tables[31].TableName = "RT_TIN6";
-            cheReportSet.DataSet.Tables[32].TableName = "RT_TIN11";
-            cheReportSet.DataSet.Tables[33].TableName = "RT_TIN16";
-            cheReportSet.DataSet.Tables[34].TableName = "RT_TIN21";
-            cheReportSet.DataSet.Tables[35].TableName = "RT_TIN26";
+                cheReportSet.DataSet.Tables[30].TableName = "RT_TIN";
+                cheReportSet.DataSet.Tables[31].TableName = "RT_TIN6";
+                cheReportSet.DataSet.Tables[32].TableName = "RT_TIN11";
+                cheReportSet.DataSet.Tables[33].TableName = "RT_TIN16";
+                cheReportSet.DataSet.Tables[34].TableName = "RT_TIN21";
+                cheReportSet.DataSet.Tables[35].TableName = "RT_TIN26";
 
-            cheReportSet.DataSet.Tables[36].TableName = "LT_MET";
-            cheReportSet.DataSet.Tables[37].TableName = "LT_DBT";
-            cheReportSet.DataSet.Tables[38].TableName = "LT_TBT";
-            cheReportSet.DataSet.Tables[39].TableName = "LT_TeBT";
-            cheReportSet.DataSet.Tables[40].TableName = "LT_MOT";
-            cheReportSet.DataSet.Tables[41].TableName = "LT_DOT";
-            cheReportSet.DataSet.Tables[42].TableName = "LT_DProT";
-            cheReportSet.DataSet.Tables[43].TableName = "LT_DPhT";
-            cheReportSet.DataSet.Tables[44].TableName = "LT_TPhT";
-            cheReportSet.DataSet.Tables[45].TableName = "LT_DMT";
-            cheReportSet.DataSet.Tables[46].TableName = "LT_MBT";
+                cheReportSet.DataSet.Tables[36].TableName = "LT_MET";
+                cheReportSet.DataSet.Tables[37].TableName = "LT_DBT";
+                cheReportSet.DataSet.Tables[38].TableName = "LT_TBT";
+                cheReportSet.DataSet.Tables[39].TableName = "LT_TeBT";
+                cheReportSet.DataSet.Tables[40].TableName = "LT_MOT";
+                cheReportSet.DataSet.Tables[41].TableName = "LT_DOT";
+                cheReportSet.DataSet.Tables[42].TableName = "LT_DProT";
+                cheReportSet.DataSet.Tables[43].TableName = "LT_DPhT";
+                cheReportSet.DataSet.Tables[44].TableName = "LT_TPhT";
+                cheReportSet.DataSet.Tables[45].TableName = "LT_DMT";
+                cheReportSet.DataSet.Tables[46].TableName = "LT_MBT";
+            }
+            else
+            {
+                cheReportSet.RecNo = cheMainSet.RecNo;
+                cheReportSet.Pro_proj = cheMainSet.P1FileNo;
+                //cheReportSet.Sam_Remarks = profJobSchemeSet.SampleRemarks;
+                //cheReportSet.SampleIdent = profJobSchemeSet.SAMPLEIDENT;
+                cheReportSet.Select_US();
+
+                cheReportSet.DataSet.Tables[0].TableName = "P1";
+                cheReportSet.DataSet.Tables[1].TableName = "P2";
+                cheReportSet.DataSet.Tables[2].TableName = "P2EXTEND";
+                cheReportSet.DataSet.Tables[3].TableName = "Image";
+
+                cheReportSet.DataSet.Tables[4].TableName = "Coating_Lead_Limit";
+                cheReportSet.DataSet.Tables[5].TableName = "NoCoating_Lead_Limit_Plastic";
+                cheReportSet.DataSet.Tables[6].TableName = "NoCoating_Lead_Limit_Metal";
+
+                cheReportSet.DataSet.Tables[7].TableName = "Coating_Lead_Result";
+                cheReportSet.DataSet.Tables[8].TableName = "NoCoating_Lead_Result_Plastic";
+                cheReportSet.DataSet.Tables[9].TableName = "NoCoating_Lead_Result_Metal";
+
+                cheReportSet.DataSet.Tables[10].TableName = "Coating_NoLead_Limit";
+                cheReportSet.DataSet.Tables[11].TableName = "NoCoating_NoLead_Limit";
+
+                cheReportSet.DataSet.Tables[12].TableName = "Coating_NoLead_Result";
+                cheReportSet.DataSet.Tables[13].TableName = "NoCoating_NoLead_Result";
+
+                cheReportSet.DataSet.Tables[14].TableName = "NoCoating_Lead_Result";
+
+                /*
+                cheReportSet.DataSet.Tables[10].TableName = "LT_Al";
+                cheReportSet.DataSet.Tables[11].TableName = "LT_As";
+                cheReportSet.DataSet.Tables[12].TableName = "LT_B";
+                cheReportSet.DataSet.Tables[13].TableName = "LT_Ba";
+                cheReportSet.DataSet.Tables[14].TableName = "LT_Cd";
+                cheReportSet.DataSet.Tables[15].TableName = "LT_Co";
+                cheReportSet.DataSet.Tables[16].TableName = "LT_Cr";
+                cheReportSet.DataSet.Tables[17].TableName = "LT_lll";
+                cheReportSet.DataSet.Tables[18].TableName = "LT_Vl";
+                cheReportSet.DataSet.Tables[19].TableName = "LT_Cu";
+                cheReportSet.DataSet.Tables[20].TableName = "LT_Hg";
+                cheReportSet.DataSet.Tables[21].TableName = "LT_Mn";
+                cheReportSet.DataSet.Tables[22].TableName = "LT_Ni";
+                cheReportSet.DataSet.Tables[23].TableName = "LT_Pb";
+                cheReportSet.DataSet.Tables[24].TableName = "LT_Sb";
+                cheReportSet.DataSet.Tables[25].TableName = "LT_Se";
+                cheReportSet.DataSet.Tables[26].TableName = "LT_Sn";
+                cheReportSet.DataSet.Tables[27].TableName = "LT_Sr";
+                cheReportSet.DataSet.Tables[28].TableName = "LT_Zn";
+                cheReportSet.DataSet.Tables[29].TableName = "LT_Organic";
+
+                cheReportSet.DataSet.Tables[30].TableName = "RT_TIN";
+                cheReportSet.DataSet.Tables[31].TableName = "RT_TIN6";
+                cheReportSet.DataSet.Tables[32].TableName = "RT_TIN11";
+                cheReportSet.DataSet.Tables[33].TableName = "RT_TIN16";
+                cheReportSet.DataSet.Tables[34].TableName = "RT_TIN21";
+                cheReportSet.DataSet.Tables[35].TableName = "RT_TIN26";
+
+                cheReportSet.DataSet.Tables[36].TableName = "LT_MET";
+                cheReportSet.DataSet.Tables[37].TableName = "LT_DBT";
+                cheReportSet.DataSet.Tables[38].TableName = "LT_TBT";
+                cheReportSet.DataSet.Tables[39].TableName = "LT_TeBT";
+                cheReportSet.DataSet.Tables[40].TableName = "LT_MOT";
+                cheReportSet.DataSet.Tables[41].TableName = "LT_DOT";
+                cheReportSet.DataSet.Tables[42].TableName = "LT_DProT";
+                cheReportSet.DataSet.Tables[43].TableName = "LT_DPhT";
+                cheReportSet.DataSet.Tables[44].TableName = "LT_TPhT";
+                cheReportSet.DataSet.Tables[45].TableName = "LT_DMT";
+                cheReportSet.DataSet.Tables[46].TableName = "LT_MBT";
+                */
+            }            
 
             BindingSource bind = new BindingSource();
             bind.DataSource = cheReportSet.DataSet;
@@ -440,6 +517,7 @@ namespace Sgs.ReportIntegration
         {
             //string jobNo = "";
             string extendJobNo = "";
+            string fileNo = "";
 
             profJobSet.Type = EReportType.Chemical;
             profJobSet.JobNo = jobNo;
@@ -453,6 +531,7 @@ namespace Sgs.ReportIntegration
             {
                 profJobSet.Fetch(0);
                 jobNo = profJobSet.JobNo;
+                fileNo = profJobSet.FileNo;
 
                 if (string.IsNullOrWhiteSpace(jobNo) == false)
                 {
@@ -483,7 +562,7 @@ namespace Sgs.ReportIntegration
                         //    profJobSet.Fetch(0);
                         //}
                         //cheQuery.Insert(areaNo, extendJobNo);
-                        cheQuery.Insert_Chemical_Import(areaNo, jobNo);
+                        cheQuery.Insert_Chemical_Import(areaNo, jobNo, fileNo);
                         //cheQuery.Insert(extendJobNo);
                     }
                 }

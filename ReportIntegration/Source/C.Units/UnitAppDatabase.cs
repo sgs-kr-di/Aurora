@@ -5854,6 +5854,10 @@ namespace Sgs.ReportIntegration
     {
         public string RecNo { get; set; }
 
+        public string Pro_proj { get; set; }
+
+        public string Sam_Remarks { get; set; }
+
         public ChemicalReportDataSet(SqlConnection connect, SqlCommand command, SqlDataAdapter adapter)
             : base(connect, command, adapter)
         {
@@ -5943,7 +5947,129 @@ namespace Sgs.ReportIntegration
             dataSet.Tables.Clear();
             dataAdapter.Fill(dataSet);
         }
-    }
+
+        public void Select_US(SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+            command.CommandText =
+                $" select * from TB_CHEMAIN where pk_recno='{RecNo}'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}'; " +
+                $" select * from TB_CHEP2EXTEND where pk_recno='{RecNo}'; " +
+                $" select * from TB_CHEIMAGE where pk_recno='{RecNo}'; " +
+
+                // Report Lead Limit 출력 - coating, plastic, metal 순으로
+                $" select top 1 * from TB_CHEP2_LEAD_LIMIT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks = 'coating';   " +
+                $" select top 1 * from TB_CHEP2_LEAD_LIMIT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks = 'plastic';   " +
+                $" select top 1 * from TB_CHEP2_LEAD_LIMIT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks = 'metal';   " +
+
+                // Report Lead Result 출력 - coating, plastic, metal 순으로
+                $" select * from TB_CHEP2_LEAD_RESULT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks = 'coating'; " +
+                $" select * from TB_CHEP2_LEAD_RESULT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks = 'plastic';   " +
+                $" select * from TB_CHEP2_LEAD_RESULT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks = 'metal';   " +
+
+                // Report Not Lead LIMIT 출력 - coating인 것과 coating 아닌 것 순으로
+                $" select * from TB_CHEP2_LIMIT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks = 'coating' order by" +
+                $" (case when name = 'Pb' then 1 " +
+                $" when name = 'Sb' then 2 " +
+                $" when name = 'As' then 3 " +
+                $" when name = 'Ba' then 4 " +
+                $" when name = 'Cd' then 5 " +
+                $" when name = 'Cr' then 6 " +
+                $" when name = 'Hg' then 7 " +
+                $" when name = 'Se' then 8 " +
+                $" else 9 end ); " +
+
+                $" select * from TB_CHEP2_LIMIT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks <> 'coating' order by" +
+                $" (case when name = 'Pb' then 1 " +
+                $" when name = 'Sb' then 2 " +
+                $" when name = 'As' then 3 " +
+                $" when name = 'Ba' then 4 " +
+                $" when name = 'Cd' then 5 " +
+                $" when name = 'Cr' then 6 " +
+                $" when name = 'Hg' then 7 " +
+                $" when name = 'Se' then 8 " +
+                $" else 9 end ); " +
+
+                // Report Not Lead Result 출력 - coating인 것과 coating 아닌 것 순으로
+                $" select * from TB_CHEP2_RESULT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks = 'coating';   " +
+                $" select * from TB_CHEP2_RESULT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks <> 'coating';   " +
+
+                $" select * from TB_CHEP2_LEAD_RESULT_ASTM where pro_proj like '{Pro_proj}%%' and sam_remarks <> 'coating';   ";
+            /*
+                $" select * from TB_CHEP2_HYPHEN_EN where fk_chemainno='{RecNo}' and (no>=5 and no<=8);   " +
+                $" select * from TB_CHEP2_HYPHEN_EN where fk_chemainno='{RecNo}' and (no>=9 and no<=12);  " +
+                $" select * from TB_CHEP2_HYPHEN_EN where fk_chemainno='{RecNo}' and (no>=13 and no<=16);  " +
+                $" select * from TB_CHEP2_HYPHEN_EN where fk_chemainno='{RecNo}' and (no>=17 and no<=20);  " +
+                $" select * from TB_CHEP2_HYPHEN_EN where fk_chemainno='{RecNo}' and (no>=21 and no<=24);  " +
+                // Report 6페이지 이상 출력
+
+                // Report limit  출력 - 시작
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Al)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(As)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(B)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Ba)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Cd)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Co)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Cr)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(III)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(VI)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Cu)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Hg)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Mn)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Ni)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Pb)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Sb)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Se)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Sn)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Sr)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(Zn)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%Organic Tin%'; " +
+                // Report limit  출력 - 끝
+
+                //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and (no>=1 and no<=4);   " +
+                //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and (no>=5 and no<=8);   " +
+                //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and (no>=9 and no<=12);   " +
+                //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and (no>=13 and no<=16);   " +
+                //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and (no>=17 and no<=20);   " +
+                //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and (no>=21 and no<=24);   " +
+
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_CHEPTIN_EN] WHERE fk_chemainno='{RecNo}') t WHERE t.rownum BETWEEN 1 AND 3;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_CHEPTIN_EN] WHERE fk_chemainno='{RecNo}') t WHERE t.rownum BETWEEN 4 AND 6;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_CHEPTIN_EN] WHERE fk_chemainno='{RecNo}') t WHERE t.rownum BETWEEN 7 AND 9;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_CHEPTIN_EN] WHERE fk_chemainno='{RecNo}') t WHERE t.rownum BETWEEN 10 AND 12;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_CHEPTIN_EN] WHERE fk_chemainno='{RecNo}') t WHERE t.rownum BETWEEN 13 AND 15;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_CHEPTIN_EN] WHERE fk_chemainno='{RecNo}') t WHERE t.rownum BETWEEN 16 AND 18;" +
+
+                // Report limit  출력 - 시작
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(MET)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(DBT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(TBT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(TeBT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(MOT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(DOT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(DProT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(DPhT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(TPhT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(DMT)%'; " +
+                $" select * from TB_CHEP2 where fk_chemainno='{RecNo}' and name like '%(MBT)%'; ";
+
+            //// Report limit  출력 - 시작
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(DMT)%'; " +
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(MeT)%'; " +
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(DProT)%'; " +
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(BuT)%'; " +
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(DBT)%'; " +
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(TBT)%'; " +
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(MOT)%'; " +
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(DOT)%'; " +
+            //$" select * from TB_CHEPTIN_EN where fk_chemainno='{RecNo}' and name like '%(TeBT)%'; ";
+            // Report limit  출력 - 끝
+            */
+            dataSet.Clear();
+            dataSet.Tables.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+    }   
 
     public class ChemicalMainDataSet : UlSqlDataSet
     {
@@ -6002,6 +6128,8 @@ namespace Sgs.ReportIntegration
         public string P1Conclusion { get; set; }
 
         public string P1Name { get; set; }
+
+        public string P1SampleRemark { get; set; }
 
         public string P2Description1 { get; set; }
 
@@ -6166,6 +6294,28 @@ namespace Sgs.ReportIntegration
             string sql =
                 $" update TB_CHEMAIN set " +
                 $" approval={Convert.ToInt32(Approval)}, staffno='{StaffNo}', p1name='{P1Name}' " +
+                $" where pk_recno='{RecNo}' ";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void UpdateP2Description3(SqlTransaction trans = null)
+        {
+            string sql =
+                $" update TB_CHEMAIN set " +
+                $" p1testrequested='{P1TestRequested.Replace("'", "''")}', p1conclusion='{P1Conclusion.Replace("'", "''")}' " +
                 $" where pk_recno='{RecNo}' ";
 
             SetTrans(trans);
@@ -6438,7 +6588,11 @@ namespace Sgs.ReportIntegration
 
         public string SampleDescription { get; set; }
 
+        public string SampleRemarks { get; set; }
+
         public string Sampleident { get; set; }
+
+        public string Pro_Proj { get; set; }
 
         public string DESCRIPTION_4 { get; set; }
 
@@ -6510,6 +6664,14 @@ namespace Sgs.ReportIntegration
         
         public string TPhT { get; set; }
 
+        public string MigrationLimitName { get; set; }
+
+        public string MigrationLimitLoValue { get; set; }
+
+        public string MigrationLimitReportValue { get; set; }
+
+        public string MigrationLimitHiValue { get; set; }
+
         public ChemicalP2DataSet(SqlConnection connect, SqlCommand command, SqlDataAdapter adapter)
             : base(connect, command, adapter)
         {
@@ -6566,7 +6728,7 @@ namespace Sgs.ReportIntegration
                 */
 
                 $" insert into TB_CHEP2 values " +
-                $" ('{MainNo}', '{Name}', '{LoValue}', '{HiValue}', '{ReportValue}', '{FormatValue}', '{Sch_Code}', '{Sampleident}'); " +
+                $" ('{MainNo}', '{Name}', '{LoValue}', '{HiValue}', '{ReportValue}', '{FormatValue}', '{Sch_Code}', '{Sampleident}', '{Pro_Proj}'); " +
                 $" select cast(scope_identity() as bigint); ";
             SetTrans(trans);
 
@@ -6616,6 +6778,94 @@ namespace Sgs.ReportIntegration
                 $" insert into TB_CHEPTIN_EN (fk_chemainno, sampleident, sch_code, sam_description, no, DMT, MeT, DProT, BuT, DBT, TBT, MOT, DOT, TeBT, DPhT, TPhT)" +
                 $" values " +
                 $" ('{MainNo}', '{Sampleident}', '{Sch_Code}', '{SampleDescription}', '{No}', '{DMT}', '{MET}', '{DProT}', '{MBT}', '{DBT}', '{TBT}', '{MOT}', '{DOT}', '{TeBT}', '{DPhT}', '{TPhT}'); " +
+                $" select cast(scope_identity() as bigint); ";
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                RecNo = (Int64)command.ExecuteScalar();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Insert_CHE_LEADLIMIT_ASTM(SqlTransaction trans = null)
+        {
+            string sql =
+                $" insert into TB_CHEP2_LEAD_LIMIT_ASTM (fk_chemainno, pro_proj, sampleident, lovalue, hivalue, reportvalue, sch_code, sam_remarks)" +
+                $" values " +
+                $" ('{MainNo}', '{Pro_Proj}', '{Sampleident}', '{LoValue}', '{HiValue}', '{ReportValue}', '{Sch_Code}', '{SampleRemarks}'); " +
+                $" select cast(scope_identity() as bigint); ";
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                RecNo = (Int64)command.ExecuteScalar();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Insert_CHE_LEADRESULT_ASTM(SqlTransaction trans = null)
+        {
+            string sql =
+                $" insert into TB_CHEP2_LEAD_RESULT_ASTM (fk_chemainno, pro_proj, sampleident, no, pb, sch_code, sam_remarks, sam_description)" +
+                $" values " +
+                $" ('{MainNo}', '{Pro_Proj}', '{Sampleident}', '{No}', '{Pb}', '{Sch_Code}', '{SampleRemarks}', '{SampleDescription}'); " +
+                $" select cast(scope_identity() as bigint); ";
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                RecNo = (Int64)command.ExecuteScalar();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Insert_TB_CHEP2_LIMIT_ASTM(SqlTransaction trans = null)
+        {
+            string sql =
+                $" insert into TB_CHEP2_LIMIT_ASTM (fk_chemainno, sampleident, pro_proj, name, lovalue, hivalue, reportvalue, sch_code, sam_remarks)" +
+                $" values " +
+                $" ('{MainNo}', '{Sampleident}', '{Pro_Proj}', '{MigrationLimitName}', '{MigrationLimitLoValue}', '{MigrationLimitHiValue}', '{MigrationLimitReportValue}', '{Sch_Code}', '{SampleRemarks}'); " +
+                $" select cast(scope_identity() as bigint); ";
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                RecNo = (Int64)command.ExecuteScalar();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Insert_Result_ASTM(SqlTransaction trans = null)
+        {
+            string sql =
+                $" insert into TB_CHEP2_RESULT_ASTM (fk_chemainno, pro_proj, sampleident, sch_code, sam_description, sam_remarks, no, mg, pb, sb, \"as\", ba, cd, cr, hg, se)" +
+                $" values " +
+                $" ('{MainNo}', '{Pro_Proj}', '{Sampleident}', '{Sch_Code}', '{SampleDescription}', '{SampleRemarks}', '{No}', '{Mg}', '{Pb}', '{Sb}', '{As}', '{Ba}', '{Cd}', '{Cr}', '{Hg}', '{Se}'); " +
                 $" select cast(scope_identity() as bigint); ";
             SetTrans(trans);
 
@@ -6739,6 +6989,89 @@ namespace Sgs.ReportIntegration
             }
         }
 
+        public void Delete_TB_CHEP2_RESULT_ASTM(SqlTransaction trans = null)
+        {
+            string sql =
+                $" delete from TB_CHEP2_RESULT_ASTM " +
+                $" where fk_chemainno='{MainNo}' ";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Delete_TB_CHEP2_LEAD_LIMIT_ASTM(SqlTransaction trans = null)
+        {
+            string sql =
+                $" delete from TB_CHEP2_LEAD_LIMIT_ASTM " +
+                $" where fk_chemainno='{MainNo}' ";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+        public void Delete_TB_CHEP2_LEAD_RESULT_ASTM(SqlTransaction trans = null)
+        {
+            string sql =
+                $" delete from TB_CHEP2_LEAD_RESULT_ASTM " +
+                $" where fk_chemainno='{MainNo}' ";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Delete_TB_CHEP2_LIMIT_ASTM(SqlTransaction trans = null)
+        {
+            string sql =
+                $" delete from TB_CHEP2_LIMIT_ASTM " +
+                $" where fk_chemainno='{MainNo}' ";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
         public void Fetch(int index = 0, int tableNo = 0)
         {
             if (index < GetRowCount(tableNo))
@@ -6766,7 +7099,9 @@ namespace Sgs.ReportIntegration
             HiValue = Convert.ToString(row["hivalue"]);
             ReportValue = Convert.ToString(row["reportvalue"]);
             FormatValue = Convert.ToString(row["formatvalue"]);
+            Sch_Code = Convert.ToString(row["sch_code"]);
             Sampleident = Convert.ToString(row["sampleident"]);
+            Pro_Proj = Convert.ToString(row["pro_proj"]);
         }
     }
 
@@ -7624,23 +7959,23 @@ namespace Sgs.ReportIntegration
         public void Select_Chemical_Import(SqlTransaction trans = null)
         {
             string sql =
-                " SET ARITHABORT ON " +
+                //" SET ARITHABORT ON " +
                 " select top 1 t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
                 "     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
                 "     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
                 "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1, t3.TESTCOMMENTS,   " +
                 "     t4.sam_remarks, t4.sam_description, t4.description_1,            " +
                 "     t4.description_3, t4.description_4, t5.photo                     " +
-                " from Aurora.dbo.PROFJOB t1                                                      " +
-                "     join Aurora.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
-                "     join Aurora.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
-                "     join Aurora.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
-                "     left join Aurora.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job=t1.pro_job       " +
-                //" from KRCTS01.dbo.PROFJOB t1                                                      " +
-                //"     join KRCTS01.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
-                //"     join KRCTS01.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
-                //"     join KRCTS01.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
-                //"     left join KRCTS01.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job=t1.pro_job       " +
+                //" from Aurora.dbo.PROFJOB t1                                                      " +
+                //"     join Aurora.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
+                //"     join Aurora.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
+                //"     join Aurora.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
+                //"     left join Aurora.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job=t1.pro_job       " +
+                " from KRCTS01.dbo.PROFJOB t1                                                      " +
+                "     join KRCTS01.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
+                "     join KRCTS01.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
+                "     join KRCTS01.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
+                "     left join KRCTS01.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job=t1.pro_job       " +
                 " where t1.labcode<>''                                                 ";
 
             if (string.IsNullOrWhiteSpace(JobNo) == false)
@@ -7720,7 +8055,7 @@ namespace Sgs.ReportIntegration
                 }
             }
             sql += $" order by t1.pro_proj desc ";
-            sql += $" SET ARITHABORT OFF ";
+            //sql += $" SET ARITHABORT OFF ";
 
             SetTrans(trans);
             command.CommandText = sql;
@@ -7945,6 +8280,8 @@ namespace Sgs.ReportIntegration
 
         public string ProjJobNo { get; set; }
 
+        public string fileNo { get; set; }
+
         public string SAMPLEIDENT { get; set; }
 
         public string Name { get; set; }
@@ -7962,6 +8299,8 @@ namespace Sgs.ReportIntegration
         public string DESCRIPTION_4 { get; set; }
 
         public string Sch_Code { get; set; }
+
+        public string SampleRemarks { get; set; }
 
         public ProfJobSchemeDataSet(SqlConnection connect, SqlCommand command, SqlDataAdapter adapter)
             : base(connect, command, adapter)
@@ -8276,7 +8615,8 @@ namespace Sgs.ReportIntegration
             command.CommandText =
             $"  SELECT distinct t1.pro_job,									" +
             $"                  t5.SAMPLEIDENT,                             " +
-            $"                  t6.SCH_CODE                                 " +
+            $"                  t6.SCH_CODE,                                " +
+            $"                  t7.SAM_REMARKS                              " +
             $"	FROM   KRCTS01.dbo.profjob t1                               " +
             $"		   JOIN KRCTS01.dbo.PROFJOB_CUID t5                     " +
             $"			 ON ( t1.LABCODE = t5.LABCODE                       " +
@@ -8285,6 +8625,10 @@ namespace Sgs.ReportIntegration
             $"			 ON ( t5.LABCODE = t6.LABCODE                       " +
             $"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
             $"				  AND t5.CUID = t6.CUID )                       " +
+            $"		   JOIN krcts01.dbo.profjob_cuiduser t7                 " +
+            $"			 ON ( t7.labcode = t5.labcode                       " +
+            $"				  AND t7.pro_job = t5.pro_job                   " +
+            $"				  AND t7.cuid = t5.cuid )                       " +
             $"		   JOIN KRCTS01.dbo.profjob_cuid_scheme_analyte t2      " +
             $"			 ON ( t6.LABCODE = t2.LABCODE                       " +
             $"				  AND t6.pro_job = t2.pro_job                   " +
@@ -8304,7 +8648,7 @@ namespace Sgs.ReportIntegration
             $"	WHERE  t1.PRO_JOB = '{JobNo}'                               " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"	       AND t1.NOTES1 <> '6F'                                " +
-            $"		   --AND t2.formattedvalue <> 'N.A.'                      ";
+            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
 
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
@@ -8342,10 +8686,52 @@ namespace Sgs.ReportIntegration
             $"				  AND t4.sch_code = t2.sch_code                 " +
             $"				  AND t4.schversion = t2.schversion             " +
             $"				  AND t4.analytecode = t2.analytecode )         " +
-            $"	WHERE  t1.PRO_JOB = '{JobNo}'                           " +
+            $"	       WHERE  t1.PRO_JOB = '{JobNo}'                        " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"	       AND t1.NOTES1 <> '6F'                                " +
-            $"	       AND t6.SCH_CODE = 'HCEEORGANOTIN_11_01'             " +
+            $"	       AND t6.SCH_CODE = 'HCEEORGANOTIN_11_01'              " +
+            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
+
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
+        public void SelectDistinctJob_KRCTS01_SCHE_1373_1372_1371(SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+
+            command.CommandText =
+            $"  SELECT distinct t1.pro_job,									" +
+            $"                  t5.SAMPLEIDENT,                             " +
+            $"                  t6.SCH_CODE                                 " +
+            $"	FROM   KRCTS01.dbo.profjob t1                               " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID t5                     " +
+            $"			 ON ( t1.LABCODE = t5.LABCODE                       " +
+            $"				  AND t1.PRO_JOB = t5.PRO_JOB )                 " +
+            $"		   JOIN KRCTS01.dbo.PROFJOB_CUID_SCHEME t6              " +
+            $"			 ON ( t5.LABCODE = t6.LABCODE                       " +
+            $"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
+            $"				  AND t5.CUID = t6.CUID )                       " +
+            $"		   JOIN KRCTS01.dbo.profjob_cuid_scheme_analyte t2      " +
+            $"			 ON ( t6.LABCODE = t2.LABCODE                       " +
+            $"				  AND t6.pro_job = t2.pro_job                   " +
+            $"				  AND t6.CUID = t2.CUID                         " +
+            $"				  AND t6.SCH_CODE = t2.SCH_CODE                 " +
+            $"				  AND t6.SCHVERSION = t2.SCHVERSION)            " +
+            $"		   JOIN KRCTS01.dbo.profjob_scheme_analyte t3           " +
+            $"			 ON ( t3.labcode = t2.labcode                       " +
+            $"				  AND t3.pro_job = t2.pro_job                   " +
+            $"				  AND t3.sch_code = t2.sch_code                 " +
+            $"				  AND t3.analytecode = t2.analytecode )         " +
+            $"		   JOIN KRCTS01.dbo.scheme_analyte t4                   " +
+            $"			 ON ( t4.labcode = t2.labcode                       " +
+            $"				  AND t4.sch_code = t2.sch_code                 " +
+            $"				  AND t4.schversion = t2.schversion             " +
+            $"				  AND t4.analytecode = t2.analytecode )         " +
+            $"	       WHERE  t1.PRO_JOB = '{JobNo}'                        " +
+            $"		   AND t1.completed > '2000-01-01'                      " +
+            $"	       AND t1.NOTES1 <> '6F'                                " +
+            $"	       AND (t6.SCH_CODE = 'HCEECPSC09' or t6.SCH_CODE = 'HCEECPSC08' or t6.SCH_CODE = 'HCEECPSC07') " +
             $"		   AND t2.formattedvalue <> 'N.A.'                      ";
 
             dataSet.Clear();
@@ -8658,6 +9044,7 @@ namespace Sgs.ReportIntegration
 
             command.CommandText =
             $"   SELECT t1.pro_job,											" +
+            $"   t1.PRO_PROJ,                                                   " +
             $"   t5.CUID,                                                   " +
             $"   t5.SAMPLEIDENT,                                            " +
             $"   t1.registered,                                             " +
@@ -8668,6 +9055,7 @@ namespace Sgs.ReportIntegration
             $"   t3.repdetlimit,                                            " +
             $"   t2.formattedvalue,                                         " +
             $"   t7.sam_description,                                        " +
+            $"   t7.SAM_REMARKS,                                            " +
             $"   t7.DESCRIPTION_4                                           " +
             $"	    FROM   KRCTS01.dbo.profjob t1                           " +
             $"		   JOIN KRCTS01.dbo.PROFJOB_CUID t5                     " +
@@ -8791,16 +9179,19 @@ namespace Sgs.ReportIntegration
                 JobNo = Convert.ToString(row["pro_job"]);
                 SAMPLEIDENT = Convert.ToString(row["SAMPLEIDENT"]);
                 Sch_Code = Convert.ToString(row["sch_code"]);
+                SampleRemarks = Convert.ToString(row["SAM_REMARKS"]);
             }
             else if (type.Equals("check"))
             {
                 JobNo = Convert.ToString(row["pro_job"]);
                 SAMPLEIDENT = Convert.ToString(row["SAMPLEIDENT"]);
                 Sch_Code = Convert.ToString(row["sch_code"]);
+                SampleRemarks = Convert.ToString(row["SAM_REMARKS"]);
             }
             else
             {
                 JobNo = Convert.ToString(row["pro_job"]);
+                fileNo = Convert.ToString(row["PRO_PROJ"]);
                 SAMPLEIDENT = Convert.ToString(row["SAMPLEIDENT"]);
                 RegTime = Convert.ToDateTime(row["registered"]);
                 //String code = Convert.ToString(row["sch_code"]);
@@ -8812,6 +9203,7 @@ namespace Sgs.ReportIntegration
                 FormatValue = Convert.ToString(row["formattedvalue"]);
                 SampleDescription = Convert.ToString(row["sam_description"]);
                 DESCRIPTION_4 = Convert.ToString(row["DESCRIPTION_4"]);
+                SampleRemarks = Convert.ToString(row["SAM_REMARKS"]);
 
                 if (sChkJobCase == "surface")
                 {

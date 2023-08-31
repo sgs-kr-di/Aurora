@@ -6,9 +6,10 @@ using System.Windows.Forms;
 using DevExpress.XtraPrinting.Drawing;
 using DevExpress.XtraReports.UI;
 
+/*
 namespace Sgs.ReportIntegration
 {
-    /*
+    
     public partial class ReportUsChemical : XtraReport
     {
         private StaffDataSet staffSet;
@@ -88,5 +89,6 @@ namespace Sgs.ReportIntegration
 
         }
     }
-    */
+
 }
+    */

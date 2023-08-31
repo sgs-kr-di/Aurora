@@ -164,7 +164,14 @@
 	{
 		Detail2.Visible = false;
 		DetailReport11.Visible = true;
+		xrTableCell103.Text = " Soluble Organic Tin       --";
+		xrTableCell246.Text = " Soluble Organic Tin       --";
+		xrTableCell246.Text = " Soluble Organic Tin       --";
+		xrTableCell246.Text = " Soluble Organic Tin       --";
+		xrTableCell246.Text = " Soluble Organic Tin       --";
+		xrTableCell246.Text = " Soluble Organic Tin       --";
 	}
+
 }</value>
   </data>
 </root>

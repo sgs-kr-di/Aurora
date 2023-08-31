@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace Sgs.ReportIntegration
 {
@@ -31,6 +32,8 @@ namespace Sgs.ReportIntegration
         private ProductDataSet productSet;
 
         private PartDataSet partSet;
+
+        bool chkCoating = false, chkPlastic = false, chkMetal = false, chkTextile = false, chkCoatingLimit = false, chkNoCoatingLimit = false;
 
         public ChemicalQuery(bool local = false)
         {
@@ -265,7 +268,7 @@ namespace Sgs.ReportIntegration
             }
         }
 
-        public void Insert_Chemical_Import(EReportArea AreaNo, string JobNo, SqlTransaction trans = null)
+        public void Insert_Chemical_Import(EReportArea AreaNo, string JobNo, string fileNo, SqlTransaction trans = null)
         {
             string sSchemCode = "";
             string sSubJobNo = "";
@@ -289,177 +292,50 @@ namespace Sgs.ReportIntegration
                 // Area - US
                 if (area == EReportArea.US)
                 {
-                    //ProfJobSchemeSet.JobNo = extendJobNo;
-                    ProfJobSchemeSet.ProjJobNo = JobNo;
-                    bool bChkTin = false;
+                    bool bChkLead = false;
+                    ProfJobSchemeSet.JobNo = JobNo;
+                    ProfJobSchemeSet.fileNo = fileNo;
 
-                    //if (ProfJobSchemeSet.ProjJobNo.Contains("AYHA21-06897"))
-                    //if (ProfJobSchemeSet.ProjJobNo.Contains("AYHA21-17276") || ProfJobSchemeSet.ProjJobNo.Contains("AYHA21-11157"))
-                    // {
-                    //   string test = "";
-                    //}
-
-                    //ProfJobSchemeSet.SelectDistinct_Aurora(trans);
-                    ProfJobSchemeSet.SelectDistinctJob_Aurora(trans);
-                    //ProfJobSchemeSet.Fetch();
-                    iChemRowCount = ProfJobSchemeSet.RowCount;
-
-                    //MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
-                    //MainSet.SelectRecno(trans);
-
-                    if (iChemRowCount == 1)
+                    ProfJobSchemeSet.SelectDistinctJob_KRCTS01_SCHE_1373_1372_1371(trans);
+                    if (ProfJobSchemeSet.RowCount > 0)
                     {
-                        ProfJobSchemeSet.SelectDistinctJob_Aurora(trans);
-                        ProfJobSchemeSet.Fetch(0);
+                        bChkLead = true;
+                    }
 
-                        MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
-                        MainSet.SelectRecno(trans);
+                    MainSet.RecNo = ProfJobSchemeSet.JobNo;
+                    MainSet.SelectRecno(trans);
 
-                        //ProfJobSchemeSet.SelectSampleident(trans);
-                        //ProfJobSchemeSet.SelectSampleident_Aurora(trans);
-                        ProfJobSchemeSet.SelectSampleidentPro_KRCTS01(trans);
-                        ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
-
-                        //InsertPage2Extend(area, extendJobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
-                        if (MainSet.Empty == true)
-                        {
-                            InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, bChkTin, trans);
-                            InsertJoin(trans);
-                        }
+                    // Insert SubJob
+                    if (MainSet.Empty == true)
+                    {
+                        InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, bChkLead, trans);
                         InsertImage(trans);
-                        InsertPage2(0, area, trans);
                     }
-                    else if (iChemRowCount > 1)
+
+                    // Count SubJob
+                    ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
+                    iChemSubJobRowCount = ProfJobSchemeSet.RowCount;
+
+                    chkCoating = false;
+                    chkPlastic = false;
+                    chkMetal = false;
+                    chkTextile = false;
+                    chkCoatingLimit = false;
+                    chkNoCoatingLimit = false;
+
+                    // Insert SubJob
+                    for (int i = 0; i < iChemSubJobRowCount; i++)
                     {
-                        // Count SubJob
                         ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
-                        iChemSubJobRowCount = ProfJobSchemeSet.RowCount;
-
-                        // Insert SubJob
-                        for (int i = 0; i < iChemSubJobRowCount; i++)
-                        {
-                            ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
-                            ProfJobSchemeSet.Fetch(i, 0, "check", "");
-                            sSchemCode = ProfJobSchemeSet.Sch_Code;
-                            sSubJobNo = ProfJobSchemeSet.SAMPLEIDENT;
-                            sListSchem.Add(sSchemCode);
-                            sListSubJobNo.Add(sSubJobNo);
-
-                            MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
-                            MainSet.SelectRecno(trans);
-
-                            if (sSchemCode.Substring(0, 8) == "HCEECPSC")
-                            {
-                                if (sSchemCode.Equals("HCEECPSC07"))
-                                {
-                                    InsertPage2Extend(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
-                                }
-                                else if (sSchemCode.Equals("HCEECPSC08"))
-                                {
-                                    InsertPage2Extend(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
-                                }
-                                else if (sSchemCode.Equals("HCEECPSC09"))
-                                {
-                                    InsertPage2Extend(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, "surface", trans);
-                                }
-                                else
-                                {
-                                    InsertPage2Extend(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
-                                }
-                            }
-
-                            if (MainSet.Empty == true)
-                            {
-                                InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, bChkTin, trans);
-                                InsertJoin(trans);
-                            }
-                            /*
-                            InsertImage(trans);
-                            InsertPage2(area, trans);
-                            */
-                        }
-
-                        // Insert MainJob - Matching Job
-                        for (int j = 0; j < iChemSubJobRowCount; j++)
-                        {
-                            ProfJobSchemeSet.SelectDistinctMainProJob_Aurora(j + 1, trans);
-                            ProfJobSchemeSet.Fetch(0, 0, "check", "");
-
-                            MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
-                            MainSet.SelectRecno(trans);
-
-                            /*
-                            if (ProfJobSchemeSet.SAMPLEIDENT.Contains("AYN21-051339")) 
-                            {
-                                string test = "";
-                            }
-                            */
-
-                            if (sListSchem[j].Substring(0, 8) == "HCEECPSC")
-                            {
-                                if (sListSchem[j].Equals("HCEECPSC07"))
-                                {
-                                    UpdatePage2Extend(sListSubJobNo[j], ProfJobSchemeSet.SAMPLEIDENT, trans);
-                                    ProfJobSchemeSet.SelectSampleidentProj_Aurora(trans);
-                                    ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
-                                }
-                                else if (sListSchem[j].Equals("HCEECPSC08"))
-                                {
-                                    UpdatePage2Extend(sListSubJobNo[j], ProfJobSchemeSet.SAMPLEIDENT, trans);
-                                    ProfJobSchemeSet.SelectSampleidentProj_Aurora(trans);
-                                    ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
-                                }
-                                else if (sListSchem[j].Equals("HCEECPSC09"))
-                                {
-                                    UpdatePage2Extend(sListSubJobNo[j], ProfJobSchemeSet.SAMPLEIDENT, trans);
-                                    ProfJobSchemeSet.SelectSampleidentProj_Aurora(trans);
-                                    ProfJobSchemeSet.Fetch(0, 0, "no", "surface");
-                                }
-                                else
-                                {
-                                    UpdatePage2Extend(sListSubJobNo[j], ProfJobSchemeSet.SAMPLEIDENT, trans);
-                                    ProfJobSchemeSet.SelectSampleidentProj_Aurora(trans);
-                                    ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
-                                }
-                            }
-                            if (MainSet.Empty == true)
-                            {
-                                ProfJobSet.JobNo = ProfJobSchemeSet.SAMPLEIDENT;
-                                ProfJobSet.Select_Distinct_Sampleident_Profjob_Aurora(trans);
-                                ProfJobSet.Fetch(j);
-
-                                InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, bChkTin, trans);
-                                InsertJoin(trans);
-                            }
-                            InsertImage(trans);
-                            InsertPage2(0, area, trans);
-                        }
-
-                        // Insert Another MainJob - Non Matching Job
-                        for (int k = 0; k < iChemRowCount - (iChemSubJobRowCount * 2); k++)
-                        {
-                            //ProfJobSchemeSet.SelectDistinctMainProjJob_Aurora(k + iChemSubJobRowCount, trans);
-                            //ProfJobSchemeSet.Fetch(0, 0, "check", "");
-                            ProfJobSchemeSet.SelectSampleidentProj_Aurora(k + 1, trans);
-                            ProfJobSchemeSet.Fetch(0, 0, "no", "substrate");
-
-                            MainSet.RecNo = ProfJobSchemeSet.SAMPLEIDENT;
-                            MainSet.SelectRecno(trans);
-
-                            //InsertPage2Extend(area, extendJobNo, ProfJobSchemeSet.SAMPLEIDENT, "substrate", trans);
-                            if (MainSet.Empty == true)
-                            {
-                                InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, bChkTin, trans);
-                                InsertJoin(trans);
-                            }
-                            InsertImage(trans);
-                            InsertPage2(0, area, trans);
-                        }
+                        ProfJobSchemeSet.Fetch(i, 0, "check");
+                        iSaveLoopResultCnt = iSaveLoopResultCnt + 1;                        
+                        InsertPage2_CHEMICAL_ASTM(iSaveLoopResultCnt, area, trans);
                     }
-                    // Else Case - Nothing
-                    else
+
+                    if (local == false)
                     {
-                        Console.WriteLine("Chemical Insert : " + JobNo + " - Else Case!");
+                        //SetReportValidation(trans);
+                        AppRes.DB.CommitTrans();
                     }
                 }
                 // Area - EU
@@ -478,7 +354,7 @@ namespace Sgs.ReportIntegration
                     MainSet.RecNo = ProfJobSchemeSet.JobNo;
                     MainSet.SelectRecno(trans);
 
-                    // Insert SubJob
+                    // Insert MainJob
                     if (MainSet.Empty == true)
                     {
                         InsertMain(area, JobNo, ProfJobSchemeSet.SAMPLEIDENT, bChkTin, trans);
@@ -562,6 +438,12 @@ namespace Sgs.ReportIntegration
                 P2Set.Delete(trans);
                 P2Set.Delete_TB_CHEP2_HYPHEN_EN(trans);
                 P2Set.Delete_TB_CHEPTIN_EN(trans);
+
+                P2Set.Delete_TB_CHEP2_LEAD_LIMIT_ASTM(trans);
+                P2Set.Delete_TB_CHEP2_LEAD_RESULT_ASTM(trans);
+                P2Set.Delete_TB_CHEP2_LIMIT_ASTM(trans);
+                P2Set.Delete_TB_CHEP2_RESULT_ASTM(trans);
+
                 P2ExtendSet.RecNo = mainNo;
                 P2ExtendSet.Delete(trans);
                 MainSet.Delete(trans);
@@ -585,6 +467,7 @@ namespace Sgs.ReportIntegration
             MainSet.ReportedTime = ProfJobSet.ReportedTime;
             MainSet.Approval = (string.IsNullOrWhiteSpace(ProfJobSet.StaffNo) == true) ? false : true;
             MainSet.LeadType = ProfJobSchemeSet.Lead;
+
             //MainSet.AreaNo = ProfJobSet.AreaNo;
             MainSet.AreaNo = area;
             MainSet.StaffNo = ProfJobSet.StaffNo;
@@ -605,18 +488,20 @@ namespace Sgs.ReportIntegration
             MainSet.P1TestPeriod = $"{ProfJobSet.ReceivedTime:yyyy. MM. dd}  to  {ProfJobSet.RequiredTime:yyyy. MM. dd}";
             MainSet.P1TestMethod = "For further details, please refer to following page(s)";
             MainSet.P1TestResults = "For further details, please refer to following page(s)";
+            MainSet.P1SampleRemark = ProfJobSet.SampleRemark;
             //MainSet.P1Comments = ProfJobSet.ReportComments;
 
             MainSet.P1Name = "";
 
+            // Area.US
             if (area == EReportArea.US)
             {
                 MainSet.P1TestRequested =
                     "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
-                    "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-16\r\n" +
-                    "    4.3.5.2-Heavy Metal in Substrate Materials";
-                MainSet.P1Conclusion = "\r\n\r\n-\r\nPASS";
-                MainSet.P2Description2 = "Method: With reference to ASTM F963-16 Clause 8.3. Analysis was performed by ICP-OES.";
+                    "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17";
+                    //"    4.3.5.2-Heavy Metal in Substrate Materials\r\n";
+                MainSet.P1Conclusion = "\r\n\r\n-";
+                MainSet.P2Description2 = "Method: With reference to ASTM F963-17 Clause 8.3. Analysis was performed by ICP-OES.";
                 MainSet.P2Description3 =
                     "1. Black textile\r\n\r\n" +
                     "Note:    -   Soluble results shown are of the adjusted analytical result.\r\n" +
@@ -626,28 +511,96 @@ namespace Sgs.ReportIntegration
                                      "otherwise stated.\r\n" +
                                      "This test report is not related to Korea Laboratory Accreditation Scheme.";
 
-                if (string.IsNullOrWhiteSpace(extendJobNo) == false)
+                MainSet.P3Description1 =
+                        //"Note. 1. mg/kg = milligram per kilogram\r\n" +
+                        //"      2. ND = Not Detected(< MDL)\r\n" +
+                        //"      3. 1% = 10000 mg/kg = 10000 ppm\r\n" +
+                        //"      4. Soluble Chromium(III) = Soluble Total Chromium – Soluble Chromium(VI)\r\n" +
+                        //"      5. ^ = Confirmation test of soluble organic tin is not required in case of soluble tin, after conversion, does not exceed the soluble organic tin requirement as specified in EN71-3:2019.";
+
+                        //"Note. 1. mg/kg = milligram per kilogram\r\n" +
+                        //    "      2. MDL = Method Detection Limit\r\n" +
+                        //    "      3. ND = Not Detected (< MDL)\r\n" +
+                        //    "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
+                        //    "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n";
+                        "- Soluble results shown are of the adjusted analytical result.\r\n" +
+                        "- ND = Not Detected(<MDL)\r\n" +
+                        "- MDL = Method Detection Limit\r\n";
+
+                // 슬림 스킴네임에 따른 스킴코드 값 (납 없을때) - 2400
+                /*
+                if (ProfJobSchemeSet.Sch_Code.Trim().ToUpper().Equals("HCEEASTMICP_05"))
                 {
-                    if (MainSet.LeadType == ELeadType.Substrate)
+                    if (ProfJobSet.SampleRemark.Trim().ToUpper().Equals("COATING"))
                     {
-                        MainSet.P2Description1 = "ASTM F963-16, Clause 4.3.5.2 - Heavy Elements in Toys Substrate Materials";
+
+                    }
+                    else if (ProfJobSet.SampleRemark.Trim().ToUpper().Equals("PLASTIC"))
+                    {
+
+                    }
+                    else if (ProfJobSet.SampleRemark.Trim().ToUpper().Equals("METAL"))
+                    {
+
+                    }
+                    else if (ProfJobSet.SampleRemark.Trim().ToUpper().Equals("TEXTILE"))
+                    {
+
+                    }
+                    else // 예외 케이스
+                    {
+
+                    }
+                }
+                // 슬림 스킴네임에 따른 스킴코드 값 (납 있을 때) - HCEECPSC09 -> 1373, HCEECPSC08 -> 1372, HCEECPSC07 -> 1371                
+                else
+                {
+                    // coating
+                    if (ProfJobSchemeSet.Sch_Code.Trim().ToUpper().Equals("HCEECPSC09"))
+                    {
+
+                    }
+                    // plastic
+                    else if (ProfJobSchemeSet.Sch_Code.Trim().ToUpper().Equals("HCEECPSC08"))
+                    {
+
+                    }
+                    // metal
+                    else if (ProfJobSchemeSet.Sch_Code.Trim().ToUpper().Equals("HCEECPSC07"))
+                    {
+
+                    }
+                    else // 예외 케이스
+                    {
+
+                    }
+
+                    if (string.IsNullOrWhiteSpace(extendJobNo) == false)
+                    {
+                        if (MainSet.LeadType == ELeadType.Substrate)
+                        {
+                            MainSet.P2Description1 = "ASTM F963-17, Clause 4.3.5.2 - Heavy Elements in Toys Substrate Materials";
+                        }
+                        else
+                        {
+                            MainSet.P2Description1 = "ASTM F963-17, Clause 4.3.5.1 - Heavy Elements in Paint/Similar Coating Materials";
+                        }
+
+                        MainSet.P2Description4 =
+                        "Method(non-metallic materials): CPSC-CH-E1002-08.3 - Standard Operation Procedure for Determining Total Lead(Pb) in Non-Metal Children Product. Analysis was performed by ICP-OES.";
                     }
                     else
                     {
-                        MainSet.P2Description1 = "ASTM F963-17, Clause 4.3.5.1 - Heavy Elements in Paint/Similar Coating Materials";
+                        MainSet.P2Description1 = "";
+                        MainSet.P2Description4 = "";
                     }
 
-                    MainSet.P2Description4 =
-                        "Method(non-metallic materials): CPSC-CH-E1002-08.3 - Standard Operation Procedure for Determining Total Lead(Pb) in Non-Metal Children Product. Analysis was performed by ICP-OES.";
+                    MainSet.P3Description1 = "";
                 }
-                else
-                {
-                    MainSet.P2Description1 = "";
-                    MainSet.P2Description4 = "";
-                }
-
-                MainSet.P3Description1 = "";
+                */
             }
+
+            // Area.EU
             else
             {
                 MainSet.P1Comments = "The results shown in this test report refer only to the sample(s) tested unless otherwise stated.\r\n" +
@@ -674,7 +627,7 @@ namespace Sgs.ReportIntegration
                     "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements\r\n" +
                     "(By first action method testing only)";
                 }
-                
+
                 MainSet.P1Conclusion = "PASS";
                 //MainSet.P2Description1 = "EN71-3:2013+A3:2018 - Migration of certain elements";
                 MainSet.P2Description1 = "Directive 2009/48/EC and its Amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements";
@@ -687,7 +640,7 @@ namespace Sgs.ReportIntegration
                 {
                     MainSet.P2Description2 = "Method : With reference to EN71-3:2019+A1:2021. Analysis of general elements was performed by ICP-OES and Chromium (III) was obtained by calculation, chromium (VI) was analyzed by IC-UV/VIS.";
                 }
-                
+
                 MainSet.P2Description3 = ProfJobSet.SampleDescription;
                 MainSet.P2Description4 = "";
                 if (bChkTin)
@@ -713,12 +666,12 @@ namespace Sgs.ReportIntegration
                 else
                 {
                     MainSet.P3Description1 =
-                        //"Note. 1. mg/kg = milligram per kilogram\r\n" +
-                        //    "      2. MDL = Method Detection Limit\r\n" +
-                        //    "      3. ND = Not Detected (< MDL)\r\n" +
-                        //    "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
-                        //    "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n" +
-                        //    "      6. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test for soluble organic tin on component exceeding the screening limit of 4.9mg/kg soluble Sn.";
+                            //"Note. 1. mg/kg = milligram per kilogram\r\n" +
+                            //    "      2. MDL = Method Detection Limit\r\n" +
+                            //    "      3. ND = Not Detected (< MDL)\r\n" +
+                            //    "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
+                            //    "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n" +
+                            //    "      6. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test for soluble organic tin on component exceeding the screening limit of 4.9mg/kg soluble Sn.";
                             "      1. mg/kg = milligram per kilogram\r\n" +
                             "      2. MDL = Method Detection Limit\r\n" +
                             "      3. ND = Not Detected (< MDL)\r\n" +
@@ -783,6 +736,8 @@ namespace Sgs.ReportIntegration
                         P2Set.ReportValue = "--";
                         P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
                         P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
+                        P2Set.Pro_Proj = ProfJobSchemeSet.fileNo;
+
                         if (string.IsNullOrWhiteSpace(ProfJobSchemeSet.DESCRIPTION_4) == true)
                         {
                             P2Set.FormatValue = "--";
@@ -1010,54 +965,408 @@ namespace Sgs.ReportIntegration
             }
         }
 
-        private void InsertPage2HypenEN(EReportArea area, SqlTransaction trans)
+        private void InsertPage2_CHEMICAL_ASTM(int index, EReportArea area, SqlTransaction trans)
         {
-            P2Set.MainNo = ProfJobSchemeSet.SAMPLEIDENT;
-            P2Set.Select(trans);
+            P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
+            P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
+            P2Set.Select_Che2Sampleident(trans);
+            P2Set.Fetch();
 
             if (P2Set.Empty == true)
             {
+                ProfJobSchemeSet.SelectSampleidentPro_KRCTS01(trans);
+
                 for (int i = 0; i < ProfJobSchemeSet.RowCount; i++)
                 {
-                    ProfJobSchemeSet.Fetch(i);
+                    ProfJobSchemeSet.Fetch(i,0,"other" );
 
-                    if (i == 0)
-                    {
-                        P2Set.MainNo = ProfJobSchemeSet.SAMPLEIDENT;
-                        P2Set.Name = "Mass of trace amount (mg)";
-                        P2Set.LoValue = "--";
-                        P2Set.HiValue = "--";
-                        P2Set.ReportValue = "--";
-                        P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
-                        P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
-                        if (string.IsNullOrWhiteSpace(ProfJobSchemeSet.DESCRIPTION_4) == true)
-                        {
-                            P2Set.FormatValue = "--";
-                        }
-                        else
-                        {
-                            P2Set.FormatValue = ProfJobSchemeSet.DESCRIPTION_4;
-                        }
-                        P2Set.Insert(trans);
-                    }
-                    if (area == EReportArea.EU)
-                    {
-                        // Cr의(Total) 제외요청으로 인한 로직 추가
-                        if (ProfJobSchemeSet.Name.Equals("Chromium (Cr)"))
-                        {
-                            continue;
-                        }
-                    }
-
-                    P2Set.MainNo = ProfJobSchemeSet.SAMPLEIDENT;
-                    P2Set.Name = ProfJobSchemeSet.Name;
+                    P2Set.MainNo = ProfJobSchemeSet.JobNo;
+                    P2Set.Name = ProfJobSchemeSet.Name.Trim();
                     P2Set.LoValue = ProfJobSchemeSet.LoValue;
                     P2Set.HiValue = ProfJobSchemeSet.HiValue;
                     P2Set.ReportValue = ProfJobSchemeSet.ReportValue;
                     P2Set.FormatValue = ProfJobSchemeSet.FormatValue;
                     P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
                     P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
+                    P2Set.Pro_Proj = ProfJobSchemeSet.fileNo;
+                    
                     P2Set.Insert(trans);
+                }
+            }
+
+            //if (true)
+            if (index != 0)            
+            {
+                P2Set.MainNo = ProfJobSchemeSet.JobNo;
+                P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
+                P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
+                P2Set.SampleRemarks = ProfJobSchemeSet.SampleRemarks;
+                P2Set.Select_Che2Sampleident(trans);
+
+                if (P2Set.SampleRemarks.Trim().ToLower().Equals("coating"))
+                {
+                    chkCoating = true;
+                }
+                else if (P2Set.SampleRemarks.Trim().ToLower().Equals("plastic"))
+                {
+                    chkPlastic = true;
+                }
+                else if (P2Set.SampleRemarks.Trim().ToLower().Equals("metal"))
+                {
+                    chkMetal = true;
+                }
+                else if (P2Set.SampleRemarks.Trim().ToLower().Equals("textile"))
+                {
+                    chkTextile = true;
+                }
+                else
+                {
+
+                }
+
+                if (P2Set.Empty == false)
+                {
+                    // No Lead
+                    if (P2Set.Sch_Code.Equals("HCEEASTMICP_05"))
+                    {
+                        //P2Set.No = index;
+                        // Sampleident의 맨마지막 값 추후에 10의 자리인 경우도 찾아야 한다면 10자리의 수가 0인지 체크하여 가져오기. 그 이후도 동일한 로직으로
+                        P2Set.No = Convert.ToInt32(P2Set.Sampleident.Substring(P2Set.Sampleident.Length - 1));                        
+                        for (int i = 0; i < P2Set.RowCount; i++)
+                        {
+                            P2Set.Fetch(i);
+
+                            if (P2Set.Name.Contains("(Pb)"))
+                            {
+                                P2Set.Pb = P2Set.FormatValue;
+                                P2Set.MigrationLimitName = "Pb";
+                                P2Set.MigrationLimitHiValue = "90";
+                                P2Set.MigrationLimitReportValue = "5";
+                                P2Set.MigrationLimitLoValue = "--";
+
+                                if (chkCoating == true)
+                                {
+                                    if (chkCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+
+                                if (chkPlastic || chkMetal || chkTextile)
+                                {
+                                    if (chkNoCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+                            }
+                            else if (P2Set.Name.Contains("(Sb)"))
+                            {
+                                P2Set.Sb = P2Set.FormatValue;
+                                P2Set.MigrationLimitName = "Sb";
+                                P2Set.MigrationLimitHiValue = "60";
+                                P2Set.MigrationLimitReportValue = "5";
+                                P2Set.MigrationLimitLoValue = "--";
+
+                                if (chkCoating == true)
+                                {
+                                    if (chkCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+
+                                if (chkPlastic || chkMetal || chkTextile)
+                                {
+                                    if (chkNoCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+                            }
+                            else if (P2Set.Name.Contains("(As)"))
+                            {
+                                P2Set.As = P2Set.FormatValue;
+                                P2Set.MigrationLimitName = "As";
+                                P2Set.MigrationLimitHiValue = "25";
+                                P2Set.MigrationLimitReportValue = "2.5";
+                                P2Set.MigrationLimitLoValue = "--";
+
+                                if (chkCoating == true)
+                                {
+                                    if (chkCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+
+                                if (chkPlastic || chkMetal || chkTextile)
+                                {
+                                    if (chkNoCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+                            }
+                            else if (P2Set.Name.Contains("(Ba)"))
+                            {
+                                P2Set.Ba = P2Set.FormatValue;
+                                P2Set.MigrationLimitName = "Ba";
+                                P2Set.MigrationLimitHiValue = "1000";
+                                P2Set.MigrationLimitReportValue = "10";
+                                P2Set.MigrationLimitLoValue = "--";
+
+                                if (chkCoating == true)
+                                {
+                                    if (chkCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+
+                                if (chkPlastic || chkMetal || chkTextile)
+                                {
+                                    if (chkNoCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+                            }
+                            else if (P2Set.Name.Contains("(Cd)"))
+                            {
+                                P2Set.Cd = P2Set.FormatValue;
+                                P2Set.MigrationLimitName = "Cd";
+                                P2Set.MigrationLimitHiValue = "75";
+                                P2Set.MigrationLimitReportValue = "5";
+                                P2Set.MigrationLimitLoValue = "--";
+
+                                if (chkCoating == true)
+                                {
+                                    if (chkCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+
+                                if (chkPlastic || chkMetal || chkTextile)
+                                {
+                                    if (chkNoCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+                            }
+                            else if (P2Set.Name.Contains("(Cr)"))
+                            {
+                                P2Set.Cr = P2Set.FormatValue;
+                                P2Set.MigrationLimitName = "Cr";
+                                P2Set.MigrationLimitHiValue = "60";
+                                P2Set.MigrationLimitReportValue = "2.5";
+                                P2Set.MigrationLimitLoValue = "--";
+
+                                if (chkCoating == true)
+                                {
+                                    if (chkCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+
+                                if (chkPlastic || chkMetal || chkTextile)
+                                {
+                                    if (chkNoCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+                            }
+                            else if (P2Set.Name.Contains("(Hg)"))
+                            {
+                                P2Set.Hg = P2Set.FormatValue;
+                                P2Set.MigrationLimitName = "Hg";
+                                P2Set.MigrationLimitHiValue = "60";
+                                P2Set.MigrationLimitReportValue = "2.5";
+                                P2Set.MigrationLimitLoValue = "--";
+
+                                if (chkCoating == true)
+                                {
+                                    if (chkCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+
+                                if (chkPlastic || chkMetal || chkTextile)
+                                {
+                                    if (chkNoCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+                            }
+                            else if (P2Set.Name.Contains("(Se)"))
+                            {
+                                P2Set.Se = P2Set.FormatValue;
+                                P2Set.MigrationLimitName = "Se";
+                                P2Set.MigrationLimitHiValue = "500";
+                                P2Set.MigrationLimitReportValue = "10";
+                                P2Set.MigrationLimitLoValue = "--";
+
+                                if (chkCoating == true)
+                                {
+                                    if (chkCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+
+                                if (chkPlastic || chkMetal || chkTextile)
+                                {
+                                    if (chkNoCoatingLimit == false)
+                                    {
+                                        P2Set.Insert_TB_CHEP2_LIMIT_ASTM(trans);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Chemical job - None Case");
+                            }
+                        }
+
+                        if (chkCoating)
+                        {
+                            chkCoatingLimit = true;
+                        }
+                        else if (chkPlastic)
+                        {
+                            chkNoCoatingLimit = true;
+                        }
+                        else if (chkMetal)
+                        {
+                            chkNoCoatingLimit = true;
+                        }
+                        else if (chkTextile)
+                        {
+                            chkNoCoatingLimit = true;
+                        }
+                        else
+                        {
+
+                        }
+
+                        P2Set.SampleDescription = ProfJobSchemeSet.SampleDescription;
+                        P2Set.Mg = ProfJobSchemeSet.DESCRIPTION_4;
+
+                        if (string.IsNullOrEmpty(P2Set.Mg)) 
+                        {
+                            P2Set.Mg = "--";
+                        }
+
+                        P2Set.Insert_Result_ASTM(trans);
+                    }
+                    // Yes Lead
+                    else if (!P2Set.Sch_Code.Equals("HCEEASTMICP_05"))
+                    {
+                        for (int i = 0; i < P2Set.RowCount; i++)
+                        {
+                            P2Set.Fetch(i);
+
+                            if (P2Set.Name.Contains("Total Lead (Pb)"))
+                            {
+                                P2Set.Pb = P2Set.FormatValue;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Chemical job - None Case - Yes Tin");
+                            }
+                        }
+                        // Sampleident의 맨마지막 값 추후에 10의 자리인 경우도 찾아야 한다면 10자리의 수가 0인지 체크하여 가져오기. 그 이후도 동일한 로직으로
+                        P2Set.No = Convert.ToInt32(P2Set.Sampleident.Substring(P2Set.Sampleident.Length - 1));
+                        P2Set.SampleDescription = ProfJobSchemeSet.SampleDescription;
+                        P2Set.SampleRemarks = ProfJobSchemeSet.SampleRemarks;
+                        P2Set.Insert_CHE_LEADRESULT_ASTM(trans);
+
+                        if (P2Set.SampleRemarks.Trim().ToLower().Equals("coating"))
+                        {
+                            P2Set.MainNo = MainSet.RecNo;
+                            //P2Set.Pro_Proj = P2Set.Pro_Proj;
+                            P2Set.LoValue = "--";
+                            P2Set.HiValue = "90";
+                            P2Set.ReportValue = "20";
+                            //P2Set.Sch_Code = P2Set.Sch_Code;
+                            //P2Set.SampleRemarks = P2Set.SampleRemarks;
+                            P2Set.Insert_CHE_LEADLIMIT_ASTM(trans);
+                        }
+                        else if (P2Set.SampleRemarks.Trim().ToLower().Equals("plastic"))
+                        {
+                            P2Set.MainNo = MainSet.RecNo;
+                            //P2Set.Pro_Proj = P2Set.Pro_Proj;
+                            P2Set.LoValue = "--";
+                            P2Set.HiValue = "100";
+                            P2Set.ReportValue = "20";
+                            //P2Set.Sch_Code = P2Set.Sch_Code;
+                            //P2Set.SampleRemarks = P2Set.SampleRemarks;
+                            P2Set.Insert_CHE_LEADLIMIT_ASTM(trans);
+                        }
+                        else if (P2Set.SampleRemarks.Trim().ToLower().Equals("metal"))
+                        {
+                            P2Set.MainNo = MainSet.RecNo;
+                            //P2Set.Pro_Proj = P2Set.Pro_Proj;
+                            P2Set.LoValue = "--";
+                            P2Set.HiValue = "100";
+                            P2Set.ReportValue = "50";
+                            //P2Set.Sch_Code = P2Set.Sch_Code;
+                            //P2Set.SampleRemarks = P2Set.SampleRemarks;
+                            P2Set.Insert_CHE_LEADLIMIT_ASTM(trans);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Chemical job - None Case - Yes Lead");
+                        }
+                    }
+                }
+            }
+            
+            MatchCollection matches = Regex.Matches(P2Set.Pro_Proj, "-");
+            int cnt = matches.Count;
+
+            // 항목 시험에 따라서 아래의 값이 변경되어야 함.
+            if (cnt < 2)
+            {
+                if (chkCoating)
+                {
+                    if (chkMetal || chkPlastic || chkTextile)
+                    {
+                        MainSet.P1TestRequested =
+                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n" +
+                        "    4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials\r\n" +
+                        "    4.3.5.2 - Heavy Metal in Substrate Materials\r\n";
+                        MainSet.P1Conclusion = "\r\n\r\n-\r\nPASS\r\nPASS";
+                        MainSet.UpdateP2Description3(trans);
+                    }
+                    else
+                    {
+                        MainSet.P1TestRequested =
+                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n" +
+                        "    4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials";
+                        MainSet.P1Conclusion = "\r\n\r\n-\r\nPASS";
+                        MainSet.UpdateP2Description3(trans);
+                    }
+                }
+                else
+                {
+                    if (chkMetal || chkPlastic || chkTextile)
+                    {
+                        MainSet.P1TestRequested =
+                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n" +
+                        "    4.3.5.2 - Heavy Metal in Substrate Materials";
+                        MainSet.P1Conclusion = "\r\n\r\n-\r\nPASS";
+                        MainSet.UpdateP2Description3(trans);
+                    }
                 }
             }
         }
