@@ -473,14 +473,16 @@ namespace Sgs.ReportIntegration
             MainSet.StaffNo = ProfJobSet.StaffNo;
             MainSet.MaterialNo = "";
             MainSet.P1ClientNo = ProfJobSet.ClientNo;
-            MainSet.P1ClientName = ProfJobSet.ClientName;            
-            MainSet.P1ClientAddress = ProfJobSet.ClientAddress;
+            MainSet.P1ClientName = ProfJobSet.ClientName;
+            //MainSet.P1ClientAddress = ProfJobSet.ClientAddress;
+            MainSet.P1ClientAddress = "-";
             MainSet.P1FileNo = ProfJobSet.FileNo;
             MainSet.P1SampleDescription = ProfJobSet.TESTCOMMENTS;
             //MainSet.P1SampleDescription = ProfJobSet.SampleRemark;
             MainSet.P1ItemNo = ProfJobSet.ItemNo;
             MainSet.P1OrderNo = "-";
             MainSet.P1Manufacturer = ProfJobSet.Manufacturer;
+            //MainSet.P1Manufacturer = "-";
             //MainSet.P1CountryOfOrigin = ProfJobSet.CountryOfOrigin;
             MainSet.P1CountryOfOrigin = "-";
             MainSet.P1CountryOfDestination = "-";
@@ -507,9 +509,22 @@ namespace Sgs.ReportIntegration
                     "Note:    -   Soluble results shown are of the adjusted analytical result.\r\n" +
                     "         -   ND = Not Detected(<MDL)";
 
-                MainSet.P1Comments = "The results shown in this test report refer only to the sample(s) tested unless\r\n" +
-                                     "otherwise stated.\r\n" +
-                                     "This test report is not related to Korea Laboratory Accreditation Scheme.";
+                //MainSet.P1Comments = "The results shown in this test report refer only to the sample(s) tested unless\r\n" +
+                //                     "otherwise stated.\r\n" +
+                //                     "This test report is not related to Korea Laboratory Accreditation Scheme.";
+
+                MainSet.P1Comments = "The results shown in this test report refer only to the sample(s) tested unless otherwise stated.\r\n" +
+                                     "This test report is not related to Korea Laboratory Accreditation Scheme.\r\n" +
+                                     "The statement of conformity was made on the requested specification or standard. The decision rule would be based on the binary statement (Pass/Fail) according to ILAC-G8:09/2019 guideline 4.2.1 without\r\n" +
+                                     "taking measurement uncertainty into account by applicant's agreement";
+
+                /*
+                 The results shown in this test report refer only to the sample(s) tested unless otherwise stated.
+                 This test report is not related to Korea Laboratory Accreditation Scheme.
+                 The statement of conformity was made on the requested specification or standard. The decision rule would be based on the binary statement (Pass/Fail) according to ILAC-G8:09/2019 guideline 4.2.1 without taking measurement uncertainty into account by applicant's agreement
+
+                 
+                 */
 
                 MainSet.P3Description1 =
                         //"Note. 1. mg/kg = milligram per kilogram\r\n" +
@@ -1340,19 +1355,19 @@ namespace Sgs.ReportIntegration
                     {
                         MainSet.P1TestRequested =
                         "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
-                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
                         "    4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials\r\n" +
                         "    4.3.5.2 - Heavy Metal in Substrate Materials\r\n";
-                        MainSet.P1Conclusion = "\r\n\r\n-\r\nPASS\r\nPASS";
+                        MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS\r\nPASS";
                         MainSet.UpdateP2Description3(trans);
                     }
                     else
                     {
                         MainSet.P1TestRequested =
                         "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
-                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
                         "    4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials";
-                        MainSet.P1Conclusion = "\r\n\r\n-\r\nPASS";
+                        MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS";
                         MainSet.UpdateP2Description3(trans);
                     }
                 }
@@ -1362,9 +1377,9 @@ namespace Sgs.ReportIntegration
                     {
                         MainSet.P1TestRequested =
                         "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
-                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
                         "    4.3.5.2 - Heavy Metal in Substrate Materials";
-                        MainSet.P1Conclusion = "\r\n\r\n-\r\nPASS";
+                        MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS";
                         MainSet.UpdateP2Description3(trans);
                     }
                 }
