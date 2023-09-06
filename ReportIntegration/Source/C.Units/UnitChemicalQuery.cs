@@ -474,8 +474,8 @@ namespace Sgs.ReportIntegration
             MainSet.MaterialNo = "";
             MainSet.P1ClientNo = ProfJobSet.ClientNo;
             MainSet.P1ClientName = ProfJobSet.ClientName;
-            //MainSet.P1ClientAddress = ProfJobSet.ClientAddress;
-            MainSet.P1ClientAddress = "-";
+            MainSet.P1ClientAddress = ProfJobSet.ClientAddress;
+            //MainSet.P1ClientAddress = "-";
             MainSet.P1FileNo = ProfJobSet.FileNo;
             MainSet.P1SampleDescription = ProfJobSet.TESTCOMMENTS;
             //MainSet.P1SampleDescription = ProfJobSet.SampleRemark;
@@ -515,8 +515,8 @@ namespace Sgs.ReportIntegration
 
                 MainSet.P1Comments = "The results shown in this test report refer only to the sample(s) tested unless otherwise stated.\r\n" +
                                      "This test report is not related to Korea Laboratory Accreditation Scheme.\r\n" +
-                                     "The statement of conformity was made on the requested specification or standard. The decision rule would be based on the binary statement (Pass/Fail) according to ILAC-G8:09/2019 guideline 4.2.1 without\r\n" +
-                                     "taking measurement uncertainty into account by applicant's agreement";
+                                     "The statement of conformity was made on the requested specification or standard. The decision rule would be based on the binary statement (Pass/Fail) according to ILAC-G8:09/2019 guideline 4.2.1 without taking measurement\r\n" +
+                                     "uncertainty into account by applicant's agreement";
 
                 /*
                  The results shown in this test report refer only to the sample(s) tested unless otherwise stated.
@@ -526,18 +526,11 @@ namespace Sgs.ReportIntegration
                  
                  */
 
-                MainSet.P3Description1 =
-                        //"Note. 1. mg/kg = milligram per kilogram\r\n" +
-                        //"      2. ND = Not Detected(< MDL)\r\n" +
-                        //"      3. 1% = 10000 mg/kg = 10000 ppm\r\n" +
-                        //"      4. Soluble Chromium(III) = Soluble Total Chromium – Soluble Chromium(VI)\r\n" +
-                        //"      5. ^ = Confirmation test of soluble organic tin is not required in case of soluble tin, after conversion, does not exceed the soluble organic tin requirement as specified in EN71-3:2019.";
+                MainSet.P2Description4 =
+                        "- ND = Not Detected(<MDL)\r\n" +
+                        "- MDL = Method Detection Limit\r\n";
 
-                        //"Note. 1. mg/kg = milligram per kilogram\r\n" +
-                        //    "      2. MDL = Method Detection Limit\r\n" +
-                        //    "      3. ND = Not Detected (< MDL)\r\n" +
-                        //    "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
-                        //    "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n";
+                MainSet.P3Description1 =
                         "- Soluble results shown are of the adjusted analytical result.\r\n" +
                         "- ND = Not Detected(<MDL)\r\n" +
                         "- MDL = Method Detection Limit\r\n";
@@ -1354,7 +1347,7 @@ namespace Sgs.ReportIntegration
                     if (chkMetal || chkPlastic || chkTextile)
                     {
                         MainSet.P1TestRequested =
-                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
+                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314\r\n(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
                         "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
                         "    4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials\r\n" +
                         "    4.3.5.2 - Heavy Metal in Substrate Materials\r\n";
@@ -1364,7 +1357,7 @@ namespace Sgs.ReportIntegration
                     else
                     {
                         MainSet.P1TestRequested =
-                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
+                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314\r\n(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
                         "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
                         "    4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials";
                         MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS";
@@ -1376,7 +1369,7 @@ namespace Sgs.ReportIntegration
                     if (chkMetal || chkPlastic || chkTextile)
                     {
                         MainSet.P1TestRequested =
-                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
+                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314\r\n(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
                         "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
                         "    4.3.5.2 - Heavy Metal in Substrate Materials";
                         MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS";

@@ -2307,7 +2307,6 @@
             this.DetailReport4});
             this.DetailReport3.DataMember = "Coating_NoLead_Limit";
             this.DetailReport3.Dpi = 254F;
-            this.DetailReport3.Expanded = false;
             this.DetailReport3.Level = 5;
             this.DetailReport3.Name = "DetailReport3";
             this.DetailReport3.ReportPrintOptions.PrintOnEmptyDataSource = false;
@@ -2630,7 +2629,7 @@
             this.xrTableCell19.StylePriority.UseBorders = false;
             this.xrTableCell19.StylePriority.UseFont = false;
             this.xrTableCell19.StylePriority.UseTextAlignment = false;
-            this.xrTableCell19.Text = "Mass of trace amount(mg)";
+            this.xrTableCell19.Text = "Mass of trace amount (mg)";
             this.xrTableCell19.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrTableCell19.Weight = 1.6432698557466212D;
             // 
@@ -3177,7 +3176,6 @@
             this.GroupHeader1});
             this.DetailReport6.DataMember = "Coating_Lead_Limit";
             this.DetailReport6.Dpi = 254F;
-            this.DetailReport6.Expanded = false;
             this.DetailReport6.Level = 1;
             this.DetailReport6.Name = "DetailReport6";
             this.DetailReport6.ReportPrintOptions.PrintOnEmptyDataSource = false;
@@ -3188,7 +3186,6 @@
             this.xrLabel61,
             this.xrTable42});
             this.Detail5.Dpi = 254F;
-            this.Detail5.Expanded = false;
             this.Detail5.HeightF = 188.4584F;
             this.Detail5.HierarchyPrintOptions.Indent = 50.8F;
             this.Detail5.Name = "Detail5";
@@ -3390,7 +3387,7 @@
             this.xrTableCell53.Multiline = true;
             this.xrTableCell53.Name = "xrTableCell53";
             this.xrTableCell53.StylePriority.UseTextAlignment = false;
-            this.xrTableCell53.Text = " Total Limit(mg/kg)";
+            this.xrTableCell53.Text = " Total Limit (mg/kg)";
             this.xrTableCell53.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
             this.xrTableCell53.Weight = 2.1614165821356464D;
             // 
@@ -3429,7 +3426,7 @@
             this.xrTableCell56.Multiline = true;
             this.xrTableCell56.Name = "xrTableCell56";
             this.xrTableCell56.StylePriority.UseTextAlignment = false;
-            this.xrTableCell56.Text = " Method Detection Limit(mg/kg)";
+            this.xrTableCell56.Text = " Method Detection Limit (mg/kg)";
             this.xrTableCell56.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
             this.xrTableCell56.Weight = 2.1614165821356464D;
             // 
@@ -3478,7 +3475,7 @@
             this.xrTableCell60.Multiline = true;
             this.xrTableCell60.Name = "xrTableCell60";
             this.xrTableCell60.StylePriority.UseTextAlignment = false;
-            this.xrTableCell60.Text = "Total result(s)(mg/kg)";
+            this.xrTableCell60.Text = "Total result(s) (mg/kg)";
             this.xrTableCell60.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrTableCell60.Weight = 3.9370067512652489D;
             // 
@@ -3891,7 +3888,7 @@
             this.xrTableCell82.StylePriority.UseBorders = false;
             this.xrTableCell82.StylePriority.UseFont = false;
             this.xrTableCell82.StylePriority.UseTextAlignment = false;
-            this.xrTableCell82.Text = "Mass of trace amount(mg)";
+            this.xrTableCell82.Text = "Mass of trace amount (mg)";
             this.xrTableCell82.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrTableCell82.Weight = 1.1284610091338279D;
             // 
@@ -4248,7 +4245,7 @@
             this.xrTableCell134.Multiline = true;
             this.xrTableCell134.Name = "xrTableCell134";
             this.xrTableCell134.StylePriority.UseTextAlignment = false;
-            this.xrTableCell134.Text = " Total Limit(mg/kg)";
+            this.xrTableCell134.Text = " Total Limit (mg/kg)";
             this.xrTableCell134.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
             this.xrTableCell134.Weight = 2.1595305003076D;
             // 
@@ -4287,7 +4284,7 @@
             this.xrTableCell137.Multiline = true;
             this.xrTableCell137.Name = "xrTableCell137";
             this.xrTableCell137.StylePriority.UseTextAlignment = false;
-            this.xrTableCell137.Text = " Method Detection Limit(mg/kg)";
+            this.xrTableCell137.Text = " Method Detection Limit (mg/kg)";
             this.xrTableCell137.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
             this.xrTableCell137.Weight = 2.1595305003076D;
             // 
@@ -4336,7 +4333,7 @@
             this.xrTableCell141.Multiline = true;
             this.xrTableCell141.Name = "xrTableCell141";
             this.xrTableCell141.StylePriority.UseTextAlignment = false;
-            this.xrTableCell141.Text = "Total result(s)(mg/kg)";
+            this.xrTableCell141.Text = "Total result(s) (mg/kg)";
             this.xrTableCell141.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrTableCell141.Weight = 4.1090145784924967D;
             // 
@@ -4379,6 +4376,7 @@
             this.xrLabel27,
             this.xrLabel28});
             this.GroupHeader5.Dpi = 254F;
+            this.GroupHeader5.Expanded = false;
             this.GroupHeader5.HeightF = 259.4199F;
             this.GroupHeader5.Name = "GroupHeader5";
             this.GroupHeader5.Visible = false;
@@ -4425,7 +4423,6 @@
             this.Detail8});
             this.DetailReport10.DataMember = "NoCoating_Lead_Limit_Metal";
             this.DetailReport10.Dpi = 254F;
-            this.DetailReport10.Expanded = false;
             this.DetailReport10.Level = 2;
             this.DetailReport10.Name = "DetailReport10";
             this.DetailReport10.ReportPrintOptions.PrintOnEmptyDataSource = false;
@@ -4525,7 +4522,7 @@
             this.xrTableCell147.Multiline = true;
             this.xrTableCell147.Name = "xrTableCell147";
             this.xrTableCell147.StylePriority.UseTextAlignment = false;
-            this.xrTableCell147.Text = " Total Limit(mg/kg)";
+            this.xrTableCell147.Text = " Total Limit (mg/kg)";
             this.xrTableCell147.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
             this.xrTableCell147.Weight = 2.1614165821356464D;
             // 
@@ -4613,7 +4610,7 @@
             this.xrTableCell165.Multiline = true;
             this.xrTableCell165.Name = "xrTableCell165";
             this.xrTableCell165.StylePriority.UseTextAlignment = false;
-            this.xrTableCell165.Text = "Total result(s)(mg/kg)";
+            this.xrTableCell165.Text = "Total result(s) (mg/kg)";
             this.xrTableCell165.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrTableCell165.Weight = 3.9370067512652489D;
             // 
@@ -4643,7 +4640,6 @@
             this.Detail11});
             this.DetailReport13.DataMember = "NoCoating_Lead_Result_Metal";
             this.DetailReport13.Dpi = 254F;
-            this.DetailReport13.Expanded = false;
             this.DetailReport13.Level = 3;
             this.DetailReport13.Name = "DetailReport13";
             this.DetailReport13.ReportPrintOptions.PrintOnEmptyDataSource = false;
@@ -4723,7 +4719,6 @@
             this.Detail14});
             this.DetailReport16.DataMember = "NoCoating_Lead_Result_Plastic";
             this.DetailReport16.Dpi = 254F;
-            this.DetailReport16.Expanded = false;
             this.DetailReport16.Level = 1;
             this.DetailReport16.Name = "DetailReport16";
             this.DetailReport16.ReportPrintOptions.PrintOnEmptyDataSource = false;
@@ -4803,7 +4798,6 @@
             this.Detail15});
             this.DetailReport17.DataMember = "NoCoating_Lead_Limit_Plastic";
             this.DetailReport17.Dpi = 254F;
-            this.DetailReport17.Expanded = false;
             this.DetailReport17.Level = 0;
             this.DetailReport17.Name = "DetailReport17";
             this.DetailReport17.ReportPrintOptions.PrintOnEmptyDataSource = false;
@@ -4903,7 +4897,7 @@
             this.xrTableCell173.Multiline = true;
             this.xrTableCell173.Name = "xrTableCell173";
             this.xrTableCell173.StylePriority.UseTextAlignment = false;
-            this.xrTableCell173.Text = " Total Limit(mg/kg)";
+            this.xrTableCell173.Text = " Total Limit (mg/kg)";
             this.xrTableCell173.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
             this.xrTableCell173.Weight = 2.1614165821356464D;
             // 
@@ -4942,7 +4936,7 @@
             this.xrTableCell176.Multiline = true;
             this.xrTableCell176.Name = "xrTableCell176";
             this.xrTableCell176.StylePriority.UseTextAlignment = false;
-            this.xrTableCell176.Text = " Method Detection Limit(mg/kg)";
+            this.xrTableCell176.Text = " Method Detection Limit (mg/kg)";
             this.xrTableCell176.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
             this.xrTableCell176.Weight = 2.1614165821356464D;
             // 
@@ -4991,7 +4985,7 @@
             this.xrTableCell180.Multiline = true;
             this.xrTableCell180.Name = "xrTableCell180";
             this.xrTableCell180.StylePriority.UseTextAlignment = false;
-            this.xrTableCell180.Text = "Total result(s)(mg/kg)";
+            this.xrTableCell180.Text = "Total result(s) (mg/kg)";
             this.xrTableCell180.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrTableCell180.Weight = 3.9370067512652489D;
             // 
@@ -5015,7 +5009,7 @@
             this.xrLabel55.StylePriority.UseFont = false;
             this.xrLabel55.Text = "Method (non-metallic materials): With reference to CPSC-CH-E1002-08.3 –Standard O" +
     "peration Procedure for Determining Total Lead (Pb) in Non-Metal Children Product" +
-    ".";
+    ". Analysis was performed by ICP-OES.";
             // 
             // DetailReport12
             // 
@@ -5090,7 +5084,6 @@
             this.xrLabel41,
             this.xrLabel42});
             this.GroupFooter5.Dpi = 254F;
-            this.GroupFooter5.Expanded = false;
             this.GroupFooter5.HeightF = 78.45855F;
             this.GroupFooter5.Name = "GroupFooter5";
             // 
@@ -5111,7 +5104,7 @@
             // 
             this.xrLabel42.Dpi = 254F;
             this.xrLabel42.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[P1].[p3desc1]")});
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[P1].[p2desc4]")});
             this.xrLabel42.Font = new System.Drawing.Font("Arial", 10F);
             this.xrLabel42.LocationFloat = new DevExpress.Utils.PointFloat(126.8132F, 30.00011F);
             this.xrLabel42.Multiline = true;
@@ -5160,7 +5153,6 @@
             this.Detail12.Controls.AddRange(new DevExpress.XtraReports.UI.XRControl[] {
             this.xrTable35});
             this.Detail12.Dpi = 254F;
-            this.Detail12.Expanded = false;
             this.Detail12.HeightF = 54.56218F;
             this.Detail12.HierarchyPrintOptions.Indent = 50.8F;
             this.Detail12.Name = "Detail12";
@@ -5216,7 +5208,6 @@
             this.xrLabel35,
             this.xrLabel39});
             this.GroupFooter2.Dpi = 254F;
-            this.GroupFooter2.Expanded = false;
             this.GroupFooter2.HeightF = 78.45855F;
             this.GroupFooter2.Name = "GroupFooter2";
             // 
@@ -5224,7 +5215,7 @@
             // 
             this.xrLabel35.Dpi = 254F;
             this.xrLabel35.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[P1].[p3desc1]")});
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[P1].[p2desc4]")});
             this.xrLabel35.Font = new System.Drawing.Font("Arial", 10F);
             this.xrLabel35.LocationFloat = new DevExpress.Utils.PointFloat(126.8132F, 30.00011F);
             this.xrLabel35.Multiline = true;
@@ -5506,10 +5497,9 @@
             // xrTableCell196
             // 
             this.xrTableCell196.Dpi = 254F;
-            this.xrTableCell196.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[P1].[p1clientaddress]")});
             this.xrTableCell196.Multiline = true;
             this.xrTableCell196.Name = "xrTableCell196";
+            this.xrTableCell196.Text = "-";
             this.xrTableCell196.Weight = 2.0585105771660062D;
             // 
             // xrTableRow73
@@ -5857,7 +5847,7 @@
             this.xrTableCell225.StylePriority.UseTextAlignment = false;
             this.xrTableCell225.Text = " Test Requested";
             this.xrTableCell225.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
-            this.xrTableCell225.Weight = 5.26428156557499D;
+            this.xrTableCell225.Weight = 5.2779019576993127D;
             // 
             // xrTableCell226
             // 
@@ -5870,7 +5860,7 @@
             this.xrTableCell226.StylePriority.UseTextAlignment = false;
             this.xrTableCell226.Text = "Conclusion";
             this.xrTableCell226.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
-            this.xrTableCell226.Weight = 1.1066568505768941D;
+            this.xrTableCell226.Weight = 1.0930364584525716D;
             // 
             // xrTableRow85
             // 
@@ -5890,12 +5880,11 @@
             this.xrTableCell227.Multiline = true;
             this.xrTableCell227.Name = "xrTableCell227";
             this.xrTableCell227.Padding = new DevExpress.XtraPrinting.PaddingInfo(15, 5, 0, 0, 254F);
-            this.xrTableCell227.SnapLineMargin = new DevExpress.XtraPrinting.PaddingInfo(10, 0, 0, 0, 254F);
             this.xrTableCell227.StylePriority.UseFont = false;
             this.xrTableCell227.StylePriority.UsePadding = false;
             this.xrTableCell227.StylePriority.UseTextAlignment = false;
-            this.xrTableCell227.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleLeft;
-            this.xrTableCell227.Weight = 5.2642815655749908D;
+            this.xrTableCell227.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleJustify;
+            this.xrTableCell227.Weight = 5.2779019576993136D;
             // 
             // xrTableCell228
             // 
@@ -5908,7 +5897,7 @@
             this.xrTableCell228.StylePriority.UseFont = false;
             this.xrTableCell228.StylePriority.UseTextAlignment = false;
             this.xrTableCell228.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
-            this.xrTableCell228.Weight = 1.1066568505768941D;
+            this.xrTableCell228.Weight = 1.0930364584525716D;
             // 
             // xrLine2
             // 
