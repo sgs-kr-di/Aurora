@@ -37,6 +37,8 @@ namespace Sgs.ReportIntegration
 
         private ProfJobDataSet profJobSet;
 
+        private ProfJobImageDataSet profJobImageSet;
+
         private ProfJobSchemeDataSet profJobSchemeSet;
 
         private ChemicalQuery cheQuery;
@@ -65,6 +67,7 @@ namespace Sgs.ReportIntegration
             cheReportUsSet = new ChemicalReportDataSet(AppRes.DB.Connect, null, null);
             profJobSet = new ProfJobDataSet(AppRes.DB.Connect, null, null);
             profJobSchemeSet = new ProfJobSchemeDataSet(AppRes.DB.Connect, null, null);
+            profJobImageSet = new ProfJobImageDataSet(AppRes.DB.Connect, null, null);
 
             ctrlUs = new CtrlEditChemicalUs(findButton);
             ctrlUs.MainSet = cheMainSet;
@@ -87,6 +90,7 @@ namespace Sgs.ReportIntegration
             cheQuery.ProfJobSchemeSet = profJobSchemeSet;
             cheQuery.CtrlUs = ctrlUs;
             cheQuery.CtrlEu = ctrlEu;
+            cheQuery.ProfImageJobSet = profJobImageSet;
 
             bookmark = new GridBookmark(chemicalGridView);
             AppHelper.SetGridEvenRow(chemicalGridView);
@@ -558,7 +562,6 @@ namespace Sgs.ReportIntegration
                         //            break;
                         //        }
                         //    }
-
                         //    profJobSet.Fetch(0);
                         //}
                         //cheQuery.Insert(areaNo, extendJobNo);

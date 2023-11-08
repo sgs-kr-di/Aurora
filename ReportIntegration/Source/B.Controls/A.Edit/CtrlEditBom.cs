@@ -484,7 +484,8 @@ namespace Sgs.ReportIntegration
             integQuery.ProfJobSet.ItemNo = col.Code;
             integQuery.ProfJobSet.ExtendASTM = false;
             //integQuery.ProfJobSet.Select(trans);
-            integQuery.ProfJobSet.Select_Aurora(trans);
+            //integQuery.ProfJobSet.Select_Aurora(trans);
+            integQuery.ProfJobSet.Select_KRSCT01(trans);
             integQuery.ProfJobSet.Fetch();
             string jobNo = integQuery.ProfJobSet.JobNo;
 
@@ -535,7 +536,8 @@ namespace Sgs.ReportIntegration
             phyQuery.ProfJobSet.ItemNo = col.Code;
             phyQuery.ProfJobSet.ExtendASTM = false;
             //phyQuery.ProfJobSet.Select(trans);
-            phyQuery.ProfJobSet.Select_Aurora(trans);
+            //phyQuery.ProfJobSet.Select_Aurora(trans);
+            phyQuery.ProfJobSet.Select_KRSCT01(trans);
             phyQuery.ProfJobSet.Fetch();
             string jobNo = phyQuery.ProfJobSet.JobNo;
 
@@ -584,7 +586,8 @@ namespace Sgs.ReportIntegration
             cheQuery.ProfJobSet.ItemNo = col.MaterialNo;
             cheQuery.ProfJobSet.ExtendASTM = true;
 
-            cheQuery.ProfJobSet.Select_Aurora(trans);
+            //cheQuery.ProfJobSet.Select_Aurora(trans);
+            cheQuery.ProfJobSet.Select_KRSCT01(trans);
 
             int rowCount = cheQuery.ProfJobSet.RowCount;
             if (rowCount > 0)
@@ -610,7 +613,8 @@ namespace Sgs.ReportIntegration
                         // Final, Formatted가 있는 Insert
                         if (string.IsNullOrWhiteSpace(extendJobNo) == false)
                         {
-                            cheQuery.Insert(bomSet.AreaNo, extendJobNo, trans);
+                            //cheQuery.Insert(bomSet.AreaNo, extendJobNo, trans);
+                            cheQuery.Insert_Chemical_Import(bomSet.AreaNo, jobNo, extendJobNo, trans);
                             //cheQuery.Insert(extendJobNo, trans);
                             AppRes.TotalLog["NOTE"] = $"Created chemical report - {jobNo}, {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";
                         }

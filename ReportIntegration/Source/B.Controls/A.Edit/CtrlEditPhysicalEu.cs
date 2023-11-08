@@ -2289,13 +2289,20 @@ namespace Sgs.ReportIntegration
                         P45Set.Result = row["Result"].ToString();
                         if (l == 0)
                         {
+                            //P45Set.Note = "SE = Self-Extinguishing\r\n" +
+                            //              "DNI = Did not Ignite\r\n" +
+                            //              "FAIL: Exceed the limit\r\n" +
+                            //              "* The sample(s) was (were) not tested as its maximum dimension is 150 mm or less.\r\n" +
+                            //              //"(The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.)\r\n\r\n" +
+                            //              "Requirement: The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.\r\n\r\n" +
+                            //              "N.B.: Only applicable clauses were shown.";
+
                             P45Set.Note = "SE = Self-Extinguishing\r\n" +
                                           "DNI = Did not Ignite\r\n" +
                                           "FAIL: Exceed the limit\r\n" +
                                           "* The sample(s) was (were) not tested as its maximum dimension is 150 mm or less.\r\n" +
                                           //"(The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.)\r\n\r\n" +
-                                          "Requirement: The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.\r\n\r\n" +
-                                          "N.B.: Only applicable clauses were shown.";
+                                          "Requirement: The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.";
                         }
                         else
                         {

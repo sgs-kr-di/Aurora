@@ -27,6 +27,8 @@ namespace Sgs.ReportIntegration
 
         public CtrlEditChemicalEu CtrlEu { get; set; }
 
+        public ProfJobImageDataSet ProfImageJobSet { get; set; }
+
         private bool local;
 
         private ProductDataSet productSet;
@@ -48,10 +50,11 @@ namespace Sgs.ReportIntegration
                 P2ExtendSet = new ChemicalP2ExtendDataSet(AppRes.DB.Connect, null, null);
                 ProfJobSet = new ProfJobDataSet(AppRes.DB.Connect, null, null);
                 ProfJobSchemeSet = new ProfJobSchemeDataSet(AppRes.DB.Connect, null, null);
+                ProfImageJobSet = new ProfJobImageDataSet(AppRes.DB.Connect, null, null);
                 CtrlUs = null;
                 CtrlEu = null;
             }
-
+            
             productSet = new ProductDataSet(AppRes.DB.Connect, null, null);
             partSet = new PartDataSet(AppRes.DB.Connect, null, null);
         }
@@ -477,7 +480,7 @@ namespace Sgs.ReportIntegration
             MainSet.P1ClientAddress = ProfJobSet.ClientAddress;
             //MainSet.P1ClientAddress = "-";
             MainSet.P1FileNo = ProfJobSet.FileNo;
-            MainSet.P1SampleDescription = ProfJobSet.TESTCOMMENTS;
+            MainSet.P1SampleDescription = ProfJobSet.TESTCOMMENTS;            
             //MainSet.P1SampleDescription = ProfJobSet.SampleRemark;
             MainSet.P1ItemNo = ProfJobSet.ItemNo;
             MainSet.P1OrderNo = "-";
@@ -666,10 +669,9 @@ namespace Sgs.ReportIntegration
                     //    "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
                     //    "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n";
                         "      1. mg/kg = milligram per kilogram\r\n" +
-                        "      2. MDL = Method Detection Limit\r\n" +
-                        "      3. ND = Not Detected (< MDL)\r\n" +
-                        "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
-                        "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n";
+                        "      2. N.D. = Not Detected ( < Reporting Limit )\r\n" +
+                        "      3. 1% = 10,000 mg/kg = 10,000 ppm\r\n" +
+                        "      4. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n";
                 }
                 else
                 {
@@ -681,11 +683,10 @@ namespace Sgs.ReportIntegration
                             //    "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n" +
                             //    "      6. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test for soluble organic tin on component exceeding the screening limit of 4.9mg/kg soluble Sn.";
                             "      1. mg/kg = milligram per kilogram\r\n" +
-                            "      2. MDL = Method Detection Limit\r\n" +
-                            "      3. ND = Not Detected (< MDL)\r\n" +
-                            "      4. 1% = 10000 mg/kg = 10000 ppm\r\n" +
-                            "      5. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n" +
-                            "      6. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test for soluble organic tin on component exceeding the screening limit of 4.9mg/kg soluble Sn.";
+                            "      2. N.D. = Not Detected (< Reporting Limit )\r\n" +
+                            "      3. 1% = 10,000 mg/kg = 10,000 ppm\r\n" +
+                            "      4. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n" +
+                            "      5. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test for soluble organic tin on component exceeding the screening limit of 4.9mg/kg soluble Sn.";
                 }
             }
 
@@ -710,11 +711,16 @@ namespace Sgs.ReportIntegration
             ImageSet.RecNo = ProfJobSchemeSet.JobNo;
             ImageSet.Select(trans);
 
+            ProfImageJobSet.JobNo = ProfJobSchemeSet.JobNo;            
+            ProfImageJobSet.PHOTORTFKEY = ProfJobSet.PHOTORTFKEY_SAMPLE;
+            ProfImageJobSet.Select(trans);
+            ProfImageJobSet.Fetch();
+
             if (ImageSet.Empty == true)
             {
                 ImageSet.RecNo = ProfJobSchemeSet.JobNo;
                 ImageSet.Signature = null;
-                ImageSet.Picture = ProfJobSet.Image;
+                ImageSet.Picture = ProfImageJobSet.Image;
                 ImageSet.Insert(trans);
             }
         }
@@ -770,7 +776,7 @@ namespace Sgs.ReportIntegration
                     P2Set.LoValue = ProfJobSchemeSet.LoValue;
                     P2Set.HiValue = ProfJobSchemeSet.HiValue;
                     P2Set.ReportValue = ProfJobSchemeSet.ReportValue;
-                    P2Set.FormatValue = ProfJobSchemeSet.FormatValue;
+                    P2Set.FormatValue = string.Format("{0:N0}", ProfJobSchemeSet.FormatValue); // 1000자리마다 , 생성 (자릿수 0은 소수점 이하 버림) ex) 1,000
                     P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
                     P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
 
@@ -881,7 +887,7 @@ namespace Sgs.ReportIntegration
                             }
                             else if (P2Set.Name.Contains("Organic Tin"))
                             {
-                                if (P2Set.FormatValue.Equals("ND") || P2Set.FormatValue.Equals("0.00"))
+                                if (P2Set.FormatValue.Equals("N.D.") || P2Set.FormatValue.Equals("0.00"))
                                 {
                                     P2Set.OrgTin = "--";
                                 }

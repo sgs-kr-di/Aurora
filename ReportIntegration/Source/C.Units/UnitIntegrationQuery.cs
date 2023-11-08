@@ -26,6 +26,8 @@ namespace Sgs.ReportIntegration
 
         public IntegrationT6DataSet T6Set { get; set; }
 
+        public IntegrationT61DataSet T61Set { get; set; }
+
         public IntegrationT7DataSet T7Set { get; set; }
 
         public PhysicalP2DataSet P2Set { get; set; }
@@ -38,7 +40,11 @@ namespace Sgs.ReportIntegration
 
         public PhysicalP42DataSet P42Set { get; set; }
 
+        public PhysicalP45DataSet P45Set { get; set; }
+
         public PhysicalP5DataSet P5Set { get; set; }
+
+        public PhysicalP6DataSet P6Set { get; set; }
 
         public IntegrationLimitEnDataSet LimitEnSet { get; set; }
 
@@ -112,8 +118,11 @@ namespace Sgs.ReportIntegration
                 P40Set = new PhysicalP40DataSet(AppRes.DB.Connect, null, null);
                 P41Set = new PhysicalP41DataSet(AppRes.DB.Connect, null, null);
                 P42Set = new PhysicalP42DataSet(AppRes.DB.Connect, null, null);
+                P45Set = new PhysicalP45DataSet(AppRes.DB.Connect, null, null);
                 P5Set = new PhysicalP5DataSet(AppRes.DB.Connect, null, null);
+                P6Set = new PhysicalP6DataSet(AppRes.DB.Connect, null, null);
                 T6Set = new IntegrationT6DataSet(AppRes.DB.Connect, null, null);
+                T61Set = new IntegrationT61DataSet(AppRes.DB.Connect, null, null);
                 T7Set = new IntegrationT7DataSet(AppRes.DB.Connect, null, null);
                 LimitEnSet = new IntegrationLimitEnDataSet(AppRes.DB.Connect, null, null);
                 ResultEnSet = new IntegrationResultEnDataSet(AppRes.DB.Connect, null, null);
@@ -159,13 +168,14 @@ namespace Sgs.ReportIntegration
             {
                 InsertMain(area, trans);        //
                 InsertImage(trans);             //
-                InsertT1(area, trans);          // page2
-                InsertT2(area, trans);          // page3 US tb_integt2
+                InsertT1(area, trans);          // page 2
+                InsertT2(area, trans);          // page 3 US tb_integt2
                 InsertT3(area, trans);          // 
-                InsertT4(area, trans);          // page4 EN
-                InsertT5(area, trans);          // page4 US, EN
-                InsertT6(area, trans);          // page8
-                InsertT7(area, trans);          // page5, 6
+                InsertT4(area, trans);          // page 4 EN
+                InsertT5(area, trans);          // page 4 US, EN
+                InsertT6(area, trans);          // page 8
+                InsertT61(area, trans);         // page 8-1
+                InsertT7(area, trans);          // page 5, 6
                 UpdateProductSet(area, trans);
 
                 if (local == false)
@@ -238,12 +248,15 @@ namespace Sgs.ReportIntegration
                 T5Set.Delete(trans);
                 T6Set.MainNo = mainNo;
                 T6Set.Delete(trans);
+                T61Set.MainNo = mainNo;
+                T61Set.Delete(trans);
                 T7Set.MainNo = mainNo;
                 T7Set.Delete(trans);
                 LimitEnSet.MainNo = mainNo;
                 LimitEnSet.Delete(trans);
                 ResultEnSet.MainNo = mainNo;
                 ResultEnSet.Delete(trans);
+                ResultEnSet.Delete_Tin(trans);
                 // 추가된 delete hyphen
                 ResultEnSet.MainNo = mainNo;
                 ResultEnSet.Delete_HYPHEN(trans);
@@ -287,7 +300,7 @@ namespace Sgs.ReportIntegration
             phyMainSet.Fetch();
 
             //string fileNoDate = $"F690101/LF-CTS{ProfJobSet.FileNo} dated {phyMainSet.ReportedTime.ToString("yyyy-MM-dd")}";
-            string fileNoDate = $"F690101/LF-CTS{phyMainSet.P1FileNo} dated {phyMainSet.ReportedTime.ToString("yyyy-MM-dd")}";
+            string fileNoDate = $"F690101/LF-CTS{phyMainSet.P1FileNo} dated {phyMainSet.RequiredTime.ToString("yyyy-MM-dd")}";
 
             MainSet.RecNo = ProfJobSet.JobNo;
             MainSet.RegTime = ProfJobSet.RegTime;
@@ -307,7 +320,8 @@ namespace Sgs.ReportIntegration
             //MainSet.P1DetailOfSample = ProfJobSet.DetailOfSample;
             MainSet.P1SampleDescription = phyMainSet.P1SampleDescription;
             MainSet.P1DetailOfSample = phyMainSet.P1DetailOfSample;
-            MainSet.P1ItemNo = ProfJobSet.ItemNo;
+            //MainSet.P1ItemNo = ProfJobSet.ItemNo;
+            MainSet.P1ItemNo = phyMainSet.P1ItemNo;
             //MainSet.P1OrderNo = ProfJobSet.OrderNo; // 원래 값은 "-"이 입력됨.
             MainSet.P1OrderNo = "-"; // -로 다시 변경해달라고 하여 수정함.
             MainSet.P1Packaging = "Yes, provided";
@@ -315,7 +329,14 @@ namespace Sgs.ReportIntegration
             MainSet.P1Buyer = "-";
             //MainSet.P1Manufacturer = ProfJobSet.Manufacturer;
             MainSet.P1Manufacturer = phyMainSet.P1Manufacturer;
+
+            if (string.IsNullOrEmpty(ProfJobSet.CountryOfOrigin))
+            {
+                ProfJobSet.CountryOfOrigin = "-";
+            }
+
             MainSet.P1CountryOfOrigin = ProfJobSet.CountryOfOrigin;
+                
             MainSet.P1CountryOfDestination = "-";
             //MainSet.P1LabeledAge = "None";
             //MainSet.P1TestAge = "None";
@@ -328,7 +349,7 @@ namespace Sgs.ReportIntegration
             // Need to modify TB_INTEGMAIN - p1testresult varchar(100) -> varchar(500) 
             MainSet.P1TestResults =
                 "The results are extracted from various reports according to the declaration\r\n" +
-                "provided by client."; //Please refer to following page(s)";
+                "provided by client. Please refer to following page(s)";
 
             //MainSet.P1Comments = ProfJobSet.ReportComments;
             /*
@@ -337,10 +358,25 @@ namespace Sgs.ReportIntegration
                 "tested unless otherwise stated.\r\n" +
                 "this test report is not related to Korea Laboratory\r\n" +
                 "Accrediation Scheme.";
-            */
+            
             MainSet.P1Comments = "The results shown in this test report refer only to the sample(s) tested unless\r\n" +
                                  "otherwise stated.\r\n" +
                                  "This test report is not related to Korea Laboratory Accreditation Scheme.";
+            */
+
+            MainSet.P1Comments = "The results shown in this test report refer only to the sample(s) tested unless\r\n" +
+                     "otherwise stated.\r\n" +
+                     "This test report is not related to Korea Laboratory Accreditation Scheme.\r\n" +
+                     "The statement of conformity was made on the requested specification or\r\n" +
+                     "standard. The decision rule would be based on the binary statement (Pass/Fail)\r\n" +
+                     "according to ILAC-G8:09/2019 guideline 4.2.1 without taking measurement\r\n" +
+                     "uncertainty into account by applicant's agreement.";
+
+            /*
+             The results shown in this test report refer only to the sample(s) tested unless otherwise stated.
+             This test report is not related to Korea Laboratory Accreditation Scheme.
+             The statement of conformity was made on the requested specification or standard. The decision rule would be based on the binary statement (Pass/Fail) according to ILAC-G8:09/2019 guideline 4.2.1 without taking measurement uncertainty into account by applicant's agreement.
+             */
             MainSet.Approval = false;
 
             if (string.IsNullOrWhiteSpace(MainSet.StaffNo) == true)
@@ -413,15 +449,18 @@ namespace Sgs.ReportIntegration
                     "As specified in European standard on safety of toys EN 71 Part 1:2014+A1:2018";
                 //MainSet.Description2 = $"This result copied from the test report no. {fileNoDate}";
                 MainSet.Description2 = $"This result copied from the test report no. {fileNoDate}";
-                MainSet.Description3 = "As specified in European standard on safety of toys EN71 PART 2: 2011+A1:2014";
-                MainSet.Description4 = "* Surface Flash of Pile Fabrics(Clause 4.1)";
-                MainSet.Description5 = "** Soft-filled toys(animals and doll, etc.) with a piled or textile surface (Clause 4.5)";
+                //MainSet.Description3 = "As specified in European standard on safety of toys EN71 PART 2: 2011+A1:2014";
+                MainSet.Description3 = "As specified in European standard on safety of toys EN71 PART 2: 2020";
+                //MainSet.Description4 = "* Surface Flash of Pile Fabrics(Clause 4.1)";
+                MainSet.Description4 = "4.1 General requirement_Surface Flash of Pile Fabrics";
+                //MainSet.Description5 = "** Soft-filled toys(animals and doll, etc.) with a piled or textile surface (Clause 4.5)";
+                MainSet.Description5 = "4.5 Soft-filled toys";
                 MainSet.Description6 =
-                    "NSFO = No surface flash occurred\r\n" +
-                    "DNI = Did not ignite\r\n" +
-                    "IBE = Ignite But Self-Extinguished\r\n" +
-                    "N / A = Not applicable since the requirements of this sub - clause do not apply to toys with a greatest dimension of 150mm or less\r\n" +
-                    "SE = Self - Extinguishing\r\n\r\n\r\n" +
+                    "SE = Self-Extinguishing\r\n" +
+                    "DNI = Did not Ignite\r\n" +
+                    "FAIL: Exceed the limit\r\n" +
+                    "* The sample(s) was (were) not tested as its maximum dimension is 150 mm or less\r\n" +
+                    "Requirement: The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec\r\n\r\n" +
                     "N.B. : Only applicable clauses were shown.";
                 MainSet.Description7 = "Labeling requirement (Washing/Cleaning Label, CE mark, importer / manufacturer mark (name, address), product identification) according to the Directive 2009/48/EC - Safety of toys";
                 MainSet.Description8 = phyMainSet.P5Description2;
@@ -439,23 +478,27 @@ namespace Sgs.ReportIntegration
                     "   their identification, or where the size or nature of the toy does not allow it, that the required information is\r\n" +
                     "   provided on the packaging or in a document accompanying the toy.";
                 */
-                MainSet.Description9 = "Method : With reference to EN71-3:2019. Analysis of general elements was performed by ICP-OES and Chromium(III) was obtained by calcuration, chromium(VI) was analyzed by IC-UV/VIS.";
+                //MainSet.Description9 = "Method : With reference to EN71-3:2019. Analysis of general elements was performed by ICP-OES and Chromium(III) was obtained by calcuration, chromium(VI) was analyzed by IC-UV/VIS.";
+                MainSet.Description9 = "Method : With reference to EN71-3:2019+A1:2021. Analysis of general elements was performed by ICP-OES and Chromium (III) was obtained by calculation, chromium (VI) was analyzed by IC-UV/VIS. Organic Tin was analyzed by GC-MS";
+                MainSet.Description14 = "Method : With reference to EN71-3:2019+A1:2021. Analysis of general elements was performed by ICP-OES and Chromium (III) was obtained by calculation, chromium (VI) was analyzed by IC-UV/VIS.";
                 MainSet.Description10 =
                     "Note. 1. mg/kg = milligram per kilogram\r\n" +
-                    "      2. ND = Not Detected(<MDL)\r\n" +
-                    "      3. 1% = 10000 mg/kg = 10000 ppm\r\n" +
+                    "      2. N.D. = Not Detected ( < Reporting Limit )\r\n" +
+                    "      3. 1% = 10,000 mg/kg = 10,000 ppm\r\n" +
                     "      4.Soluble Chromium(III) = Soluble Total Chromium - Soluble Chromium(IV)\r\n" +
                     //"      5. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test\r\n" +
                     //"         for soluble organic tin on component exceeding the screening limit of 4.9 mg/kg soluble Sn";
                     //"      5. ^ = Confirmation test of soluble organic tin is not reguired in case of\r\n" +
                     //"      soluble tin, after conversion, does not exceed the soluble organic tin\r\n" +
                     //"      reguirement as specitied in EN71-3 : 2019";
-                    "      5. ^ = Confirmation test of soluble organic tin is not required in case of soluble tin, after conversion, does not\r\n" +
-                    "        exceed the soluble organic tin requirement as specified in EN71-3: 2019.";
+                    "      5. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation\r\n" +
+                    "      test for soluble organic tin on component exceeding the screening limit of 4.9 mg/kg soluble Sn.";
                 MainSet.Description11 = $"Picture of Sample as copied from the test report no.\r\n{fileNoDate}";                
                 MainSet.Description12 = phyMainSet.P1FileNo;
-                MainSet.Description13 = "";
-                MainSet.Description14 = "";
+                MainSet.Description13 =
+                    "NSFO = No Surface Flash Occurred\r\n" +
+                    "SFO = Surface Flash Occurred";
+                //MainSet.Description14 = "";
                 MainSet.Description15 = "";
                 MainSet.Description16 = "";
                 MainSet.Description17 = "";
@@ -515,30 +558,64 @@ namespace Sgs.ReportIntegration
             }
             else
             {
+                bool bChkConclusion = true;
+
                 T1Set.MainNo = MainSet.RecNo;
-                T1Set.No = 0;
-                T1Set.Line = false;
-                T1Set.Requested = "EN 71 Part 1:2014+A1:2018 - Mechanical and Physical Properties";
-                T1Set.Conclusion = "PASS";
-                T1Set.Insert(trans);
+                P2Set.MainNo = ProductSet.PhyJobNo;
+                P2Set.Select(trans);
 
-                T1Set.No = 1;
-                T1Set.Line = false;
-                T1Set.Requested = "EN 71 Part 2:2011+A1:2014 - Flammability of Toys";
-                T1Set.Conclusion = "PASS";
-                T1Set.Insert(trans);
+                for (int i = 0; i < P2Set.RowCount; i++)
+                {
+                    P2Set.Fetch(i);
 
-                T1Set.No = 2;
-                T1Set.Line = false;
-                T1Set.Requested = "Labeling requirement (Washing/Cleaning Label, CE mark, importer / manufacturer mark (name, address), product identification) according to the Directive 2009/48/EC-Safety of toys";
-                T1Set.Conclusion = "See note 1*";
-                T1Set.Insert(trans);
+                    if (P2Set.Conclusion.ToUpper().Trim().Equals("FAIL"))
+                    {
+                        bChkConclusion = false;
+                    }
 
-                T1Set.No = 3;
+                    T1Set.No = P2Set.No;
+                    T1Set.Line = P2Set.Line;
+                    T1Set.Requested = P2Set.Requested;
+                    T1Set.Conclusion = P2Set.Conclusion;
+                    T1Set.Insert(trans);
+                    //T1Set.No = P2Set.No;
+                    //T1Set.Line = P2Set.Line;
+                    //T1Set.Requested = "EN 71 Part 1:2014+A1:2018 - Mechanical and Physical Properties";
+                    //T1Set.Conclusion = "PASS";
+                    //T1Set.Insert(trans);
+
+                    //T1Set.No = 1;
+                    //T1Set.Line = false;
+                    //T1Set.Requested = "EN 71 Part 2:2011+A1:2014 - Flammability of Toys";
+                    //T1Set.Conclusion = "PASS";
+                    //T1Set.Insert(trans);
+
+                    //T1Set.No = 2;
+                    //T1Set.Line = false;
+                    //T1Set.Requested = "Labeling requirement (Washing/Cleaning Label, CE mark, importer / manufacturer mark (name, address), product identification) according to the Directive 2009/48/EC-Safety of toys";
+                    //T1Set.Conclusion = "See note 1*";
+                    //T1Set.Insert(trans);
+
+                    //T1Set.No = 3;
+                    //T1Set.Line = false;
+                    ////T1Set.Requested = "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commision Directive (EU) 2018/725-EN71-3:2019 - Migration of certain elements(By first action method testing only)";
+                    //T1Set.Requested = "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commision Directive (EU) 2018/725-EN71-3:2019 - Migration of certain elements";
+                    //T1Set.Conclusion = "PASS";
+                    //T1Set.Insert(trans);
+                }
+
+                T1Set.No = (P2Set.No+1);
                 T1Set.Line = false;
-                //T1Set.Requested = "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commision Directive (EU) 2018/725-EN71-3:2019 - Migration of certain elements(By first action method testing only)";
-                T1Set.Requested = "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commision Directive (EU) 2018/725-EN71-3:2019 - Migration of certain elements";
-                T1Set.Conclusion = "PASS";
+                T1Set.Requested = "Directive 2009/48/EC and its amendment Council Directive (EU) 2019/1922-EN71-3:2019+A1:2021 - Migration of certain elements";
+                
+                if (bChkConclusion)
+                {
+                    T1Set.Conclusion = "PASS";
+                }
+                else 
+                {
+                    T1Set.Conclusion = "FAIL";
+                }                
                 T1Set.Insert(trans);
             }
         }
@@ -1071,327 +1148,331 @@ namespace Sgs.ReportIntegration
             }
             else // EN
             {
-                P3Set.No = 0;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                //P3Set.No = 0;
+                P3Set.SelectPhymain_P3(trans);
 
-                T2Set.MainNo = MainSet.RecNo;
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                for (int i = 0; i < P3Set.RowCount; i++)
+                {
+                    P3Set.Fetch(i);
 
-                /*
-                T2Set.MainNo = MainSet.RecNo;
-                T2Set.No = 0;
-                T2Set.Line = false;
-                T2Set.Clause = "4";
-                T2Set.Description = "General requirements";
-                T2Set.Result = "-";
-                T2Set.Insert(trans);
-                */
+                    T2Set.MainNo = MainSet.RecNo;
+                    T2Set.No = P3Set.No;
+                    T2Set.Line = P3Set.Line;
+                    T2Set.Clause = P3Set.Clause;
+                    T2Set.Description = P3Set.Description;
+                    T2Set.Result = P3Set.Result;
+                    T2Set.Insert(trans);
+                }                
 
-                P3Set.No = 1;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.MainNo = MainSet.RecNo;
+                //T2Set.No = 0;
+                //T2Set.Line = false;
+                //T2Set.Clause = "4";
+                //T2Set.Description = "General requirements";
+                //T2Set.Result = "-";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 1;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 1;
-                T2Set.Line = false;
-                T2Set.Clause = " 4.1";
-                T2Set.Description = "Material cleanliness";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 2;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 1;
+                //T2Set.Line = false;
+                //T2Set.Clause = " 4.1";
+                //T2Set.Description = "Material cleanliness";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 2;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 2;
-                T2Set.Line = false;
-                T2Set.Clause = " 4.7";
-                T2Set.Description = "Edges";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 3;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 2;
+                //T2Set.Line = false;
+                //T2Set.Clause = " 4.7";
+                //T2Set.Description = "Edges";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 3;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 3;
-                T2Set.Line = true;
-                T2Set.Clause = " 4.8";
-                T2Set.Description = "Points and metallic wires";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 4;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 3;
+                //T2Set.Line = true;
+                //T2Set.Clause = " 4.8";
+                //T2Set.Description = "Points and metallic wires";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 4;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 4;
-                T2Set.Line = false;
-                T2Set.Clause = "5";
-                T2Set.Description = "Toys intended for children under 36 months";
-                T2Set.Result = "-";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 5;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 4;
+                //T2Set.Line = false;
+                //T2Set.Clause = "5";
+                //T2Set.Description = "Toys intended for children under 36 months";
+                //T2Set.Result = "-";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 5;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 5;
-                T2Set.Line = false;
-                T2Set.Clause = " 5.1";
-                T2Set.Description = "General requirements";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 6;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 5;
+                //T2Set.Line = false;
+                //T2Set.Clause = " 5.1";
+                //T2Set.Description = "General requirements";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 6;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 6;
-                T2Set.Line = false;
-                T2Set.Clause = "";
-                T2Set.Description = "5.1a Small part requirements on toys & removable components";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 7;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 6;
+                //T2Set.Line = false;
+                //T2Set.Clause = "";
+                //T2Set.Description = "5.1a Small part requirements on toys & removable components";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 7;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 7;
-                T2Set.Line = false;
-                T2Set.Clause = "";
-                T2Set.Description = "     (Test method 8.2)";
-                T2Set.Result = "-";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 8;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 7;
+                //T2Set.Line = false;
+                //T2Set.Clause = "";
+                //T2Set.Description = "     (Test method 8.2)";
+                //T2Set.Result = "-";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 8;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 8;
-                T2Set.Line = false;
-                T2Set.Clause = "";
-                T2Set.Description = "5.1b Torque test(Test method 8.3)";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 9;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 8;
+                //T2Set.Line = false;
+                //T2Set.Clause = "";
+                //T2Set.Description = "5.1b Torque test(Test method 8.3)";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 9;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 9;
-                T2Set.Line = false;
-                T2Set.Clause = "";
-                T2Set.Description = "     Tension test(Test method 8.4)";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 10;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 9;
+                //T2Set.Line = false;
+                //T2Set.Clause = "";
+                //T2Set.Description = "     Tension test(Test method 8.4)";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 10;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 10;
-                T2Set.Line = false;
-                T2Set.Clause = "";
-                T2Set.Description = "     Drop test(Test method 8.5)";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 11;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 10;
+                //T2Set.Line = false;
+                //T2Set.Clause = "";
+                //T2Set.Description = "     Drop test(Test method 8.5)";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 11;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 11;
-                T2Set.Line = false;
-                T2Set.Clause = "";
-                T2Set.Description = "     Impact test(Test method 8.7)";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 12;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 11;
+                //T2Set.Line = false;
+                //T2Set.Clause = "";
+                //T2Set.Description = "     Impact test(Test method 8.7)";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 12;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 12;
-                T2Set.Line = false;
-                T2Set.Clause = "";
-                T2Set.Description = "     Sharp edge(Test method 8.11)";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 13;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 12;
+                //T2Set.Line = false;
+                //T2Set.Clause = "";
+                //T2Set.Description = "     Sharp edge(Test method 8.11)";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 13;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 13;
-                T2Set.Line = false;
-                T2Set.Clause = "";
-                T2Set.Description = "     Sharp point(Test method 8.12)";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 14;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 13;
+                //T2Set.Line = false;
+                //T2Set.Clause = "";
+                //T2Set.Description = "     Sharp point(Test method 8.12)";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 14;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 14;
-                T2Set.Line = false;
-                T2Set.Clause = " 5.2";
-                T2Set.Description = "Soft-filled toys and soft-filled parts of a toy";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
 
-                P3Set.No = 15;
-                P3Set.SelectPhymainNo_No(trans);
-                P3Set.Fetch();
+                ///*
+                //T2Set.No = 14;
+                //T2Set.Line = false;
+                //T2Set.Clause = " 5.2";
+                //T2Set.Description = "Soft-filled toys and soft-filled parts of a toy";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
 
-                T2Set.No = P3Set.No;
-                T2Set.Line = P3Set.Line;
-                T2Set.Clause = P3Set.Clause;
-                T2Set.Description = P3Set.Description;
-                T2Set.Result = P3Set.Result;
-                T2Set.Insert(trans);
+                //P3Set.No = 15;
+                //P3Set.SelectPhymainNo_No(trans);
+                //P3Set.Fetch();
 
-                /*
-                T2Set.No = 15;
-                T2Set.Line = false;
-                T2Set.Clause = " 5.4";
-                T2Set.Description = "Cords, chains and electrical cables in toys";
-                T2Set.Result = "Pass";
-                T2Set.Insert(trans);
-                */
+                //T2Set.No = P3Set.No;
+                //T2Set.Line = P3Set.Line;
+                //T2Set.Clause = P3Set.Clause;
+                //T2Set.Description = P3Set.Description;
+                //T2Set.Result = P3Set.Result;
+                //T2Set.Insert(trans);
+
+                ///*
+                //T2Set.No = 15;
+                //T2Set.Line = false;
+                //T2Set.Clause = " 5.4";
+                //T2Set.Description = "Cords, chains and electrical cables in toys";
+                //T2Set.Result = "Pass";
+                //T2Set.Insert(trans);
+                //*/
             }
         }
 
@@ -1399,20 +1480,38 @@ namespace Sgs.ReportIntegration
         {
             if (area == EReportArea.US) return;
 
-            T3Set.MainNo = MainSet.RecNo;
-            T3Set.No = 0;
-            T3Set.Line = false;
-            T3Set.Clause = "4.1";
-            T3Set.Description = "General requirements";
-            T3Set.Result = "Pass(See note *)";
-            T3Set.Insert(trans);
+            //P3Set.No = 0;
+            //P3Set.SelectPhymain_P3(trans);            
+            P40Set.MainNo = ProductSet.PhyJobNo;
+            P40Set.Select(trans);
 
-            T3Set.No = 1;
-            T3Set.Line = false;
-            T3Set.Clause = "4.5";
-            T3Set.Description = "Soft-filled toys(animal and doll, etc.) with apiled or textile surface";
-            T3Set.Result = "Pass(See note **)";
-            T3Set.Insert(trans);
+            for (int i = 0; i < P40Set.RowCount; i++)
+            {
+                P40Set.Fetch(i);
+
+                T3Set.MainNo = MainSet.RecNo;
+                T3Set.No = P40Set.No;
+                T3Set.Line = P40Set.Line;
+                T3Set.Clause = P40Set.Clause;
+                T3Set.Description = P40Set.Description;
+                T3Set.Result = P40Set.Result;
+                T3Set.Insert(trans);
+            }
+
+            //T3Set.MainNo = MainSet.RecNo;
+            //T3Set.No = 0;
+            //T3Set.Line = false;
+            //T3Set.Clause = "4.1";
+            //T3Set.Description = "General requirements";
+            //T3Set.Result = "Pass(See note *)";
+            //T3Set.Insert(trans);
+
+            //T3Set.No = 1;
+            //T3Set.Line = false;
+            //T3Set.Clause = "4.5";
+            //T3Set.Description = "Soft-filled toys(animal and doll, etc.) with apiled or textile surface";
+            //T3Set.Result = "Pass(See note **)";
+            //T3Set.Insert(trans);
         }
 
         private void InsertT4(EReportArea area, SqlTransaction trans)
@@ -1421,27 +1520,31 @@ namespace Sgs.ReportIntegration
 
             P41Set.MainNo = ProductSet.PhyJobNo;
             P41Set.Select(trans);
-            P41Set.Fetch();
 
-            T4Set.MainNo = MainSet.RecNo;
-            T4Set.No = P41Set.No;
-            T4Set.Line = P41Set.Line;
-            T4Set.Sample = P41Set.Sample;
-            T4Set.Result = P41Set.BurningRate;  // grid는 result이지만 db column은 burningrate.
+            for (int i = 0; i < P41Set.RowCount; i++)
+            {
+                P41Set.Fetch(i);
+
+                T4Set.MainNo = MainSet.RecNo;
+                T4Set.No = P41Set.No;
+                T4Set.Line = P41Set.Line;
+                T4Set.Sample = P41Set.Sample;
+                T4Set.Result = P41Set.BurningRate;  // grid는 result이지만 db column은 burningrate.
+                T4Set.Insert(trans);
+            }
+            
             /*
             T4Set.No = 0;
             T4Set.Line = false;
             T4Set.Sample = P41Set.Sample;
             T4Set.Result = "NSFO";            
             */
-            T4Set.Insert(trans);
         }
 
         private void InsertT5(EReportArea area, SqlTransaction trans)
         {
             if (area == EReportArea.US)
             {
-                P41Set.MainNo = ProductSet.PhyJobNo;
                 P41Set.Select(trans);
                 P41Set.Fetch();
 
@@ -1454,22 +1557,28 @@ namespace Sgs.ReportIntegration
             }
             else
             {
-                P42Set.MainNo = ProductSet.PhyJobNo;
-                P42Set.Select(trans);
-                P42Set.Fetch();
+                P45Set.MainNo = ProductSet.PhyJobNo;
+                P45Set.Select(trans);
 
-                T5Set.MainNo = MainSet.RecNo;
-                T5Set.No = P42Set.No;
-                T5Set.Line = P42Set.Line;
-                T5Set.Sample = P42Set.Sample;
-                T5Set.BurningRate = P42Set.BurningRate;
+                for (int i = 0; i < P45Set.RowCount; i++)
+                {
+                    P45Set.Fetch(i);
+
+                    T5Set.MainNo = MainSet.RecNo;
+                    T5Set.No = P45Set.No;
+                    T5Set.Line = P45Set.Line;
+                    T5Set.Sample = P45Set.Sample;
+                    T5Set.BurningRate = P45Set.BurningRate;
+                    T5Set.Result = P45Set.Result;
+                    T5Set.Insert(trans);
+                }
+                
                 /*
                 T5Set.No = 0;
                 T5Set.Line = false;
                 T5Set.Sample = " toy";
                 T5Set.BurningRate = "4.2";
                 */
-                T5Set.Insert(trans);
             }
         }
 
@@ -1525,107 +1634,152 @@ namespace Sgs.ReportIntegration
             }
             else
             {
-                P5Set.No = 0;
-                P5Set.SelectPhymainNo_No(trans);
-                P5Set.Fetch();
+                P5Set.MainNo = ProductSet.PhyJobNo;
+                P5Set.Select(trans);
 
-                T6Set.MainNo = MainSet.RecNo;
-                T6Set.MainNo = MainSet.RecNo;
-                T6Set.No = P5Set.No;
-                T6Set.Line = P5Set.Line;
-                T6Set.TestItem = P5Set.TestItem;
-                T6Set.Result = P5Set.Result;
-                T6Set.Requirement = P5Set.Requirement;
-                T6Set.Insert(trans);
+                for (int i = 0; i < P5Set.RowCount; i++)
+                {
+                    P5Set.Fetch(i);
+                    T6Set.MainNo = MainSet.RecNo;                    
+                    T6Set.No = P5Set.No;
+                    T6Set.Line = P5Set.Line;
+                    T6Set.TestItem = P5Set.TestItem;
+                    T6Set.Result = P5Set.Result;
+                    T6Set.Requirement = P5Set.Requirement;
+                    T6Set.Insert(trans);
+                }
 
-                /*
-                T6Set.No = 0;
-                T6Set.Line = true;
-                T6Set.TestItem = "Washing/Cleaning instruction";
-                T6Set.Result = "Present";
-                T6Set.Requirement = "Affixed label and Hangtag";
-                T6Set.Insert(trans);
-                */
+                //P5Set.No = 0;
+                //P5Set.SelectPhymainNo_No(trans);
+                //P5Set.Fetch();
 
-                P5Set.No = 1;
-                P5Set.SelectPhymainNo_No(trans);
-                P5Set.Fetch();
+                //T6Set.MainNo = MainSet.RecNo;
+                //T6Set.MainNo = MainSet.RecNo;
+                //T6Set.No = P5Set.No;
+                //T6Set.Line = P5Set.Line;
+                //T6Set.TestItem = P5Set.TestItem;
+                //T6Set.Result = P5Set.Result;
+                //T6Set.Requirement = P5Set.Requirement;
+                //T6Set.Insert(trans);
 
-                T6Set.No = P5Set.No;
-                T6Set.Line = P5Set.Line;
-                T6Set.TestItem = P5Set.TestItem;
-                T6Set.Result = P5Set.Result;
-                T6Set.Requirement = P5Set.Requirement;
-                T6Set.Insert(trans);
+                ///*
+                //T6Set.No = 0;
+                //T6Set.Line = true;
+                //T6Set.TestItem = "Washing/Cleaning instruction";
+                //T6Set.Result = "Present";
+                //T6Set.Requirement = "Affixed label and Hangtag";
+                //T6Set.Insert(trans);
+                //*/
 
-                /*
-                T6Set.No = 1;
-                T6Set.Line = true;
-                T6Set.TestItem = "CE mark";
-                T6Set.Result = "Present";
-                T6Set.Requirement = "Affixed label and Hangtag";
-                T6Set.Insert(trans);
-                */
+                //P5Set.No = 1;
+                //P5Set.SelectPhymainNo_No(trans);
+                //P5Set.Fetch();
 
-                P5Set.No = 2;
-                P5Set.SelectPhymainNo_No(trans);
-                P5Set.Fetch();
+                //T6Set.No = P5Set.No;
+                //T6Set.Line = P5Set.Line;
+                //T6Set.TestItem = P5Set.TestItem;
+                //T6Set.Result = P5Set.Result;
+                //T6Set.Requirement = P5Set.Requirement;
+                //T6Set.Insert(trans);
 
-                T6Set.No = P5Set.No;
-                T6Set.Line = P5Set.Line;
-                T6Set.TestItem = P5Set.TestItem;
-                T6Set.Result = P5Set.Result;
-                T6Set.Requirement = P5Set.Requirement;
-                T6Set.Insert(trans);
+                ///*
+                //T6Set.No = 1;
+                //T6Set.Line = true;
+                //T6Set.TestItem = "CE mark";
+                //T6Set.Result = "Present";
+                //T6Set.Requirement = "Affixed label and Hangtag";
+                //T6Set.Insert(trans);
+                //*/
 
-                /*
-                T6Set.No = 2;
-                T6Set.Line = true;
-                T6Set.TestItem = "Importer's Name & Address";
-                T6Set.Result = "Present";
-                T6Set.Requirement = "Affixed label and Hangtag";
-                T6Set.Insert(trans);
-                */
+                //P5Set.No = 2;
+                //P5Set.SelectPhymainNo_No(trans);
+                //P5Set.Fetch();
 
-                P5Set.No = 3;
-                P5Set.SelectPhymainNo_No(trans);
-                P5Set.Fetch();
+                //T6Set.No = P5Set.No;
+                //T6Set.Line = P5Set.Line;
+                //T6Set.TestItem = P5Set.TestItem;
+                //T6Set.Result = P5Set.Result;
+                //T6Set.Requirement = P5Set.Requirement;
+                //T6Set.Insert(trans);
 
-                T6Set.No = P5Set.No;
-                T6Set.Line = P5Set.Line;
-                T6Set.TestItem = P5Set.TestItem;
-                T6Set.Result = P5Set.Result;
-                T6Set.Requirement = P5Set.Requirement;
-                T6Set.Insert(trans);
+                ///*
+                //T6Set.No = 2;
+                //T6Set.Line = true;
+                //T6Set.TestItem = "Importer's Name & Address";
+                //T6Set.Result = "Present";
+                //T6Set.Requirement = "Affixed label and Hangtag";
+                //T6Set.Insert(trans);
+                //*/
 
-                /*
-                T6Set.No = 3;
-                T6Set.Line = true;
-                T6Set.TestItem = "Manufacturer's Name & Address";
-                T6Set.Result = "Present";
-                T6Set.Requirement = "Affixed label and Hangtag";
-                T6Set.Insert(trans);
-                */
+                //P5Set.No = 3;
+                //P5Set.SelectPhymainNo_No(trans);
+                //P5Set.Fetch();
 
-                P5Set.No = 4;
-                P5Set.SelectPhymainNo_No(trans);
-                P5Set.Fetch();
+                //T6Set.No = P5Set.No;
+                //T6Set.Line = P5Set.Line;
+                //T6Set.TestItem = P5Set.TestItem;
+                //T6Set.Result = P5Set.Result;
+                //T6Set.Requirement = P5Set.Requirement;
+                //T6Set.Insert(trans);
 
-                T6Set.No = P5Set.No;
-                T6Set.Line = P5Set.Line;
-                T6Set.TestItem = P5Set.TestItem;
-                T6Set.Result = P5Set.Result;
-                T6Set.Requirement = P5Set.Requirement;
-                T6Set.Insert(trans);
+                ///*
+                //T6Set.No = 3;
+                //T6Set.Line = true;
+                //T6Set.TestItem = "Manufacturer's Name & Address";
+                //T6Set.Result = "Present";
+                //T6Set.Requirement = "Affixed label and Hangtag";
+                //T6Set.Insert(trans);
+                //*/
 
-                /*
-                T6Set.No = 4;
-                T6Set.Line = true;
-                T6Set.TestItem = "Product ID";
-                T6Set.Result = "Present";
-                T6Set.Requirement = "Affixed label and Hangtag";
-                T6Set.Insert(trans);
-                */
+                //P5Set.No = 4;
+                //P5Set.SelectPhymainNo_No(trans);
+                //P5Set.Fetch();
+
+                //T6Set.No = P5Set.No;
+                //T6Set.Line = P5Set.Line;
+                //T6Set.TestItem = P5Set.TestItem;
+                //T6Set.Result = P5Set.Result;
+                //T6Set.Requirement = P5Set.Requirement;
+                //T6Set.Insert(trans);
+
+                ///*
+                //T6Set.No = 4;
+                //T6Set.Line = true;
+                //T6Set.TestItem = "Product ID";
+                //T6Set.Result = "Present";
+                //T6Set.Requirement = "Affixed label and Hangtag";
+                //T6Set.Insert(trans);
+                //*/
+            }
+        }
+
+        private void InsertT61(EReportArea area, SqlTransaction trans)
+        {
+            //P5Set.MainNo = ProductSet.PhyJobNo;
+            //P5Set.Select(trans);
+
+            if (area == EReportArea.US)
+            {
+
+            }
+            else
+            {
+                P6Set.MainNo = ProductSet.PhyJobNo;
+                P6Set.Select(trans);
+
+                for (int i = 0; i < P6Set.RowCount; i++)
+                {
+                    P6Set.Fetch(i);
+                    T61Set.MainNo = MainSet.RecNo;
+                    T61Set.No = P6Set.No;
+                    T61Set.Line = P6Set.Line;
+                    T61Set.TestItem = P6Set.TestItem;
+                    T61Set.Result = P6Set.Result;
+                    T61Set.Requirement = P6Set.Requirement;
+                    T61Set.Note = "";
+                    T61Set.Description = "";
+                    T61Set.Insert(trans);
+                }
             }
         }
 
@@ -1666,7 +1820,8 @@ namespace Sgs.ReportIntegration
                             cheMainSet.Fetch(j);
 
                             ProfJobSet.JobNo = cheMainSet.RecNo;
-                            ProfJobSet.Select_TopOne_Sampleident_Aurora(trans);
+                            //ProfJobSet.Select_TopOne_Sampleident_Aurora(trans);
+                            ProfJobSet.Select_TopOne_Sampleident_KRCTS01(trans);
                             ProfJobSet.Fetch(0, 0, "Select_TopOne");
 
                             //iSaveLoopIntegrationCnt = iSaveLoopIntegrationCnt + j;
@@ -1720,21 +1875,25 @@ namespace Sgs.ReportIntegration
 
                         iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
 
-                        for (int k = 0; k < cheMainSet.RowCount; k++)
+                        switch (area)
                         {
-                            cheMainSet.Fetch(k);
-                            iSaveLoopResultCnt = iSaveLoopResultCnt + k;
-                            switch (area)
-                            {
-                                case EReportArea.US:
-                                    InsertResultAstm(cheMainSet.RecNo, cheMainSet.LeadType, vDictionaryReportInsertNo[cheMainSet.RecNo], trans);
-                                    break;
+                            case EReportArea.US:
+                                break;
 
-                                case EReportArea.EU:
+                            case EReportArea.EU:
+                                cheMainSet.RecNo = partSet.JobNo;
+                                //cheP2Set.Select_Che2Sampleident_HYPEN_EN(trans);
+                                //cheP2Set.Select(trans);
+                                //cheP2Set.Fetch();
+
+                                for (int k = 0; k < cheMainSet.RowCount; k++)
+                                {
+                                    iSaveLoopResultCnt = iSaveLoopResultCnt + k;
+
                                     if (i == 0) InsertLimitEn(cheMainSet.RecNo, trans);
                                     InsertResultEn(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
-                                    break;
-                            }
+                                }
+                                break;
                         }
                     }
                 }
@@ -1746,61 +1905,64 @@ namespace Sgs.ReportIntegration
                     InsertResultAstm(cheMainSet.RecNo, cheMainSet.LeadType, trans);
                     break;
                 */
+             
                 case EReportArea.EU:
-                    if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 5)
-                    {
-                        iSaveLoopHyphenCnt = 5 - iSaveLoopResultCnt;
-                        for (int k = 0; k < iSaveLoopHyphenCnt; k++)
-                        {
-                            iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
-                            InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
-                        }
-                    }
-                    else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 10)
-                    {
-                        iSaveLoopHyphenCnt = 10 - iSaveLoopResultCnt;
-                        for (int k = 0; k < iSaveLoopHyphenCnt; k++)
-                        {
-                            iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
-                            InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
-                        }
-                    }
-                    else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 15)
-                    {
-                        iSaveLoopHyphenCnt = 15 - iSaveLoopResultCnt;
-                        for (int k = 0; k < iSaveLoopHyphenCnt; k++)
-                        {
-                            iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
-                            InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
-                        }
-                    }
-                    else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 20)
-                    {
-                        iSaveLoopHyphenCnt = 20 - iSaveLoopResultCnt;
-                        for (int k = 0; k < iSaveLoopHyphenCnt; k++)
-                        {
-                            iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
-                            InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
-                        }
-                    }
-                    else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 25)
-                    {
-                        iSaveLoopHyphenCnt = 25 - iSaveLoopResultCnt;
-                        for (int k = 0; k < iSaveLoopHyphenCnt; k++)
-                        {
-                            iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
-                            InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
-                        }
-                    }
-                    else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 30)
-                    {
-                        iSaveLoopHyphenCnt = 30 - iSaveLoopResultCnt;
-                        for (int k = 0; k < iSaveLoopHyphenCnt; k++)
-                        {
-                            iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
-                            InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
-                        }
-                    }
+                    /*
+                     if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 5)
+                     {
+                         iSaveLoopHyphenCnt = 5 - iSaveLoopResultCnt;
+                         for (int k = 0; k < iSaveLoopHyphenCnt; k++)
+                         {
+                             iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
+                             InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
+                         }
+                     }
+                     else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 10)
+                     {
+                         iSaveLoopHyphenCnt = 10 - iSaveLoopResultCnt;
+                         for (int k = 0; k < iSaveLoopHyphenCnt; k++)
+                         {
+                             iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
+                             InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
+                         }
+                     }
+                     else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 15)
+                     {
+                         iSaveLoopHyphenCnt = 15 - iSaveLoopResultCnt;
+                         for (int k = 0; k < iSaveLoopHyphenCnt; k++)
+                         {
+                             iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
+                             InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
+                         }
+                     }
+                     else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 20)
+                     {
+                         iSaveLoopHyphenCnt = 20 - iSaveLoopResultCnt;
+                         for (int k = 0; k < iSaveLoopHyphenCnt; k++)
+                         {
+                             iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
+                             InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
+                         }
+                     }
+                     else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 25)
+                     {
+                         iSaveLoopHyphenCnt = 25 - iSaveLoopResultCnt;
+                         for (int k = 0; k < iSaveLoopHyphenCnt; k++)
+                         {
+                             iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
+                             InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
+                         }
+                     }
+                     else if (iSaveLoopResultCnt > 0 && iSaveLoopResultCnt < 30)
+                     {
+                         iSaveLoopHyphenCnt = 30 - iSaveLoopResultCnt;
+                         for (int k = 0; k < iSaveLoopHyphenCnt; k++)
+                         {
+                             iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
+                             InsertResult_HYPHEN_En(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
+                         }
+                     }
+             */
                     break;
             }
         }
@@ -2319,10 +2481,11 @@ namespace Sgs.ReportIntegration
         private void InsertResultEn(int index, string recNo, SqlTransaction trans)
         {
             cheP2Set.MainNo = recNo;
-            cheP2Set.Select(trans);
+            cheP2Set.Select_Che2Sampleident_HYPEN_EN(trans);
 
             if (cheP2Set.Empty == false)
             {
+                //ResultEnSet.MainNo = recNo;
                 ResultEnSet.MainNo = MainSet.RecNo;
                 //ResultEnSet.No = index + 1;
                 ResultEnSet.No = index;
@@ -2330,214 +2493,73 @@ namespace Sgs.ReportIntegration
 
                 for (int i = 0; i < cheP2Set.RowCount; i++)
                 {
-                    cheP2Set.Fetch(i);
+                    cheP2Set.Fetch(i, 0, "Integr_EN");
 
-                    switch (i)
+                    if (cheP2Set.Sch_Code.Equals("HCEEENICP_15_02"))
                     {
-                        case 0:
-                            ResultEnSet.Mg = cheP2Set.FormatValue;
-                            break;
-
-                        case 1:
-                            ResultEnSet.Ai = cheP2Set.FormatValue;
-                            break;
-
-                        case 2:
-                            ResultEnSet.As = cheP2Set.FormatValue;
-                            break;
-
-                        case 3:
-                            ResultEnSet.B = cheP2Set.FormatValue;
-                            break;
-
-                        case 4:
-                            ResultEnSet.Ba = cheP2Set.FormatValue;
-                            break;
-
-                        case 5:
-                            ResultEnSet.Cd = cheP2Set.FormatValue;
-                            break;
-
-                        case 6:
-                            ResultEnSet.Co = cheP2Set.FormatValue;
-                            break;
-
-                        case 7:
-                            //ResultEnSet.Cr = cheP2Set.FormatValue;
-                            ResultEnSet.Cr3 = cheP2Set.FormatValue;
-                            break;
-
-                        case 8:
-                            //ResultEnSet.Cr3 = cheP2Set.FormatValue;
-                            ResultEnSet.Cr4 = cheP2Set.FormatValue;
-                            break;
-
-                        case 9:
-                            //ResultEnSet.Cr4 = cheP2Set.FormatValue;
-                            ResultEnSet.Cu = cheP2Set.FormatValue;
-                            break;
-
-                        case 10:
-                            //ResultEnSet.Cu = cheP2Set.FormatValue;
-                            ResultEnSet.Hg = cheP2Set.FormatValue;
-                            break;
-
-                        case 11:
-                            //ResultEnSet.Hg = cheP2Set.FormatValue;
-                            ResultEnSet.Mn = cheP2Set.FormatValue;
-                            break;
-
-                        case 12:
-                            //ResultEnSet.Mn = cheP2Set.FormatValue;
-                            ResultEnSet.Ni = cheP2Set.FormatValue;
-                            break;
-
-                        case 13:
-                            //ResultEnSet.Ni = cheP2Set.FormatValue;
-                            ResultEnSet.Pb = cheP2Set.FormatValue;
-                            break;
-
-                        case 14:
-                            //ResultEnSet.Pb = cheP2Set.FormatValue;
-                            ResultEnSet.Sb = cheP2Set.FormatValue;
-                            break;
-
-                        case 15:
-                            //ResultEnSet.Sb = cheP2Set.FormatValue;
-                            ResultEnSet.Se = cheP2Set.FormatValue;
-                            break;
-
-                        case 16:
-                            //ResultEnSet.Se = cheP2Set.FormatValue;
-                            ResultEnSet.Sn = cheP2Set.FormatValue;
-                            break;
-
-                        case 17:
-                            //ResultEnSet.Sn = cheP2Set.FormatValue;
-                            ResultEnSet.Sr = cheP2Set.FormatValue;
-                            break;
-
-                        case 18:
-                            //ResultEnSet.Sr = cheP2Set.FormatValue;
-                            ResultEnSet.Zn = cheP2Set.FormatValue;
-                            break;
-
-                        case 19:
-                            //ResultEnSet.Zn = cheP2Set.FormatValue;
-                            ResultEnSet.Tin = cheP2Set.FormatValue;
-
-                            if (string.IsNullOrWhiteSpace(ResultEnSet.Tin))
-                            {
-                                ResultEnSet.Tin = "--";
-                            }
-                            break;
-
-                        case 20:
-                            break;
-                            /*
-                            ResultEnSet.Tin = cheP2Set.FormatValue;
-
-                            if (string.IsNullOrWhiteSpace(ResultEnSet.Tin)) 
-                            {
-                                ResultEnSet.Tin = "--";
-                            }
-                            break;
-                            */
+                        ResultEnSet.Sampleident = cheP2Set.Sampleident;
+                        ResultEnSet.Sch_Code = cheP2Set.Sch_Code;
+                        ResultEnSet.SampleDescription = cheP2Set.SampleDescription;
+                        //ResultEnSet.No = cheP2Set.No;
+                        ResultEnSet.Mg = cheP2Set.Mg;
+                        ResultEnSet.Ai = cheP2Set.Ai;
+                        ResultEnSet.Sb = cheP2Set.Sb;
+                        ResultEnSet.As = cheP2Set.As;
+                        ResultEnSet.Ba = cheP2Set.Ba;
+                        ResultEnSet.B = cheP2Set.B;
+                        ResultEnSet.Cd = cheP2Set.Cd;
+                        ResultEnSet.Cr3 = cheP2Set.Cr3;
+                        ResultEnSet.Cr6 = cheP2Set.Cr6;
+                        ResultEnSet.Co = cheP2Set.Co;
+                        ResultEnSet.Cu = cheP2Set.Cu;
+                        ResultEnSet.Pb = cheP2Set.Pb;
+                        ResultEnSet.Mn = cheP2Set.Mn;
+                        ResultEnSet.Hg = cheP2Set.Hg;
+                        ResultEnSet.Ni = cheP2Set.Ni;
+                        ResultEnSet.Se = cheP2Set.Se;
+                        ResultEnSet.Sr = cheP2Set.Sr;
+                        ResultEnSet.Sn = cheP2Set.Sn;
+                        ResultEnSet.OrgTin = cheP2Set.OrgTin;
+                        ResultEnSet.Zn = cheP2Set.Zn;
+                        ResultEnSet.Insert(trans);
+                        ResultEnSet.Insert_HYPHEN(trans);
                     }
                 }
-                ResultEnSet.Insert(trans);
-                ResultEnSet.Insert_HYPHEN(trans);
+            }
 
-                /*
+            cheP2Set.MainNo = recNo;
+            cheP2Set.Select_Che2Sampleident_HYPEN_EN_Tin(trans);
+
+            if (cheP2Set.Empty == false)
+            {
+                ResultEnSet.MainNo = MainSet.RecNo;
+                //ResultEnSet.No = index;
+
                 for (int i = 0; i < cheP2Set.RowCount; i++)
                 {
-                    cheP2Set.Fetch(i);
+                    cheP2Set.Fetch(i, 0, "Integr_EN_Tin");
 
-                    switch (i)
+                    if (cheP2Set.Sch_Code.Equals("HCEEORGANOTIN_11_01"))
                     {
-                        case 0:
-                            ResultEnSet.Ai = cheP2Set.FormatValue;
-                            break;
-
-                        case 1:
-                            ResultEnSet.As = cheP2Set.FormatValue;
-                            break;
-
-                        case 2:
-                            ResultEnSet.B = cheP2Set.FormatValue;
-                            break;
-
-                        case 3:
-                            ResultEnSet.Ba = cheP2Set.FormatValue;
-                            break;
-
-                        case 4:
-                            ResultEnSet.Cd = cheP2Set.FormatValue;
-                            break;
-
-                        case 5:
-                            ResultEnSet.Co = cheP2Set.FormatValue;
-                            break;
-
-                        case 6:
-                            ResultEnSet.Cr = cheP2Set.FormatValue;
-                            break;
-
-                        case 7:
-                            ResultEnSet.Cr3 = cheP2Set.FormatValue;
-                            break;
-
-                        case 8:
-                            ResultEnSet.Cr4 = cheP2Set.FormatValue;
-                            break;
-
-                        case 9:
-                            ResultEnSet.Cu = cheP2Set.FormatValue;
-                            break;
-
-                        case 10:
-                            ResultEnSet.Hg = cheP2Set.FormatValue;
-                            break;
-
-                        case 11:
-                            ResultEnSet.Mn = cheP2Set.FormatValue;
-                            break;
-
-                        case 12:
-                            ResultEnSet.Ni = cheP2Set.FormatValue;
-                            break;
-
-                        case 13:
-                            ResultEnSet.Pb = cheP2Set.FormatValue;
-                            break;
-
-                        case 14:
-                            ResultEnSet.Sb = cheP2Set.FormatValue;
-                            break;
-
-                        case 15:
-                            ResultEnSet.Se = cheP2Set.FormatValue;
-                            break;
-
-                        case 16:
-                            ResultEnSet.Sn = cheP2Set.FormatValue;
-                            break;
-
-                        case 17:
-                            ResultEnSet.Sr = cheP2Set.FormatValue;
-                            break;
-
-                        case 18:
-                            ResultEnSet.Zn = cheP2Set.FormatValue;
-                            break;
-
-                        case 19:
-                            ResultEnSet.Tin = cheP2Set.FormatValue;
-                            break;
+                        // Sampleident의 맨마지막 값 추후에 10의 자리인 경우도 찾아야 한다면 10자리의 수가 0인지 체크하여 가져오기. 그 이후도 동일한 로직으로                        
+                        ResultEnSet.Sampleident = cheP2Set.Sampleident;
+                        ResultEnSet.Sch_Code = cheP2Set.Sch_Code;
+                        ResultEnSet.SampleDescription = cheP2Set.SampleDescription;
+                        ResultEnSet.No = cheP2Set.No;
+                        ResultEnSet.DMT = cheP2Set.DMT;
+                        ResultEnSet.MET = cheP2Set.MET;
+                        ResultEnSet.DProT = cheP2Set.DProT;
+                        ResultEnSet.MBT = cheP2Set.MBT;
+                        ResultEnSet.DBT = cheP2Set.DBT;
+                        ResultEnSet.TBT = cheP2Set.TBT;
+                        ResultEnSet.MOT = cheP2Set.MOT;
+                        ResultEnSet.DOT = cheP2Set.DOT;
+                        ResultEnSet.TeBT = cheP2Set.TeBT;
+                        ResultEnSet.DPhT = cheP2Set.DPhT;
+                        ResultEnSet.TPhT = cheP2Set.TPhT;
+                        ResultEnSet.Insert_Result_Tin(trans);
                     }
                 }
-                */
-                //ResultEnSet.Insert(trans);
             }
         }
 

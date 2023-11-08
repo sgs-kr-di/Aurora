@@ -40,6 +40,8 @@ namespace Sgs.ReportIntegration
 
         private IntegrationT6DataSet integT6Set;
 
+        private IntegrationT61DataSet integT61Set;
+
         private IntegrationT7DataSet integT7Set;
 
         private IntegrationLimitEnDataSet integLimitEnSet;
@@ -93,6 +95,7 @@ namespace Sgs.ReportIntegration
             integT4Set = new IntegrationT4DataSet(AppRes.DB.Connect, null, null);
             integT5Set = new IntegrationT5DataSet(AppRes.DB.Connect, null, null);
             integT6Set = new IntegrationT6DataSet(AppRes.DB.Connect, null, null);
+            integT61Set = new IntegrationT61DataSet(AppRes.DB.Connect, null, null);
             integT7Set = new IntegrationT7DataSet(AppRes.DB.Connect, null, null);
             integLimitEnSet = new IntegrationLimitEnDataSet(AppRes.DB.Connect, null, null);
             integResultEnSet = new IntegrationResultEnDataSet(AppRes.DB.Connect, null, null);
@@ -147,6 +150,7 @@ namespace Sgs.ReportIntegration
             integQuery.T4Set = integT4Set;
             integQuery.T5Set = integT5Set;
             integQuery.T6Set = integT6Set;
+            integQuery.T61Set = integT61Set;
             integQuery.T7Set = integT7Set;
             integQuery.LimitEnSet = integLimitEnSet;
             integQuery.ResultEnSet = integResultEnSet;
@@ -407,6 +411,7 @@ namespace Sgs.ReportIntegration
             this.Cursor = Cursors.WaitCursor;
 
             integReportSet.RecNo = integMainSet.RecNo;
+            integReportSet.RecNo_Chemical = profJobSet.JobNo;
             integReportSet.Select();
 
             integReportSet.DataSet.Tables[0].TableName = "P1";
@@ -456,6 +461,29 @@ namespace Sgs.ReportIntegration
             integReportSet.DataSet.Tables[43].TableName = "LT_Organic";
             integReportSet.DataSet.Tables[44].TableName = "SBLEADLT_Metal_US";
             integReportSet.DataSet.Tables[45].TableName = "SBLEADRT_Metal_US";
+            integReportSet.DataSet.Tables[46].TableName = "T61";
+            integReportSet.DataSet.Tables[47].TableName = "RT_TIN";
+            integReportSet.DataSet.Tables[48].TableName = "RT_TIN4";
+            integReportSet.DataSet.Tables[49].TableName = "RT_TIN7";
+            integReportSet.DataSet.Tables[50].TableName = "RT_TIN10";
+            integReportSet.DataSet.Tables[51].TableName = "RT_TIN13";
+            integReportSet.DataSet.Tables[52].TableName = "RT_TIN16";
+
+            integReportSet.DataSet.Tables[53].TableName = "LT_MET";
+            integReportSet.DataSet.Tables[54].TableName = "LT_DBT";
+            integReportSet.DataSet.Tables[55].TableName = "LT_TBT";
+            integReportSet.DataSet.Tables[56].TableName = "LT_TeBT";
+            integReportSet.DataSet.Tables[57].TableName = "LT_MOT";
+            integReportSet.DataSet.Tables[58].TableName = "LT_DOT";
+            integReportSet.DataSet.Tables[59].TableName = "LT_DProT";
+            integReportSet.DataSet.Tables[60].TableName = "LT_DPhT";
+            integReportSet.DataSet.Tables[61].TableName = "LT_TPhT";
+            integReportSet.DataSet.Tables[62].TableName = "LT_DMT";
+            integReportSet.DataSet.Tables[63].TableName = "LT_MBT";
+
+            integReportSet.DataSet.Tables[64].TableName = "RT_TIN1";
+            integReportSet.DataSet.Tables[65].TableName = "RT_TIN6";
+            integReportSet.DataSet.Tables[66].TableName = "RT_TIN11";
 
             BindingSource bind = new BindingSource();
             bind.DataSource = integReportSet.DataSet;
