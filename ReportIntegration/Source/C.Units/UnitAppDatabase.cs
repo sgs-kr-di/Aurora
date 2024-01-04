@@ -817,7 +817,7 @@ namespace Sgs.ReportIntegration
                 $" select * from TB_INTEGT4 where fk_integmainno='{RecNo}'; " +
                 $" select * from TB_INTEGT5 where fk_integmainno='{RecNo}'; " +
                 $" select * from TB_INTEGT6 where fk_integmainno='{RecNo}' and result <> ''; " +
-                $" select * from TB_INTEGT7 where fk_integmainno='{RecNo}'; " +
+                $" select * from TB_INTEGT7 where fk_integmainno='{RecNo}' and no >= 1 and no <= 15; " +
                 $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}'; " +
                 //$" select top 5 * from TB_INTEGRESULT_EN where fk_integmainno='{RecNo}'; " +
                 $" select top 5 * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}'; " +
@@ -875,12 +875,12 @@ namespace Sgs.ReportIntegration
 
                 $" select * from TB_INTEGT61 where fk_integmainno='{RecNo}' and result <> '' ; " +
 
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 1 AND 3;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 4 AND 6;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 7 AND 9;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 10 AND 12;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 13 AND 15;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 16 AND 18;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 1 AND 1;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 2 AND 2;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 3 AND 3;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 4 AND 4;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 5 AND 5;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 6 AND 6;" +
 
                 // Report limit  출력 - 시작
                 $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(MET)%'; " +
@@ -895,11 +895,20 @@ namespace Sgs.ReportIntegration
                 $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DMT)%'; " +
                 $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(MBT)%'; " +
 
+
+                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=1 and no<=5);   " +
+                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=6 and no<=10);   " +
+                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=11 and no<=15);   " +
+                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=16 and no<=20);   " +
+                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=21 and no<=25);   " +
+                $" select * from TB_INTEGT7 where fk_integmainno='{RecNo}' and no >= 16 and no <= 30; ";
+            /*
                 $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 1 AND 5;" +
                 $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 6 AND 10;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 11 AND 15;";
-
-
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 11 AND 15;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 16 AND 20;" +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 21 AND 25;"
+             */
 
             dataSet.Clear();
             dataSet.Tables.Clear();
@@ -1116,6 +1125,7 @@ namespace Sgs.ReportIntegration
             }
             catch (Exception e)
             {
+                Console.WriteLine(sql);
                 RollbackTrans(trans, e);
             }
         }
@@ -2376,10 +2386,15 @@ namespace Sgs.ReportIntegration
                 Cr6 = "N.D.";
             }
 
-            if (string.IsNullOrWhiteSpace(OrgTin) || OrgTin.Equals("N.D."))
-            {
-                OrgTin = "--";
-            }
+            //if (string.IsNullOrWhiteSpace(OrgTin) || OrgTin.Equals("N.D."))
+            //{
+            //    OrgTin = "--";
+            //}
+
+            //if (string.IsNullOrWhiteSpace(OrgTin))
+            //{
+            //    OrgTin = "--";
+            //}
 
             string sql =
                 $" insert into TB_INTEGRESULT_EN (fk_integmainno, sampleident, sch_code, sam_description, no, mg, ai, sb, \"as\", ba, b, cd, cr3, cr6, co, cu, pb, mn, hg, ni, se, sr ,sn, tin, zn)" +
@@ -2404,6 +2419,16 @@ namespace Sgs.ReportIntegration
 
         public void Insert_HYPHEN(SqlTransaction trans = null)
         {
+            if (string.IsNullOrWhiteSpace(Cr6))
+            {
+                Cr6 = "N.D.";
+            }
+
+            if (string.IsNullOrWhiteSpace(OrgTin))
+            {
+                OrgTin = "--";
+            }
+
             string sql =
                 $" insert into TB_INTEGRESULT_HYPHEN_EN (fk_integmainno, sampleident, sch_code, sam_description, no, mg, ai, sb, \"as\", ba, b, cd, cr3, cr6, co, cu, pb, mn, hg, ni, se, sr ,sn, tin, zn)" +
                 $" values " +
@@ -3044,7 +3069,11 @@ namespace Sgs.ReportIntegration
                 $" select * from TB_PHYRPTVIEW where fk_phymainno='{RecNo}' and page='5'; " +
                 $" select * from TB_PHYRPTVIEW where fk_phymainno='{RecNo}' and page='6'; " +
                 $" select * from TB_PHYP6 where fk_phymainno='{RecNo}'; " +
-                $" select * from TB_PHYP45 where fk_phymainno='{RecNo}' and clause = '4.5'; ";
+                $" select * from TB_PHYP45 where fk_phymainno='{RecNo}' and clause = '4.5'; " +
+                $" select * from TB_PHYRPTVIEW where fk_phymainno='{RecNo}' and page='5_Note1'; " +
+                $" select * from TB_PHYRPTVIEW where fk_phymainno='{RecNo}' and page='7'; " +
+                $" select * from TB_PHYP7 where fk_phymainno='{RecNo}'; " +
+            $" select * from TB_PHYRPTVIEW where fk_phymainno='{RecNo}' and page='4_Note1'; ";
 
             dataSet.Clear();
             dataSet.Tables.Clear();
@@ -4097,6 +4126,8 @@ namespace Sgs.ReportIntegration
 
         public string sSample { get; set; }
 
+        public string sResult { get; set; }
+
         public string sColumnDesc_4_3_7_Report_View { get; set; }
 
         public string sColumnDesc_4_3_7_Report_Page { get; set; }
@@ -4282,7 +4313,7 @@ namespace Sgs.ReportIntegration
             string sql =
                 $" insert into TB_PHYP41 values " +
                 $" ('{MainNo}', {iColumnNo}, {Convert.ToInt32(bColumnLine)}, " +
-                $" '{sSample.Replace("'", "''")}', '{sBurningRate.Replace("'", "''")}'); " +
+                $" '{sSample.Replace("'", "''")}', '{sBurningRate.Replace("'", "''")}', '{sResult.Replace("'", "''")}'); " +
                 $" select cast(scope_identity() as bigint); ";
 
             SetTrans(trans);
@@ -4303,7 +4334,8 @@ namespace Sgs.ReportIntegration
         {
             string sql =
                 $" insert into TB_PHYRPTVIEW values " +
-                $" ('{MainNo}', {sColumnDesc_4_3_7_Report_View}, {sColumnDesc_4_3_7_Report_Page} ); ";
+                $" ('{MainNo}', {sColumnDesc_4_3_7_Report_View}, '{sColumnDesc_4_3_7_Report_Page}' ); " +
+                $" select cast(scope_identity() as bigint); ";
 
             SetTrans(trans);
 
@@ -4311,7 +4343,7 @@ namespace Sgs.ReportIntegration
             {
                 BeginTrans(trans);
                 command.CommandText = sql;
-                command.ExecuteNonQuery();
+                RecNo = (Int64)command.ExecuteScalar();
                 CommitTrans(trans);
             }
             catch (Exception e)
@@ -4918,6 +4950,8 @@ namespace Sgs.ReportIntegration
 
         public string BurningRate { get; set; }
 
+        public string Result { get; set; }
+
         public PhysicalP41DataSet(SqlConnection connect, SqlCommand command, SqlDataAdapter adapter)
             : base(connect, command, adapter)
         {
@@ -4939,7 +4973,7 @@ namespace Sgs.ReportIntegration
             string sql =
                 $" insert into TB_PHYP41 values " +
                 $" ('{MainNo}', {No}, {Convert.ToInt32(Line)}, " +
-                $" '{Sample.Replace("'", "''")}', '{BurningRate.Replace("'", "''")}'); " +
+                $" '{Sample.Replace("'", "''")}', '{BurningRate.Replace("'", "''")}', '{Result.Replace("'", "''")}'); " +
                 $" select cast(scope_identity() as bigint); ";
 
             SetTrans(trans);
@@ -5002,6 +5036,7 @@ namespace Sgs.ReportIntegration
             No = Convert.ToInt32(row["no"]);
             Line = Convert.ToBoolean(row["line"]);
             Sample = Convert.ToString(row["sample"]);
+            Result = Convert.ToString(row["result"]);
             BurningRate = Convert.ToString(row["burningrate"]);
         }
     }
@@ -5603,9 +5638,13 @@ namespace Sgs.ReportIntegration
 
         public int iReportView { get; set; }
 
+        public string sPage { get; set; }
+
         public string sPhyComplete { get; set; }
 
         public string sPhyComplete_GiSool { get; set; }
+
+        public string sResult { get; set; }
 
         public PhysicalP5DataSet(SqlConnection connect, SqlCommand command, SqlDataAdapter adapter)
             : base(connect, command, adapter)
@@ -5682,7 +5721,7 @@ namespace Sgs.ReportIntegration
         {
             string sql =
                 $" insert into TB_PHYRPTVIEW values " +
-                $" ('{MainNo}', {iReportView} ); ";
+                $" ('{MainNo}', {iReportView}, '{sPage}' ); ";
 
             SetTrans(trans);
 
@@ -5713,6 +5752,27 @@ namespace Sgs.ReportIntegration
                 command.CommandText = sql;
                 command.ExecuteNonQuery();
                 //RecNo = (Int64)command.ExecuteScalar();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Update_P5_Result(SqlTransaction trans = null)
+        {
+            string sql =
+                $" update TB_PHYP5 set result='{sResult}' " +
+                $" where fk_phymainno='{MainNo}' and line = '1'";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
                 CommitTrans(trans);
             }
             catch (Exception e)
@@ -5976,6 +6036,103 @@ namespace Sgs.ReportIntegration
         }
     }
 
+    public class PhysicalP7DataSet : UlSqlDataSet
+    {
+        public Int64 RecNo { get; set; }
+
+        public string MainNo { get; set; }
+
+        public string sBasicInformation { get; set; }
+
+        public string sHowtoComply { get; set; }
+
+        public string sResults { get; set; }
+
+        public PhysicalP7DataSet(SqlConnection connect, SqlCommand command, SqlDataAdapter adapter)
+            : base(connect, command, adapter)
+        {
+        }
+
+        public void Select(SqlTransaction trans = null)
+        {
+            SetTrans(trans);
+            command.CommandText =
+                $" select * from TB_PHYP7 " +
+                $" where fk_phymainno='{MainNo}' " +
+                $" order by fk_phymainno asc ";
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
+        public void Insert(SqlTransaction trans = null)
+        {
+            string sql =
+                $" insert into TB_PHYP7 values " +
+                $" ('{MainNo}', " +
+                $" '{sBasicInformation.Replace("'", "''")}', '{sHowtoComply.Replace("'", "''")}', '{sResults.Replace("'", "''")}'); " +
+                $" select cast(scope_identity() as bigint); ";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                RecNo = (Int64)command.ExecuteScalar();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+                
+        public void Delete(SqlTransaction trans = null)
+        {
+            string sql =
+                $" delete from TB_PHYP7          " +
+                $" where fk_phymainno='{MainNo}' ";
+
+            SetTrans(trans);
+
+            try
+            {
+                BeginTrans(trans);
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+                CommitTrans(trans);
+            }
+            catch (Exception e)
+            {
+                RollbackTrans(trans, e);
+            }
+        }
+
+        public void Fetch(int index = 0, int tableNo = 0)
+        {
+            if (index < GetRowCount(tableNo))
+            {
+                Fetch(dataSet.Tables[tableNo].Rows[index]);
+            }
+            else
+            {
+                RecNo = 0;
+                MainNo = "";
+                sBasicInformation = "";
+                sHowtoComply = "";
+                sResults = "";
+            }
+        }
+
+        public void Fetch(DataRow row)
+        {
+            RecNo = Convert.ToInt64(row["pk_recno"]);
+            MainNo = Convert.ToString(row["fk_phymainno"]);
+            sBasicInformation = Convert.ToString(row["basicinformation"]);
+            sHowtoComply = Convert.ToString(row["howtocomply"]);
+            sResults = Convert.ToString(row["results"]);
+        }
+    }
     public class PhysicalImageDataSet : UlSqlDataSet
     {
         public string RecNo { get; set; }
@@ -6475,6 +6632,16 @@ namespace Sgs.ReportIntegration
 
             SetTrans(trans);
             command.CommandText = sql;
+            dataSet.Clear();
+            dataAdapter.Fill(dataSet);
+        }
+
+        public void Select_Chep2(string recno, SqlTransaction trans = null)
+        {            
+            command.CommandText =
+                $" select * from TB_CHEP2_HYPHEN_EN " +
+                $" where fk_chemainno = '{recno}'";
+            SetTrans(trans);
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
         }
@@ -7025,6 +7192,11 @@ namespace Sgs.ReportIntegration
             if (string.IsNullOrWhiteSpace(Cr6))
             {
                 Cr6 = "N.D.";
+            }
+
+            if (string.IsNullOrWhiteSpace(OrgTin))
+            {
+                OrgTin = "N.D.";
             }
 
             string sql =
@@ -7955,7 +8127,7 @@ namespace Sgs.ReportIntegration
             //dataAdapter.
 
             string sql =
-                " SET ARITHABORT ON " +
+                //" SET ARITHABORT ON " +
                 " select t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
                 "     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
                 "     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
@@ -7981,7 +8153,7 @@ namespace Sgs.ReportIntegration
                     case EReportType.Physical:
                         if (string.IsNullOrWhiteSpace(ItemNo) == false)
                         {
-                            sql += $" and t1.orderno like '{ItemNo}%%' and (t1.orderno like '%%-ASTM' or t1.orderno like '%%-EN' OR t1.orderno LIKE '%%-EN/UKCA') ";
+                            sql += $" and t1.orderno like '{ItemNo}%%' and (REPLACE(t1.orderno,' ','') like '%%-ASTM' or REPLACE(t1.orderno,' ','') like '%%-EN' OR REPLACE(t1.orderno,' ','') LIKE '%%-EN/UKCA') ";
                         }
                         if (AreaNo != EReportArea.None)
                         {
@@ -8014,6 +8186,7 @@ namespace Sgs.ReportIntegration
                         }
                         //sql += $" and t1.pro_job not in (select distinct pro_job from PROFJOB_CUID_SCHEME_ANALYTE where formattedvalue is null and finalvalue is null)";
                         sql += $" AND (t1.FINALISED >= '1900-01-01' Or t1.completed >= '1900-01-01')";
+                        sql += $" AND NOT (t1.pro_proj LIKE '%CI%')";
                         break;
 
                     case EReportType.Integration:
@@ -8025,7 +8198,7 @@ namespace Sgs.ReportIntegration
                         {
                             sql += $" and t1.orderno like '%%{AreaNo.ToDescription()}%%' ";
                         }
-                        sql += $" and t1.orderno like '%%COMBINE' ";
+                        sql += $" and t1.orderno like '%%COMBINE%%' ";
                         break;
                 }
 
@@ -8043,12 +8216,12 @@ namespace Sgs.ReportIntegration
                 }
             }
             sql += $" order by t1.pro_proj desc ";
-            sql += $" SET ARITHABORT OFF ";
+            //sql += $" SET ARITHABORT OFF ";
 
             SetTrans(trans);
             command.CommandText = sql;
             dataSet.Clear();
-            dataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+            //dataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
 
             dataAdapter.Fill(dataSet);
         }
@@ -8684,7 +8857,7 @@ namespace Sgs.ReportIntegration
                         {
                             string[] strs3 = strs2[1].Split(' ');
 
-                            if (strs3.Length == 2)
+                            if (strs3.Length >= 2)
                             {
                                 switch (strs3[0].ToUpper().Trim())
                                 {

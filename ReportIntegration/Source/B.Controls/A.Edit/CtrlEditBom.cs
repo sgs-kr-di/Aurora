@@ -482,7 +482,7 @@ namespace Sgs.ReportIntegration
             integQuery.ProfJobSet.JobNo = "";
             integQuery.ProfJobSet.AreaNo = bomRec.AreaNo;
             integQuery.ProfJobSet.ItemNo = col.Code;
-            integQuery.ProfJobSet.ExtendASTM = false;
+            integQuery.ProfJobSet.ExtendASTM = false;            
             //integQuery.ProfJobSet.Select(trans);
             //integQuery.ProfJobSet.Select_Aurora(trans);
             integQuery.ProfJobSet.Select_KRSCT01(trans);
@@ -580,64 +580,72 @@ namespace Sgs.ReportIntegration
             string sProjJobNo = "";
             string extendJobNo = "";
 
-            cheQuery.ProfJobSet.Type = EReportType.Chemical;
-            cheQuery.ProfJobSet.JobNo = "";
-            cheQuery.ProfJobSet.AreaNo = bomSet.AreaNo;
-            cheQuery.ProfJobSet.ItemNo = col.MaterialNo;
-            cheQuery.ProfJobSet.ExtendASTM = true;
-
-            //cheQuery.ProfJobSet.Select_Aurora(trans);
-            cheQuery.ProfJobSet.Select_KRSCT01(trans);
-
-            int rowCount = cheQuery.ProfJobSet.RowCount;
-            if (rowCount > 0)
+            try
             {
-                cheQuery.ProfJobSet.Fetch(0);
-                jobNo = cheQuery.ProfJobSet.JobNo;
-                sProjJobNo = cheQuery.ProfJobSet.FileNo;
+                cheQuery.ProfJobSet.Type = EReportType.Chemical;
+                cheQuery.ProfJobSet.JobNo = "";
+                cheQuery.ProfJobSet.AreaNo = bomSet.AreaNo;
+                cheQuery.ProfJobSet.ItemNo = col.MaterialNo;
+                cheQuery.ProfJobSet.ExtendASTM = true;
 
-                if (string.IsNullOrWhiteSpace(sProjJobNo) == false)
+                //cheQuery.ProfJobSet.Select_Aurora(trans);
+                cheQuery.ProfJobSet.Select_KRSCT01(trans);
+
+                int rowCount = cheQuery.ProfJobSet.RowCount;
+                if (rowCount > 0)
                 {
-                    cheMainSet.RecNo = jobNo;
-                    cheMainSet.ReportApproval = EReportApproval.None;
-                    cheMainSet.AreaNo = EReportArea.None;
-                    cheMainSet.From = "";
-                    cheMainSet.To = "";
-                    cheMainSet.MaterialNo = "";
-                    cheMainSet.Select(trans);
+                    cheQuery.ProfJobSet.Fetch(0);
+                    jobNo = cheQuery.ProfJobSet.JobNo;
+                    sProjJobNo = cheQuery.ProfJobSet.FileNo;
 
-                    if (cheMainSet.Empty == true)
+                    if (string.IsNullOrWhiteSpace(sProjJobNo) == false)
                     {
-                        extendJobNo = sProjJobNo;
+                        cheMainSet.RecNo = jobNo;
+                        cheMainSet.ReportApproval = EReportApproval.None;
+                        cheMainSet.AreaNo = EReportArea.None;
+                        cheMainSet.From = "";
+                        cheMainSet.To = "";
+                        cheMainSet.MaterialNo = "";
+                        cheMainSet.Select(trans);
 
-                        // Final, Formatted가 있는 Insert
-                        if (string.IsNullOrWhiteSpace(extendJobNo) == false)
+                        if (cheMainSet.Empty == true)
                         {
-                            //cheQuery.Insert(bomSet.AreaNo, extendJobNo, trans);
-                            cheQuery.Insert_Chemical_Import(bomSet.AreaNo, jobNo, extendJobNo, trans);
-                            //cheQuery.Insert(extendJobNo, trans);
-                            AppRes.TotalLog["NOTE"] = $"Created chemical report - {jobNo}, {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";
+                            extendJobNo = sProjJobNo;
+
+                            // Final, Formatted가 있는 Insert
+                            if (string.IsNullOrWhiteSpace(extendJobNo) == false)
+                            {
+                                //cheQuery.Insert(bomSet.AreaNo, extendJobNo, trans);
+                                cheQuery.Insert_Chemical_Import(bomSet.AreaNo, jobNo, extendJobNo, trans);
+                                //cheQuery.Insert(extendJobNo, trans);
+                                AppRes.TotalLog["NOTE"] = $"Created chemical report - {jobNo}, {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";
+                            }
+                        }
+                        else
+                        {
+                            AppRes.TotalLog["ERROR"] = $"Creating chemical report is failed because that already exists in DB - {jobNo}, {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";
                         }
                     }
-                    else
-                    {
-                        AppRes.TotalLog["ERROR"] = $"Creating chemical report is failed because that already exists in DB - {jobNo}, {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";
-                    }
                 }
+                else
+                {
+                    AppRes.TotalLog["ERROR"] = $"There is no Chemical JobNo in DB - {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";
+                }
+
+                partSet.ProductNo = productSet.RecNo;
+                partSet.JobNo = jobNo;
+                partSet.MaterialNo = col.MaterialNo;
+                partSet.Name = col.Name;
+                partSet.MaterialName = col.MaterialName;
+                partSet.Insert(trans);
+
+                AppRes.TotalLog["NOTE"] = $"Inserted Part in DB - {jobNo}, {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";                
             }
-            else
+            catch (Exception e) 
             {
-                AppRes.TotalLog["ERROR"] = $"There is no Chemical JobNo in DB - {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";
+                MessageBox.Show("Message : " + e.Message.ToString() + Environment.NewLine + "Source : " + e.Source.ToString());
+                AppRes.DB.RollbackTrans();
             }
-
-            partSet.ProductNo = productSet.RecNo;
-            partSet.JobNo = jobNo;
-            partSet.MaterialNo = col.MaterialNo;
-            partSet.Name = col.Name;
-            partSet.MaterialName = col.MaterialName;
-            partSet.Insert(trans);
-
-            AppRes.TotalLog["NOTE"] = $"Inserted Part in DB - {jobNo}, {bomSet.AreaNo.ToDescription()}, {col.MaterialNo}, {col.Name}";
 
             return (string.IsNullOrWhiteSpace(jobNo) == false) ? true : false;
         }

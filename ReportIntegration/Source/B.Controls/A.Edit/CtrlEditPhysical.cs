@@ -49,6 +49,8 @@ namespace Sgs.ReportIntegration
 
         private PhysicalP6DataSet phyP6Set;
 
+        private PhysicalP7DataSet phyP7Set;
+
         private PhysicalReportDataSet phyReportSet;
 
         private ProfJobDataSet profJobSet;
@@ -83,6 +85,7 @@ namespace Sgs.ReportIntegration
             phyP45Set = new PhysicalP45DataSet(AppRes.DB.Connect, null, null);
             phyP5Set = new PhysicalP5DataSet(AppRes.DB.Connect, null, null);
             phyP6Set = new PhysicalP6DataSet(AppRes.DB.Connect, null, null);
+            phyP7Set = new PhysicalP7DataSet(AppRes.DB.Connect, null, null);
             phyReportSet = new PhysicalReportDataSet(AppRes.DB.Connect, null, null);
             profJobSet = new ProfJobDataSet(AppRes.DB.Connect, null, null);
             productSet = new ProductDataSet(AppRes.DB.Connect, null, null);
@@ -120,6 +123,7 @@ namespace Sgs.ReportIntegration
             phyQuery.P45Set = phyP45Set;
             phyQuery.P5Set = phyP5Set;
             phyQuery.P6Set = phyP6Set;
+            phyQuery.P7Set = phyP7Set;
             phyQuery.ProfJobSet = profJobSet;
             phyQuery.CtrlUs = ctrlUs;
             phyQuery.CtrlEu = ctrlEu;
@@ -396,6 +400,10 @@ namespace Sgs.ReportIntegration
             phyReportSet.DataSet.Tables[9].TableName = "PReportView_Page6";
             phyReportSet.DataSet.Tables[10].TableName = "P6";
             phyReportSet.DataSet.Tables[11].TableName = "P45";
+            phyReportSet.DataSet.Tables[12].TableName = "PReportView_Page5_1";
+            phyReportSet.DataSet.Tables[13].TableName = "PReportView_Page7";
+            phyReportSet.DataSet.Tables[14].TableName = "P7";
+            phyReportSet.DataSet.Tables[15].TableName = "PReportView_Page4_1";
 
             BindingSource bind = new BindingSource();
             bind.DataSource = phyReportSet.DataSet;

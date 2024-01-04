@@ -131,6 +131,8 @@
             this.p4CheckEdit = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
             this.p4FlameSampleColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.p4SampleTextEdit = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
+            this.p4ResultColumn = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.p4ResultTextEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
             this.p4FlameBurningRateColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.p4BurnningRateComboEdit = new DevExpress.XtraEditors.Repository.RepositoryItemComboBox();
             this.p4FlameNoColumn = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -217,6 +219,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.p4FlameGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4CheckEdit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4SampleTextEdit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.p4ResultTextEdit1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4BurnningRateComboEdit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4BurningRateTextEdit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4Desc1Edit.Properties)).BeginInit();
@@ -1639,7 +1642,8 @@
             this.p4SampleTextEdit,
             this.p4BurningRateTextEdit,
             this.p4CheckEdit,
-            this.p4BurnningRateComboEdit});
+            this.p4BurnningRateComboEdit,
+            this.p4ResultTextEdit1});
             this.p4FlameGrid.Size = new System.Drawing.Size(540, 349);
             this.p4FlameGrid.TabIndex = 1;
             this.p4FlameGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
@@ -1647,30 +1651,31 @@
             // 
             // p4FlameGridView
             // 
-            this.p4FlameGridView.Appearance.EvenRow.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.EvenRow.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.EvenRow.Options.UseFont = true;
             this.p4FlameGridView.Appearance.FixedLine.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.FocusedCell.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.FocusedCell.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.FocusedCell.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.FocusedRow.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.FocusedRow.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.FocusedRow.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.HeaderPanel.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.HeaderPanel.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.HeaderPanel.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.HideSelectionRow.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.HideSelectionRow.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.HideSelectionRow.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.OddRow.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.OddRow.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.OddRow.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.Preview.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.Preview.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.Preview.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.Row.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.Row.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.Row.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.SelectedRow.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.SelectedRow.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.SelectedRow.Options.UseFont = true;
-            this.p4FlameGridView.Appearance.ViewCaption.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameGridView.Appearance.ViewCaption.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameGridView.Appearance.ViewCaption.Options.UseFont = true;
             this.p4FlameGridView.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
             this.p4FlameLineColumn,
             this.p4FlameSampleColumn,
+            this.p4ResultColumn,
             this.p4FlameBurningRateColumn,
             this.p4FlameNoColumn});
             this.p4FlameGridView.CustomizationFormBounds = new System.Drawing.Rectangle(1710, 580, 210, 186);
@@ -1691,11 +1696,11 @@
             // 
             // p4FlameLineColumn
             // 
-            this.p4FlameLineColumn.AppearanceCell.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameLineColumn.AppearanceCell.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameLineColumn.AppearanceCell.Options.UseFont = true;
             this.p4FlameLineColumn.AppearanceCell.Options.UseTextOptions = true;
             this.p4FlameLineColumn.AppearanceCell.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
-            this.p4FlameLineColumn.AppearanceHeader.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameLineColumn.AppearanceHeader.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameLineColumn.AppearanceHeader.Options.UseFont = true;
             this.p4FlameLineColumn.AppearanceHeader.Options.UseTextOptions = true;
             this.p4FlameLineColumn.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
@@ -1733,11 +1738,11 @@
             // 
             // p4FlameSampleColumn
             // 
-            this.p4FlameSampleColumn.AppearanceCell.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameSampleColumn.AppearanceCell.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameSampleColumn.AppearanceCell.Options.UseFont = true;
             this.p4FlameSampleColumn.AppearanceCell.Options.UseTextOptions = true;
             this.p4FlameSampleColumn.AppearanceCell.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
-            this.p4FlameSampleColumn.AppearanceHeader.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameSampleColumn.AppearanceHeader.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameSampleColumn.AppearanceHeader.Options.UseFont = true;
             this.p4FlameSampleColumn.AppearanceHeader.Options.UseTextOptions = true;
             this.p4FlameSampleColumn.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
@@ -1769,13 +1774,46 @@
             this.p4SampleTextEdit.MaxLength = 50;
             this.p4SampleTextEdit.Name = "p4SampleTextEdit";
             // 
+            // p4ResultColumn
+            // 
+            this.p4ResultColumn.AppearanceCell.Options.UseTextOptions = true;
+            this.p4ResultColumn.AppearanceCell.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
+            this.p4ResultColumn.AppearanceHeader.Options.UseTextOptions = true;
+            this.p4ResultColumn.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
+            this.p4ResultColumn.Caption = "Result";
+            this.p4ResultColumn.ColumnEdit = this.p4ResultTextEdit1;
+            this.p4ResultColumn.FieldName = "Result";
+            this.p4ResultColumn.Name = "p4ResultColumn";
+            this.p4ResultColumn.OptionsColumn.AllowGroup = DevExpress.Utils.DefaultBoolean.False;
+            this.p4ResultColumn.OptionsColumn.AllowIncrementalSearch = false;
+            this.p4ResultColumn.OptionsColumn.AllowMerge = DevExpress.Utils.DefaultBoolean.False;
+            this.p4ResultColumn.OptionsColumn.AllowMove = false;
+            this.p4ResultColumn.OptionsColumn.AllowShowHide = false;
+            this.p4ResultColumn.OptionsColumn.AllowSize = false;
+            this.p4ResultColumn.OptionsColumn.AllowSort = DevExpress.Utils.DefaultBoolean.False;
+            this.p4ResultColumn.OptionsColumn.FixedWidth = true;
+            this.p4ResultColumn.OptionsFilter.AllowAutoFilter = false;
+            this.p4ResultColumn.OptionsFilter.AllowFilter = false;
+            this.p4ResultColumn.Visible = true;
+            this.p4ResultColumn.VisibleIndex = 3;
+            // 
+            // p4ResultTextEdit1
+            // 
+            this.p4ResultTextEdit1.Appearance.Font = new System.Drawing.Font("Arial", 9F);
+            this.p4ResultTextEdit1.Appearance.Options.UseFont = true;
+            this.p4ResultTextEdit1.AppearanceFocused.Font = new System.Drawing.Font("Arial", 9F);
+            this.p4ResultTextEdit1.AppearanceFocused.Options.UseFont = true;
+            this.p4ResultTextEdit1.AutoHeight = false;
+            this.p4ResultTextEdit1.MaxLength = 50;
+            this.p4ResultTextEdit1.Name = "p4ResultTextEdit1";
+            // 
             // p4FlameBurningRateColumn
             // 
-            this.p4FlameBurningRateColumn.AppearanceCell.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameBurningRateColumn.AppearanceCell.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameBurningRateColumn.AppearanceCell.Options.UseFont = true;
             this.p4FlameBurningRateColumn.AppearanceCell.Options.UseTextOptions = true;
             this.p4FlameBurningRateColumn.AppearanceCell.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
-            this.p4FlameBurningRateColumn.AppearanceHeader.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.p4FlameBurningRateColumn.AppearanceHeader.Font = new System.Drawing.Font("Arial", 9F);
             this.p4FlameBurningRateColumn.AppearanceHeader.Options.UseFont = true;
             this.p4FlameBurningRateColumn.AppearanceHeader.Options.UseTextOptions = true;
             this.p4FlameBurningRateColumn.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
@@ -2431,6 +2469,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.p4FlameGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4CheckEdit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4SampleTextEdit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.p4ResultTextEdit1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4BurnningRateComboEdit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4BurningRateTextEdit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.p4Desc1Edit.Properties)).EndInit();
@@ -2598,5 +2637,7 @@
         private System.Windows.Forms.Button btnImportWord;
         private System.Windows.Forms.CheckBox chkPhyComplete_Gisool;
         private System.Windows.Forms.ProgressBar progressBar_PhyASTM_ImportWORD;
+        private DevExpress.XtraGrid.Columns.GridColumn p4ResultColumn;
+        private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit p4ResultTextEdit1;
     }
 }

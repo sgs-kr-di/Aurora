@@ -331,7 +331,7 @@ namespace Sgs.ReportIntegration
                     {
                         ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
                         ProfJobSchemeSet.Fetch(i, 0, "check");
-                        iSaveLoopResultCnt = iSaveLoopResultCnt + 1;                        
+                        iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
                         InsertPage2_CHEMICAL_ASTM(iSaveLoopResultCnt, area, trans);
                     }
 
@@ -890,6 +890,7 @@ namespace Sgs.ReportIntegration
                                 if (P2Set.FormatValue.Equals("N.D.") || P2Set.FormatValue.Equals("0.00"))
                                 {
                                     P2Set.OrgTin = "--";
+                                    //P2Set.OrgTin = "N.D."; 
                                 }
                                 else
                                 {

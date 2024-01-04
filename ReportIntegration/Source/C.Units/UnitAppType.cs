@@ -306,12 +306,15 @@ namespace Sgs.ReportIntegration
 
         public string BurningRate { get; set; }
 
+        public string Result { get; set; }
+
         public PhysicalPage4Row()
         {
             No = 0;
             Line = false;
             Sample = "";
             BurningRate = "";
+            Result = "";
         }
     }
 

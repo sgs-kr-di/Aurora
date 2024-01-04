@@ -26,6 +26,8 @@ namespace Sgs.ReportIntegration
 
         public PhysicalP5DataSet P5Set;
 
+        public PhysicalP7DataSet P7Set;
+
         public List<PhysicalPage2Row> P2Rows;
 
         public List<PhysicalPage3Row> P3Rows;
@@ -60,6 +62,16 @@ namespace Sgs.ReportIntegration
 
         public DataTable dtGet6;
 
+        public DataTable dtGet7;
+
+        public DataTable dtGet8;
+
+        public DataTable dtGet9;
+
+        public DataTable dtGet10;
+
+        public DataTable dtGet11;
+
         public CtrlEditPhysicalUs(Button findButton)
         {
 
@@ -74,15 +86,17 @@ namespace Sgs.ReportIntegration
             progressBar_PhyASTM_ImportWORD.Style = ProgressBarStyle.Continuous;
             progressBar_PhyASTM_ImportWORD.Minimum = 0;
             progressBar_PhyASTM_ImportWORD.Maximum = 110;
-            progressBar_PhyASTM_ImportWORD.Step = 10;
+            progressBar_PhyASTM_ImportWORD.Step = 11;
             progressBar_PhyASTM_ImportWORD.Value = 0;
 
             P2Set = new PhysicalP2DataSet(AppRes.DB.Connect, null, null);
+            P7Set = new PhysicalP7DataSet(AppRes.DB.Connect, null, null);
 
             staffSet = new StaffDataSet(AppRes.DB.Connect, null, null);
 
             phyQuery = new PhysicalQuery();
             phyQuery.P2Set = P2Set;
+            phyQuery.P7Set = P7Set;
 
             p2Bookmark = new GridBookmark(p2ResultGridView);
             P2Rows = new List<PhysicalPage2Row>();
@@ -1414,12 +1428,26 @@ namespace Sgs.ReportIntegration
             dtGet3 = fImportWordToDT.GetVariable3();
             //DT4 -- sample table
             dtGet4 = fImportWordToDT.GetVariable4();
-            //-	What kinds of stuffing
+            //-	note2- What kinds of stuffing
             dtGet5 = fImportWordToDT.GetVariable5();
             //PAGE COMPLETE
             dtGet6 = fImportWordToDT.GetVariable6();
+            //Exclude Tracking Label Requirement
+            dtGet7 = fImportWordToDT.GetVariable7();
+            //tracking label -result tb
+            dtGet8 = fImportWordToDT.GetVariable8();
+            //note 2- 보고서 출력(Check)
+            dtGet9 = fImportWordToDT.GetVariable9();
+            //note 2- result table
+            dtGet10 = fImportWordToDT.GetVariable10();
+            //note 2- result table
+            dtGet11 = fImportWordToDT.GetVariable11();
 
             P2Set.MainNo = MainSet.RecNo;
+            P5Set.MainNo = MainSet.RecNo;
+            P7Set.MainNo = MainSet.RecNo;
+            P2Set.Delete_PHYRPTVIEW();
+            P7Set.Delete();
             P2Set.sColumnDesc_4_3_7_Result = "";
 
             progressBar_PhyASTM_ImportWORD.PerformStep();
@@ -1435,7 +1463,7 @@ namespace Sgs.ReportIntegration
                         P2Set.sRequestAge = row["Requested Age Grading"].ToString();
                         P2Set.sTestAge = row["Age Group Applied in Testing"].ToString();
                         P2Set.sSampleDescription = row["Sample description"].ToString();
-                        P2Set.sDetailOfSample = row["Detail of sample"].ToString();                        
+                        P2Set.sDetailOfSample = row["Detail of sample"].ToString();
                         P2Set.sReportComments = row["Report Comments"].ToString();
                         P2Set.Update_Main();
                     }
@@ -1458,20 +1486,41 @@ namespace Sgs.ReportIntegration
                         P2Set.sColumnRemark = row["Remark"].ToString();
                         P2Set.sColumnComment = "";
 
-
                         if (P2Set.sColumnClause.Trim().Equals("4.1"))
                         {
-                            P2Set.sColumnDesc = "Material Quality **";
+                            P2Set.sColumnDesc = "Material Quality *";
                         }
 
                         if (P2Set.sColumnClause.Trim().Equals("4.2"))
                         {
-                            P2Set.sColumnDesc = "Flammability Test (16 CFR 1500.44)";
+                            //P2Set.sColumnDesc = "Flammability Test (16 CFR 1500.44)";
+                            P2Set.sColumnDesc = "Flammability Test";
+                            P2Set.sColumnResult = "PASS (SEE NOTE 1)";
                         }
 
                         if (P2Set.sColumnClause.Trim().Equals("4.3.5"))
                         {
                             P2Set.sColumnDesc = "Heavy Elements";
+                        }
+
+                        if (P2Set.sColumnClause.Trim().Equals("4.3.7"))
+                        {
+                            P2Set.sColumnResult = "PASS (SEE NOTE 2)";
+                        }
+
+                        if (P2Set.sColumnClause.Trim().Equals("4.6.1"))
+                        {
+                            P2Set.sColumnDesc = "Small Objects";
+                        }
+
+                        if (P2Set.sColumnClause.Trim().Equals("4.7"))
+                        {
+                            P2Set.sColumnDesc = "Accessible Edges";
+                        }
+
+                        if (P2Set.sColumnClause.Trim().Equals("4.9"))
+                        {
+                            P2Set.sColumnDesc = "Accessible Points";
                         }
 
                         if (P2Set.sColumnClause.Trim().Equals("4.3.7") && P2Set.sColumnResult.Trim().Equals(""))
@@ -1481,12 +1530,19 @@ namespace Sgs.ReportIntegration
 
                         if (P2Set.sColumnClause.Trim().Equals("4.7"))
                         {
-                            P2Set.sColumnDesc = "Accessible Edges (16 CFR 1500.49)";
+                            //P2Set.sColumnDesc = "Accessible Edges (16 CFR 1500.49)";
+                            P2Set.sColumnDesc = "Accessible Edges";
                         }
 
                         if (P2Set.sColumnClause.Trim().Equals("4.9"))
                         {
-                            P2Set.sColumnDesc = "Accessible Points (16 CFR 1500.48)";
+                            //P2Set.sColumnDesc = "Accessible Points (16 CFR 1500.48)";
+                            P2Set.sColumnDesc = "Accessible Points";
+                        }
+
+                        if (P2Set.sColumnResult.ToUpper().Trim().Contains("PASS RE"))
+                        {
+                            P2Set.sColumnResult = "PASS\r\nRemark";
                         }
                         /*
                         if (P2Set.sColumnClause.Trim().Equals("4.3.5.1"))
@@ -1501,49 +1557,58 @@ namespace Sgs.ReportIntegration
                         */
                         P2Set.Insert_PhyPage3();
 
-                        if (P2Set.sColumnRemark.Trim().Equals("Remark: Any toy or game that is intended for use by children who are at least three years old (36 months) but less than six years of age (72 months) and includes a small part is subject to the labeling requirements in accordance with 5.11.2."))
+                        P2Set.sColumnRemark  = "Remark: " + P2Set.sColumnRemark;
+
+                        if (P2Set.sColumnRemark.Trim().Contains("Remark: Any toy or game that is intended for use by children who are at least three years old (36 months) but less than six years of age (72 months) and includes a small part is subject to the labeling requirements in accordance with 5.11.2."))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
                             P2Set.sColumnResult = "";
                             P2Set.Insert_PhyPage3();
                         }
-                        else if (P2Set.sColumnRemark.Trim().Equals("Remark: Toys containing non-replaceable batteries shall be labeled in accordance with 5.15."))
+                        else if (P2Set.sColumnRemark.Trim().Contains("Remark: Toys containing non-replaceable batteries shall be labeled in accordance with 5.15."))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
                             P2Set.sColumnResult = "";
                             P2Set.Insert_PhyPage3();
                         }
-                        else if (P2Set.sColumnRemark.Trim().Equals("Remark: Toys with non-replaceable batteries that are accessible with the use of a coin, screwdriver, or other common household tool shall bear a statement that the battery is not replaceable"))
+                        else if (P2Set.sColumnRemark.Trim().Contains("Remark: Toys with non-replaceable batteries that are accessible with the use of a coin, screwdriver, or other common household tool shall bear a statement that the battery is not replaceable"))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
                             P2Set.sColumnResult = "";
                             P2Set.Insert_PhyPage3();
                         }
-                        else if (P2Set.sColumnRemark.Trim().Equals("Remark: The toy or package should be age labeled"))
+                        else if (P2Set.sColumnRemark.Trim().Contains("Remark: The toy or package should be age labeled"))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
                             P2Set.sColumnResult = "";
                             P2Set.Insert_PhyPage3();
                         }
-                        else if (P2Set.sColumnRemark.Trim().Equals("Remark: It is drawn to your attention that the toy or its packaging shall be marked with appropriate small part warning in accordance with 16 CFR 1500.19"))
+                        else if (P2Set.sColumnRemark.Trim().Contains("Remark: It is drawn to your attention that the toy or its packaging shall be marked with appropriate small part warning in accordance with 16 CFR 1500.19"))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
                             P2Set.sColumnResult = "";
                             P2Set.Insert_PhyPage3();
                         }
-                        else if (P2Set.sColumnRemark.Trim().Equals("Remark: The toy should be marked with name and address of the producer or the distributor"))
+                        else if (P2Set.sColumnRemark.Trim().Contains("Remark: The toy should be marked with name and address of the producer or the distributor"))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
                             P2Set.sColumnResult = "";
                             P2Set.Insert_PhyPage3();
                         }
-                        else if (P2Set.sColumnRemark.Trim().Equals("Remark: Washing was conducted in one trial as per client’s request"))
+                        else if (P2Set.sColumnRemark.Trim().Contains("Remark: Washing was conducted in one trial as per client’s request"))
+                        {
+                            P2Set.sColumnClause = "";
+                            P2Set.sColumnDesc = P2Set.sColumnRemark;
+                            P2Set.sColumnResult = "";
+                            P2Set.Insert_PhyPage3();
+                        }
+                        else if (P2Set.sColumnRemark.Trim().Contains("Remark: Battery-operated toys shall meet the requirements of 6.5 for instructions on safe battery usage"))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
@@ -1578,27 +1643,48 @@ namespace Sgs.ReportIntegration
 
                 progressBar_PhyASTM_ImportWORD.PerformStep();
 
-                if (dtGet4.Rows.Count > 0)
+                //note 2- result table
+                // row의 값을 수정하여서 값 넣어야 함. 지금은 뭉태기로 되어 있음. 처리됨. 테스트 필요.
+                if (dtGet11.Rows.Count > 0)
                 {
-                    //int i = 0, j = 0;
-                    int i = 0;
-                    P2Set.Delete_PhyPage41();
-                    //P2Set.Select_Phy41();
-                    //P2Set.Fetch();
-                    //j = P2Set.RowCount;
-
-                    foreach (DataRow row in dtGet4.Rows)
+                    foreach (DataRow row in dtGet11.Rows)
                     {
-                        //P2Set.iColumnNo = j + i;
-                        P2Set.iColumnNo = i;
-                        P2Set.bColumnLine = false;
-                        //P2Set.sBurningRate = row["Actual Burn Rate (in./s)"].ToString();
-                        P2Set.sBurningRate = row["Result"].ToString();
-                        P2Set.sSample = row["Sample"].ToString();
-                        P2Set.Insert_PhyPage41();
-                        i++;
+                        if (row["Flammability"].ToString().ToUpper().Contains("V")) // V가 체크되어 있을때만 값을 입력하는 것으로. 기존에 있던 값은 유지됨.
+                        {
+                            if (dtGet4.Rows.Count > 0)
+                            {
+                                //int i = 0, j = 0;
+                                int i = 0;
+                                P2Set.Delete_PhyPage41();
+                                //P2Set.Select_Phy41();
+                                //P2Set.Fetch();
+                                //j = P2Set.RowCount;
+
+                                foreach (DataRow row4 in dtGet4.Rows)
+                                {
+                                    //P2Set.iColumnNo = j + i;
+                                    P2Set.iColumnNo = i;
+                                    P2Set.bColumnLine = false;
+                                    //P2Set.sBurningRate = row["Actual Burn Rate (in./s)"].ToString();
+                                    P2Set.sBurningRate = row4["Burnning Rate (in./s))"].ToString();
+                                    P2Set.sSample = row4["Sample"].ToString();
+                                    P2Set.sResult = row4["Result"].ToString();
+                                    P2Set.Insert_PhyPage41();
+                                    i++;
+                                }
+                            }
+                            //P2Set.sColumnDesc_4_3_7_Report_Page = "4_Note1";
+                            //P2Set.sColumnDesc_4_3_7_Report_View = "0";
+                            //P2Set.Insert_ReportView();
+                        }
+                        else
+                        {
+                            //P2Set.sColumnDesc_4_3_7_Report_Page = "4_Note1";
+                            //P2Set.sColumnDesc_4_3_7_Report_View = "1";
+                            //P2Set.Insert_ReportView();
+                        }
                     }
-                }
+                }                
 
                 progressBar_PhyASTM_ImportWORD.PerformStep();
 
@@ -1610,18 +1696,18 @@ namespace Sgs.ReportIntegration
                         {
                             //P2Set.sP5desc2 = row["what kind of stuffing"].ToString();
                             P2Set.sP5desc2 = row["Stuffing materials"].ToString();
-                            P2Set.sColumnDesc_4_3_7_Report_View = "0";
-
+                            //P2Set.sColumnDesc_4_3_7_Report_View = "0";
+                            //P2Set.sColumnDesc_4_3_7_Report_Page = "5_Note1";
                             P2Set.Update_Polyester();
-                            P2Set.Update_ReportView();
+                            //P2Set.Insert_ReportView();
                         }
                         else
                         {
                             P2Set.sP5desc2 = "";
-                            P2Set.sColumnDesc_4_3_7_Report_View = "1";
-
+                            //P2Set.sColumnDesc_4_3_7_Report_View = "1";
+                            //P2Set.sColumnDesc_4_3_7_Report_Page = "5_Note1";
                             P2Set.Update_Polyester();
-                            P2Set.Update_ReportView();
+                            //P2Set.Insert_ReportView();
                         }
                     }
                 }
@@ -1654,6 +1740,84 @@ namespace Sgs.ReportIntegration
                         }
                     }
                 }
+
+                progressBar_PhyASTM_ImportWORD.PerformStep();
+
+                //Exclude Tracking Label Requirement
+                // P2Set.Update_ReportView()에 넣으면됨. 아래의 dtGet9 참고하여 만들기. 처리됨. 테스트 필요.
+                if (dtGet7.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dtGet7.Rows)
+                    {
+                        if (row["Exclude Tracking Label Requirement"].ToString().ToUpper().Contains("V"))
+                        {
+                            P2Set.sColumnDesc_4_3_7_Report_Page = "7";
+                            P2Set.sColumnDesc_4_3_7_Report_View = "1";
+                            P2Set.Insert_ReportView();
+                        }
+                        else
+                        {
+                            P2Set.sColumnDesc_4_3_7_Report_Page = "7";
+                            P2Set.sColumnDesc_4_3_7_Report_View = "0";
+                            P2Set.Insert_ReportView();
+                        }
+                    }
+                }
+
+                progressBar_PhyASTM_ImportWORD.PerformStep();
+
+                // DB에 새롭게 생성해야 됨. DB 생성 완료.
+                // 결과 값임. 컬럼도 다시 만들어야 함. 모두 완료.
+                // Insert문 만들면 됨. 추후에 Report 모양 나오면 Report 만들고 거기에 집어 넣으면 됨.
+                //tracking label -result tb
+                if (dtGet8.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dtGet8.Rows)
+                    {
+                        P7Set.sBasicInformation = row["Basic Information"].ToString().Trim();
+                        P7Set.sHowtoComply = row["How to comply"].ToString().Trim();
+                        P7Set.sResults = row["Results"].ToString().Trim();
+                        P7Set.Insert();
+                    }
+                }
+
+                progressBar_PhyASTM_ImportWORD.PerformStep();
+
+                //note 2- 보고서 출력(Check)
+                // 처리됨. 테스트 필요.
+                if (dtGet9.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dtGet9.Rows)
+                    {
+                        if (row["V"].ToString().ToUpper().Contains("V"))
+                        {
+                            P2Set.sColumnDesc_4_3_7_Report_Page = "5_Note1";
+                            P2Set.sColumnDesc_4_3_7_Report_View = "1";
+                            P2Set.Insert_ReportView();
+                        }
+                        else
+                        {
+                            P2Set.sColumnDesc_4_3_7_Report_Page = "5_Note1";
+                            P2Set.sColumnDesc_4_3_7_Report_View = "0";
+                            P2Set.Insert_ReportView();
+                        }
+                    }
+                }
+
+                progressBar_PhyASTM_ImportWORD.PerformStep();
+
+                //note 2- result table
+                // row의 값을 수정하여서 값 넣어야 함. 지금은 뭉태기로 되어 있음. 처리됨. 테스트 필요.
+                if (dtGet10.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dtGet10.Rows)
+                    {
+                        P5Set.Result = row["Stuffing materials"].ToString().Trim();
+                        P5Set.Update_P5_Result();
+                    }
+                }
+
+                
 
                 // Step11
                 progressBar_PhyASTM_ImportWORD.PerformStep();

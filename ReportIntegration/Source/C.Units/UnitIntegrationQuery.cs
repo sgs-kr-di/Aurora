@@ -100,6 +100,8 @@ namespace Sgs.ReportIntegration
 
         private int substrateResultIndex;
 
+        int iSaveLoopResultCnt = 0;
+
         public IntegrationQuery(bool local = false)
         {
             this.local = local;
@@ -399,7 +401,7 @@ namespace Sgs.ReportIntegration
                     $"{fileNoDate}";
                 //$"{fileNoDate} where the samples are claimed to be identical.";
                 //MainSet.Description3 = $"N/A = Only applicable clauses were shown               **Visual Examination";
-                MainSet.Description3 = $"N.B. Only applicable clauses were shown               **Visual Examination";
+                MainSet.Description3 = $"N.B. Only applicable clauses were shown               *Visual Examination";
                 MainSet.Description4 = $"Flammability Test(Clauses 4.2)";
                 MainSet.Description5 =
                     "*Burning rate has been rounded to the nearest one tenth of an inch per second.\r\n\r\n" +
@@ -434,7 +436,7 @@ namespace Sgs.ReportIntegration
                 MainSet.Description14 = "Stuffing Materials(Clause 4.3.7)";
                 MainSet.Description15 =
                     "Method: With reference to ASTM F963-17 Clause 8.29. Visual inspection is performed using a stereo widefield microscope, or equivalent, at 10 x magnification and adequate ilumination.";
-                MainSet.Description16 = $"Picture of Sample as copied from the test report no.\r\n{fileNoDate}"; 
+                MainSet.Description16 = $"Picture of Sample as copied from the test report no.\r\n{fileNoDate}";
                 MainSet.Description17 = "";
                 MainSet.Description18 = "";
                 MainSet.Description19 = "";
@@ -493,13 +495,23 @@ namespace Sgs.ReportIntegration
                     //"      reguirement as specitied in EN71-3 : 2019";
                     "      5. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation\r\n" +
                     "      test for soluble organic tin on component exceeding the screening limit of 4.9 mg/kg soluble Sn.";
-                MainSet.Description11 = $"Picture of Sample as copied from the test report no.\r\n{fileNoDate}";                
+                MainSet.Description11 = $"Picture of Sample as copied from the test report no.\r\n{fileNoDate}";
                 MainSet.Description12 = phyMainSet.P1FileNo;
                 MainSet.Description13 =
                     "NSFO = No Surface Flash Occurred\r\n" +
                     "SFO = Surface Flash Occurred";
                 //MainSet.Description14 = "";
-                MainSet.Description15 = "";
+                MainSet.Description15 =
+                    "1. The UKCA marking should be at least 5 mm in height - unless a different minimum dimension is specified in the" +
+                    " relevant legislation. The UKCA marking should be easily visible, legible (from 1 January 2023 it must be permanently" +
+                    " attached). To reduce or enlarge the size of your marking, the letters forming the UKCA marking must be in proportion to" +
+                    " the version.\r\n\r\n" +
+                    "2. UK importer shall label company’s details, including company’s name and a contact address after 1 January 2021." +
+                    " Until 31 December 2022, UK importer can provide these details on the accompanying documentation rather on the" +
+                    " good itself.\r\n\r\n" +
+                    "3. Manufacturers must ensure that their toys bear a type, batch, serial or model number or other element allowing" +
+                    " their identification, or where the size or nature of the toy does not allow it, that the required information is provided on" +
+                    " the packaging or in a document accompanying the toy.";
                 MainSet.Description16 = "";
                 MainSet.Description17 = "";
                 MainSet.Description18 = "";
@@ -606,7 +618,7 @@ namespace Sgs.ReportIntegration
 
                 T1Set.No = (P2Set.No+1);
                 T1Set.Line = false;
-                T1Set.Requested = "Directive 2009/48/EC and its amendment Council Directive (EU) 2019/1922-EN71-3:2019+A1:2021 - Migration of certain elements";
+                T1Set.Requested = "Directive 2009/48/EC and its amendment Council Directive (EU) 2017/738, Commission Directive (EU) 2019/1922 - EN71-3:2019+A1:2021 - Migration of certain elements";
                 
                 if (bChkConclusion)
                 {
@@ -1785,10 +1797,11 @@ namespace Sgs.ReportIntegration
 
         private void InsertT7(EReportArea area, SqlTransaction trans)
         {
-            int iSaveLoopIntegrationCnt = 0, iSaveLoopResultCnt = 0, iSaveLoopHyphenCnt = 0;
+            int iSaveLoopIntegrationCnt = 0, iSaveLoopHyphenCnt = 0;            
             int iCountHypen = 0;
             string sP1FileNo = "";
             string sSampleDescription = "";
+            iSaveLoopResultCnt = 0;
 
             bSubstrateMetalLeadCheck = false;
             bSubstratePlasticLeadCheck = false;
@@ -1815,9 +1828,13 @@ namespace Sgs.ReportIntegration
                     {
                         iSaveLoopIntegrationCnt = iSaveLoopIntegrationCnt + 1;
 
-                        for (int j = 0; j < cheMainSet.RowCount; j++)
+                        cheP2Set.MainNo = partSet.JobNo;
+                        cheP2Set.Select_Che2Sampleident_HYPEN_EN(trans);
+
+                        for (int j = 0; j < cheP2Set.RowCount; j++)
                         {
-                            cheMainSet.Fetch(j);
+                            cheP2Set.Fetch(j, 0, "Integr_EN");
+                            //cheMainSet.Fetch();
 
                             ProfJobSet.JobNo = cheMainSet.RecNo;
                             //ProfJobSet.Select_TopOne_Sampleident_Aurora(trans);
@@ -1853,15 +1870,16 @@ namespace Sgs.ReportIntegration
                             // SampleDescription이 빈값인 경우가 있음. 아래의 Case 참고.
                             // sampleident      sam_description   pro_job         orderno
                             // AYN22-027324.001                   AYN22-027324    B1066-72
-                            if (!ProfJobSet.SampleDescription.Equals(""))
-                            {
-                                sSampleDescription = ProfJobSet.SampleDescription[0].ToString().ToUpper() + ProfJobSet.SampleDescription.Substring(1).ToLower();
-                                T7Set.Description = sSampleDescription;
-                            }
-                            else
-                            {
-                                T7Set.Description = "";
-                            }
+                            //if (!ProfJobSet.SampleDescription.Equals(""))
+                            //{
+                            //    sSampleDescription = ProfJobSet.SampleDescription[0].ToString().ToUpper() + ProfJobSet.SampleDescription.Substring(1).ToLower();
+                            //    T7Set.Description = sSampleDescription;
+                            //}
+                            //else
+                            //{
+                            //    T7Set.Description = "";
+                            //}
+                            T7Set.Description = cheP2Set.SampleDescription.ToUpper();
                             //T7Set.Description = ProfJobSet.SampleDescription;
                             T7Set.Name = partSet.Name;
                             T7Set.MaterialNo = partSet.MaterialNo;
@@ -1870,7 +1888,7 @@ namespace Sgs.ReportIntegration
                             //T7Set.IssuedDate = cheMainSet.RegTime.ToString("yyyy.MM.dd");
                             T7Set.IssuedDate = cheMainSet.RequiredTime.ToString("yyyy.MM.dd");
                             T7Set.Insert(trans);
-                            vDictionaryReportInsertNo.Add(cheMainSet.RecNo, iSaveLoopIntegrationCnt);
+                            //vDictionaryReportInsertNo.Add(cheMainSet.RecNo, iSaveLoopIntegrationCnt);
                         }
 
                         iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
@@ -2480,87 +2498,108 @@ namespace Sgs.ReportIntegration
 
         private void InsertResultEn(int index, string recNo, SqlTransaction trans)
         {
+            Dictionary<string, int> dicTinNo = new Dictionary<string, int>(); // 시료에서 추가 분석된 Tin의 No와 동일하게 매칭하기 위한 Dictionary 변수
             cheP2Set.MainNo = recNo;
             cheP2Set.Select_Che2Sampleident_HYPEN_EN(trans);
+            ResultEnSet.MainNo = MainSet.RecNo;
+            //ResultEnSet.Select(trans);
 
-            if (cheP2Set.Empty == false)
-            {
-                //ResultEnSet.MainNo = recNo;
-                ResultEnSet.MainNo = MainSet.RecNo;
-                //ResultEnSet.No = index + 1;
-                ResultEnSet.No = index;
-                //ResultEnSet.Mg = "--";
-
-                for (int i = 0; i < cheP2Set.RowCount; i++)
+            //if (ResultEnSet.Empty == true)
+            //{
+                if (cheP2Set.Empty == false)
                 {
-                    cheP2Set.Fetch(i, 0, "Integr_EN");
+                    //ResultEnSet.MainNo = recNo;
+                    //ResultEnSet.MainNo = MainSet.RecNo;
+                    //ResultEnSet.No = index + 1;
+                    //ResultEnSet.Mg = "--";
 
-                    if (cheP2Set.Sch_Code.Equals("HCEEENICP_15_02"))
+                    for (int i = 0; i < cheP2Set.RowCount; i++)
                     {
-                        ResultEnSet.Sampleident = cheP2Set.Sampleident;
-                        ResultEnSet.Sch_Code = cheP2Set.Sch_Code;
-                        ResultEnSet.SampleDescription = cheP2Set.SampleDescription;
-                        //ResultEnSet.No = cheP2Set.No;
-                        ResultEnSet.Mg = cheP2Set.Mg;
-                        ResultEnSet.Ai = cheP2Set.Ai;
-                        ResultEnSet.Sb = cheP2Set.Sb;
-                        ResultEnSet.As = cheP2Set.As;
-                        ResultEnSet.Ba = cheP2Set.Ba;
-                        ResultEnSet.B = cheP2Set.B;
-                        ResultEnSet.Cd = cheP2Set.Cd;
-                        ResultEnSet.Cr3 = cheP2Set.Cr3;
-                        ResultEnSet.Cr6 = cheP2Set.Cr6;
-                        ResultEnSet.Co = cheP2Set.Co;
-                        ResultEnSet.Cu = cheP2Set.Cu;
-                        ResultEnSet.Pb = cheP2Set.Pb;
-                        ResultEnSet.Mn = cheP2Set.Mn;
-                        ResultEnSet.Hg = cheP2Set.Hg;
-                        ResultEnSet.Ni = cheP2Set.Ni;
-                        ResultEnSet.Se = cheP2Set.Se;
-                        ResultEnSet.Sr = cheP2Set.Sr;
-                        ResultEnSet.Sn = cheP2Set.Sn;
-                        ResultEnSet.OrgTin = cheP2Set.OrgTin;
-                        ResultEnSet.Zn = cheP2Set.Zn;
-                        ResultEnSet.Insert(trans);
-                        ResultEnSet.Insert_HYPHEN(trans);
+                        if (i > 0)
+                        {
+                            index = index + 1;
+                            iSaveLoopResultCnt = index;
+                        }
+
+                        cheP2Set.Fetch(i, 0, "Integr_EN");
+
+                        if (cheP2Set.Sch_Code.Equals("HCEEENICP_15_02"))
+                        {
+                            if (string.IsNullOrEmpty(cheP2Set.OrgTin) == false)
+                            {
+                                if (cheP2Set.OrgTin.Equals("N.D."))
+                                {
+                                    dicTinNo.Add(cheP2Set.Sampleident, index);
+                                }
+                            }
+
+                            ResultEnSet.Sampleident = cheP2Set.Sampleident;
+                            ResultEnSet.Sch_Code = cheP2Set.Sch_Code;
+                            ResultEnSet.SampleDescription = cheP2Set.SampleDescription;
+                            ResultEnSet.No = index;
+                            //ResultEnSet.No = cheP2Set.No;
+                            ResultEnSet.Mg = cheP2Set.Mg;
+                            ResultEnSet.Ai = cheP2Set.Ai;
+                            ResultEnSet.Sb = cheP2Set.Sb;
+                            ResultEnSet.As = cheP2Set.As;
+                            ResultEnSet.Ba = cheP2Set.Ba;
+                            ResultEnSet.B = cheP2Set.B;
+                            ResultEnSet.Cd = cheP2Set.Cd;
+                            ResultEnSet.Cr3 = cheP2Set.Cr3;
+                            ResultEnSet.Cr6 = cheP2Set.Cr6;
+                            ResultEnSet.Co = cheP2Set.Co;
+                            ResultEnSet.Cu = cheP2Set.Cu;
+                            ResultEnSet.Pb = cheP2Set.Pb;
+                            ResultEnSet.Mn = cheP2Set.Mn;
+                            ResultEnSet.Hg = cheP2Set.Hg;
+                            ResultEnSet.Ni = cheP2Set.Ni;
+                            ResultEnSet.Se = cheP2Set.Se;
+                            ResultEnSet.Sr = cheP2Set.Sr;
+                            ResultEnSet.Sn = cheP2Set.Sn;
+                            ResultEnSet.OrgTin = cheP2Set.OrgTin;
+                            ResultEnSet.Zn = cheP2Set.Zn;
+                            ResultEnSet.Insert(trans);
+                            ResultEnSet.Insert_HYPHEN(trans);
+                        }
                     }
                 }
-            }
 
-            cheP2Set.MainNo = recNo;
-            cheP2Set.Select_Che2Sampleident_HYPEN_EN_Tin(trans);
+                cheP2Set.MainNo = recNo;
+                cheP2Set.Select_Che2Sampleident_HYPEN_EN_Tin(trans);
 
-            if (cheP2Set.Empty == false)
-            {
-                ResultEnSet.MainNo = MainSet.RecNo;
-                //ResultEnSet.No = index;
-
-                for (int i = 0; i < cheP2Set.RowCount; i++)
+                if (cheP2Set.Empty == false)
                 {
-                    cheP2Set.Fetch(i, 0, "Integr_EN_Tin");
+                    //ResultEnSet.MainNo = MainSet.RecNo;
+                    //ResultEnSet.No = index;
 
-                    if (cheP2Set.Sch_Code.Equals("HCEEORGANOTIN_11_01"))
+                    for (int i = 0; i < cheP2Set.RowCount; i++)
                     {
-                        // Sampleident의 맨마지막 값 추후에 10의 자리인 경우도 찾아야 한다면 10자리의 수가 0인지 체크하여 가져오기. 그 이후도 동일한 로직으로                        
-                        ResultEnSet.Sampleident = cheP2Set.Sampleident;
-                        ResultEnSet.Sch_Code = cheP2Set.Sch_Code;
-                        ResultEnSet.SampleDescription = cheP2Set.SampleDescription;
-                        ResultEnSet.No = cheP2Set.No;
-                        ResultEnSet.DMT = cheP2Set.DMT;
-                        ResultEnSet.MET = cheP2Set.MET;
-                        ResultEnSet.DProT = cheP2Set.DProT;
-                        ResultEnSet.MBT = cheP2Set.MBT;
-                        ResultEnSet.DBT = cheP2Set.DBT;
-                        ResultEnSet.TBT = cheP2Set.TBT;
-                        ResultEnSet.MOT = cheP2Set.MOT;
-                        ResultEnSet.DOT = cheP2Set.DOT;
-                        ResultEnSet.TeBT = cheP2Set.TeBT;
-                        ResultEnSet.DPhT = cheP2Set.DPhT;
-                        ResultEnSet.TPhT = cheP2Set.TPhT;
-                        ResultEnSet.Insert_Result_Tin(trans);
+                        cheP2Set.Fetch(i, 0, "Integr_EN_Tin");
+
+                        if (cheP2Set.Sch_Code.Equals("HCEEORGANOTIN_11_01"))
+                        {
+                            // Sampleident의 맨마지막 값 추후에 10의 자리인 경우도 찾아야 한다면 10자리의 수가 0인지 체크하여 가져오기. 그 이후도 동일한 로직으로                        
+                            ResultEnSet.Sampleident = cheP2Set.Sampleident;
+                            ResultEnSet.Sch_Code = cheP2Set.Sch_Code;
+                            ResultEnSet.SampleDescription = cheP2Set.SampleDescription;
+                            ResultEnSet.No = dicTinNo[cheP2Set.Sampleident];
+                            //ResultEnSet.No = cheP2Set.No;
+                            ResultEnSet.DMT = cheP2Set.DMT;
+                            ResultEnSet.MET = cheP2Set.MET;
+                            ResultEnSet.DProT = cheP2Set.DProT;
+                            ResultEnSet.MBT = cheP2Set.MBT;
+                            ResultEnSet.DBT = cheP2Set.DBT;
+                            ResultEnSet.TBT = cheP2Set.TBT;
+                            ResultEnSet.MOT = cheP2Set.MOT;
+                            ResultEnSet.DOT = cheP2Set.DOT;
+                            ResultEnSet.TeBT = cheP2Set.TeBT;
+                            ResultEnSet.DPhT = cheP2Set.DPhT;
+                            ResultEnSet.TPhT = cheP2Set.TPhT;
+                            ResultEnSet.Insert_Result_Tin(trans);
+                        }
                     }
                 }
-            }
+            //}
         }
 
         private void InsertResult_HYPHEN_En(int index, string recNo, SqlTransaction trans)

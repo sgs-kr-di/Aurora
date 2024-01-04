@@ -29,6 +29,8 @@ namespace Sgs.ReportIntegration
 
         public PhysicalP6DataSet P6Set { get; set; }
 
+        public PhysicalP7DataSet P7Set { get; set; }
+
         public ProfJobDataSet ProfJobSet { get; set; }
 
         public CtrlEditPhysicalUs CtrlUs { get; set; }
@@ -55,6 +57,8 @@ namespace Sgs.ReportIntegration
                 P44Set = new PhysicalP44DataSet(AppRes.DB.Connect, null, null);
                 P45Set = new PhysicalP45DataSet(AppRes.DB.Connect, null, null);
                 P5Set = new PhysicalP5DataSet(AppRes.DB.Connect, null, null);
+                P6Set = new PhysicalP6DataSet(AppRes.DB.Connect, null, null);
+                P7Set = new PhysicalP7DataSet(AppRes.DB.Connect, null, null);
                 ProfJobSet = new ProfJobDataSet(AppRes.DB.Connect, null, null);
                 CtrlUs = null;
                 CtrlEu = null;
@@ -120,7 +124,7 @@ namespace Sgs.ReportIntegration
                 SavePage3(area, trans);
                 SavePage4(area, trans);
                 SavePage4_4(area, trans);
-                SavePage4_5(area, trans);                
+                SavePage4_5(area, trans);
                 SavePage5(area, trans);
                 SavePage6(area, trans);
                 SavePageComplete(area, trans);
@@ -165,6 +169,10 @@ namespace Sgs.ReportIntegration
                 P5Set.Delete(trans);
                 P5Set.Delete_PHYRPTVIEW(trans);
                 P5Set.Delete_PHYCOMPLETE(trans);
+                P6Set.MainNo = mainNo;
+                P6Set.Delete(trans);
+                P7Set.MainNo = mainNo;
+                P7Set.Delete(trans);
                 ImageSet.RecNo = mainNo;
                 ImageSet.Delete(trans);
                 MainSet.Delete(trans);
@@ -266,11 +274,11 @@ namespace Sgs.ReportIntegration
             {
                 MainSet.P3Description1 = "As specified in ASTM F963-17 standard consumer safety specification on toys safety.";
                 MainSet.P3Description2 =
-                    "N/A = Not Applicable                **Visual Examination\r\n" +
+                    "N/A = Not Applicable                *Visual Examination\r\n" +
                     "NT = Not tested as per client's request.\r\n\r\n" +
                     "N.B. : - Only applicable clauses were shown";
 
-                MainSet.P4Description1 = "Flammability Test(Clause 4.2)";
+                MainSet.P4Description1 = "Flammability (Clause 4.2)";
                 MainSet.P4Description2 =
                     "*Burning rate has been rounded to the nearest one tenth of an inch per second.\r\n" +
                     "SE = Self-Extinguished\r\n" +
@@ -713,6 +721,7 @@ namespace Sgs.ReportIntegration
                     P41Set.Sample = ProfJobSet.SampleRemark + " toy";
                 }
                 P41Set.BurningRate = "0.1*";
+                P41Set.Result = "";
                 P41Set.Insert(trans);
             }
             else
@@ -749,6 +758,7 @@ namespace Sgs.ReportIntegration
                 P41Set.Line = false;
                 //P41Set.Sample = "Santa mini toy";
                 P41Set.BurningRate = "NSFO";    // burningRate는 Grid에서 Result로 출력된다.
+                P41Set.Result = "";             // Result는 공백으로 처리.
                 P41Set.Insert(trans);
 
                 P42Set.MainNo = MainSet.RecNo;
@@ -981,6 +991,7 @@ namespace Sgs.ReportIntegration
                 {
                     P41Set.No = row.No;
                     P41Set.Line = row.Line;
+                    P41Set.Result = row.Result;
                     if (String.IsNullOrEmpty(MainSet.P1SampleDescription))
                     {
                         P41Set.Sample = row.Sample;
@@ -1245,6 +1256,7 @@ namespace Sgs.ReportIntegration
             }
 
             CtrlUs.SetReportView();
+            P5Set.sPage = "5_Note1";
             P5Set.Insert_ReportView(trans);
         }
 

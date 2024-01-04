@@ -1,34 +1,49 @@
-﻿using System;
-using Spire.Doc;
+﻿using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System;
 using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Globalization;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
 {
     public partial class frmImportWord : Form
     {
         //DT1
-        DataTable dtSet1;
+        private DataTable dtSet1;
+
         //DT2
-        DataTable dtSet2;
+        private DataTable dtSet2;
+
         //DT3
-        DataTable dtSet3;
+        private DataTable dtSet3;
+
         //DT4
-        DataTable dtSet4;
+        private DataTable dtSet4;
+
         //DT5
-        DataTable dtSet5;
+        private DataTable dtSet5;
+
         //DT6
-        DataTable dtSet6;
+        private DataTable dtSet6;
+
+        //DT7
+        private DataTable dtSet7;
+
+        //DT8
+        private DataTable dtSet8;
+
+        //DT9
+        private DataTable dtSet9;
+
+        //DT10
+        private DataTable dtSet10;
+
+        //DT11
+        private DataTable dtSet11;
+
 
         public frmImportWord()
         {
@@ -44,6 +59,11 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             dtSet4 = new DataTable();
             dtSet5 = new DataTable();
             dtSet6 = new DataTable();
+            dtSet7 = new DataTable();
+            dtSet8 = new DataTable();
+            dtSet9 = new DataTable();
+            dtSet10 = new DataTable();
+            dtSet11 = new DataTable();
         }
 
         private DataRow Readvaluefordt1(Table cellTable, DataRow dtr)
@@ -117,66 +137,137 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             //결과
             foreach (Paragraph p in row.Cells[2].Paragraphs)
             {
-                if (p.Text.ToUpper().Trim() == "P")
-                {
-                    dtrow[2] = "PASS";
-                }
-                else if (p.Text.ToUpper().Trim() == "F")
+
+                if (p.Text.ToUpper().Trim() == "F")
                 {
                     dtrow[2] = "FAIL";
+                    break;
                 }
                 else if (p.Text.ToUpper().Trim() == "Y")
                 {
                     dtrow[2] = "YES";
+                    break;
                 }
                 else if (p.Text.ToUpper().Trim() == "N")
                 {
                     dtrow[2] = "NO";
+                    break;
                 }
                 else if (p.Text.ToUpper().Trim() == "SR")
                 {
                     dtrow[2] = "See Remark";
+                    break;
                 }
-                else if (p.Text.ToUpper().Trim() == "RE 1")
+                else if (p.Text.ToUpper().Trim().Contains("RE 1"))
                 {
-                    dtrow[2] = "Remark";
-                    dtrow[3] = "Any toy or game that is intended for use by children who are at least three years old (36 months) but less than six years of age (72 months) and includes a small part is subject to the labeling requirements in accordance with 5.11.2.";
-                }
-                else if (p.Text.ToUpper().Trim() == "RE 2")
-                {
-                    dtrow[2] = "Remark";
-                    dtrow[3] = "Toys containing non-replaceable batteries shall be labeled in accordance with 5.15.";
-                }
-                else if (p.Text.ToUpper().Trim() == "RE 3")
-                {
-                    dtrow[2] = "Remark";
-                    dtrow[3] = "Toys with non-replaceable batteries that are accessible with the use of a coin, screwdriver, or other common household tool shall bear a statement that the battery is not replaceable";
+                    if (!p.Text.ToUpper().Trim().Contains("PASS"))
+                    {
+                        dtrow[2] = "Remark";
 
+                    }
+                    else
+                    {
+                        dtrow[2] = p.Text;
+                    }
+                    dtrow[3] = "(Any toy or game that is intended for use by children who are at least three years old (36 months) but less than six years of age (72 months) and includes a small part is subject to the labeling requirements in accordance with 5.11.2.)";
+                    break;
                 }
-                else if (p.Text.ToUpper().Trim() == "RE 4")
+                else if (p.Text.ToUpper().Trim().Contains("RE 2"))
                 {
-                    dtrow[2] = "Remark";
-                    dtrow[3] = "The toy or package should be age labeled";
+                    if (!p.Text.ToUpper().Trim().Contains("PASS"))
+                    { dtrow[2] = "Remark"; }
+                    else
+                    {
+                        dtrow[2] = p.Text;
+                    }
+
+                    dtrow[3] = "(Toys containing non-replaceable batteries shall be labeled in accordance with 5.15.)";
+                    break;
                 }
-                else if (p.Text.ToUpper().Trim() == "RE 5")
+                else if (p.Text.ToUpper().Trim().Contains("RE 3"))
                 {
-                    dtrow[2] = "Remark";
-                    dtrow[3] = "It is drawn to your attention that the toy or its packaging shall be marked with appropriate small part warning in accordance with 16 CFR 1500.19";
+                    if (!p.Text.ToUpper().Trim().Contains("PASS"))
+                    { dtrow[2] = "Remark"; }
+                    else
+                    {
+                        dtrow[2] = p.Text;
+                    }
+
+                    dtrow[3] = "(Toys with non-replaceable batteries that are accessible with the use of a coin, screwdriver, or other common household tool shall bear a statement that the battery is not replaceable)";
+
+                    break;
                 }
-                else if (p.Text.ToUpper().Trim() == "RE 6")
+                else if (p.Text.ToUpper().Trim().Contains("RE 4"))
                 {
-                    dtrow[2] = "Remark";
-                    dtrow[3] = "The toy should be marked with name and address of the producer or the distributor";
+                    if (!p.Text.ToUpper().Trim().Contains("PASS"))
+                    { dtrow[2] = "Remark"; }
+                    else
+                    {
+                        dtrow[2] = p.Text;
+                    }
+
+                    dtrow[3] = "(The toy or package should be age labeled)";
+                    break;
                 }
-                else if (p.Text.ToUpper().Trim() == "RE 7")
+                else if (p.Text.ToUpper().Trim().Contains("RE 5"))
                 {
-                    dtrow[2] = "Remark";
-                    dtrow[3] = "Washing was conducted in one trial as per client’s request";
+                    if (!p.Text.ToUpper().Trim().Contains("PASS"))
+                    { dtrow[2] = "Remark"; }
+                    else
+                    {
+                        dtrow[2] = p.Text;
+                    }
+
+                    dtrow[3] = "(It is drawn to your attention that the toy or its packaging shall be marked with appropriate small part warning in accordance with 16 CFR 1500.19)";
+                    break;
+                }
+                else if (p.Text.ToUpper().Trim().Contains("RE 6"))
+                {
+                    if (!p.Text.ToUpper().Trim().Contains("PASS"))
+                    { dtrow[2] = "Remark"; }
+                    else
+                    {
+                        dtrow[2] = p.Text;
+                    }
+
+                    dtrow[3] = "(The toy should be marked with name and address of the producer or the distributor)";
+                    break;
+                }
+                else if (p.Text.ToUpper().Trim().Contains("RE 7"))
+                {
+                    if (!p.Text.ToUpper().Trim().Contains("PASS"))
+                    { dtrow[2] = "Remark"; }
+                    else
+                    {
+                        dtrow[2] = p.Text;
+                    }
+
+                    dtrow[3] = "(Washing was conducted in one trial as per client’s request)";
+                    break;
+                }
+                else if (p.Text.ToUpper().Trim().Contains("RE 8"))
+                {
+                    if (!p.Text.ToUpper().Trim().Contains("PASS"))
+                    { dtrow[2] = "Remark"; }
+                    else
+                    {
+                        dtrow[2] = p.Text;
+                    }
+
+                    dtrow[3] = "(Battery-operated toys shall meet the requirements of 6.5 for instructions on safe battery usage)";
+                    break;
+                }
+                else if (p.Text.ToUpper().Trim() == "P")
+                {
+                    dtrow[2] = "PASS";
+                    break;
                 }
                 else
                 {
                     dtrow[2] += p.Text;
+                    break;
                 }
+
             }
             return dtrow;
         }
@@ -310,6 +401,22 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
 
         }
 
+
+        private TextRange RemoveBreakFromPr(Paragraph pr)
+        {
+            foreach (DocumentObject docobc in pr.ChildObjects)
+            {
+                if (docobc.DocumentObjectType == DocumentObjectType.TextRange)
+                {
+
+                    return docobc as TextRange;
+                }
+
+            }
+
+            return null;
+        }
+
         private DataTable getdt2(Document document)
         {
             DataTable dt2 = new DataTable();
@@ -329,12 +436,16 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                         if (row.Cells.Count > 2)
                         {
                             DataRow dtrow = dt2.Rows.Add();
+                            Paragraph pr = row.Cells[0].Paragraphs[0];
 
                             if (row.Cells[0].Paragraphs[0].ChildObjects.Count > 0)
                             {
-                                TextRange range = row.Cells[0].Paragraphs[0].ChildObjects[0] as TextRange;
+
+                                TextRange range = RemoveBreakFromPr(row.Cells[0].Paragraphs[0]);
+
                                 if (range != null)
                                 {
+                                    //Debug.WriteLine(range.Text);
                                     if (range.CharacterFormat.Bold == true && row.Cells.Count == 3)
                                     {
 
@@ -462,7 +573,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                 for (int i = 0; i < sec.Tables.Count; i++)
                 {
                     Table table = (Table)sec.Tables[i];
-                    if (table.Rows[0].Cells[0].Paragraphs[0].Text.Trim().Contains("Note 1. Clause 4.2 Flammability test of toys (16 CFR 1500.44 / ASTM F963)"))
+                    if (table.Rows[0].Cells.Count > 1 && table.Rows[0].Cells[1].Paragraphs[0].Text.Trim().Replace(" ", "").Contains("Note1.Clause4.2Flammabilitytestoftoys(16CFR1500.44/ASTMF963)"))
                     {
                         foreach (TableRow row in table.Rows)
                         {
@@ -537,7 +648,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                     {
                         foreach (TableCell tableCell in tableRow.Cells)
                         {
-                            if (tableCell.Paragraphs[0].Text.Trim() == "a) Stuffing materials")
+                            if (tableCell.Paragraphs[0].Text.Trim().Replace(" ", "").ToLower() == "a)stuffingmaterials")
                             {
                                 foreach (DocumentObject documentObject in tableCell.ChildObjects)
                                 {
@@ -572,7 +683,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
 
         private DataTable getdt6(Document document)
         {
-            //PAGE COMPLETE
+            //PAGE COMPLETE_
             DataTable dt6 = new DataTable();
             dt6.Locale = CultureInfo.InvariantCulture;
             dt6.Columns.Add(new DataColumn("COMPLETE_실무자", typeof(string)));
@@ -599,6 +710,239 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             return dt6;
         }
 
+
+        private DataTable getdt7(Document document)
+        {
+            //PAGE COMPLETE_
+            DataTable dt7 = new DataTable();
+            dt7.Locale = CultureInfo.InvariantCulture;
+            dt7.Columns.Add(new DataColumn("Exclude Tracking Label Requirement", typeof(string)));
+
+
+            foreach (Section sec in document.Sections)
+            {
+                for (int i = 0; i < sec.Tables.Count; i++)
+                {
+                    Table table = (Table)sec.Tables[i];
+
+                    foreach (TableRow tableRow in table.Rows)
+                    {
+                        foreach (TableCell tableCell in tableRow.Cells)
+                        {
+                            if (tableCell.Paragraphs[0].Text.Trim().Replace(" ", "").ToLower() == "excludetrackinglabelrequirement)")
+                            {
+                                TableCell resultCell = tableRow.Cells[tableCell.GetCellIndex() - 1];
+                                DataRow dtr = dt7.Rows.Add();
+                                foreach (Paragraph pr in resultCell.Paragraphs)
+                                {
+                                    dtr[0] += pr.Text;
+
+                                }
+
+
+                            }
+                        }
+
+                    }
+                }
+
+
+            }
+
+
+
+            return dt7;
+        }
+
+
+        private DataTable getdt8(Document document)
+        {
+            //PAGE COMPLETE_
+            DataTable dt8 = new DataTable();
+            dt8.Locale = CultureInfo.InvariantCulture;
+            dt8.Columns.Add(new DataColumn("Basic Information", typeof(string)));
+            dt8.Columns.Add(new DataColumn("How to comply", typeof(string)));
+            dt8.Columns.Add(new DataColumn("Results", typeof(string)));
+
+
+            foreach (Section sec in document.Sections)
+            {
+                for (int i = 0; i < sec.Tables.Count; i++)
+                {
+                    Table table = (Table)sec.Tables[i];
+
+                    if (table.Rows[0].Cells[0].Paragraphs[0].Text.Trim().Replace(" ", "").ToLower() == "basicinformation")
+                    {
+                        foreach (TableRow tableRow in table.Rows)
+                        {
+                            if (tableRow.GetRowIndex() != 0)
+                            {
+                                DataRow dtr = dt8.Rows.Add();
+
+                                foreach (Paragraph pr in tableRow.Cells[0].Paragraphs)
+                                {
+                                    dtr[0] += pr.Text;
+
+                                }
+                                foreach (Paragraph pr in tableRow.Cells[1].Paragraphs)
+                                {
+                                    dtr[1] += pr.Text;
+
+                                }
+                                foreach (Paragraph pr in tableRow.Cells[2].Paragraphs)
+                                {
+                                    dtr[2] += pr.Text;
+
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+
+            }
+
+
+
+            return dt8;
+        }
+
+        private DataTable getdt9(Document document)
+        {
+
+            DataTable dt9 = new DataTable();
+            dt9.Locale = CultureInfo.InvariantCulture;
+            dt9.Columns.Add(new DataColumn("V", typeof(string)));
+
+
+            foreach (Section sec in document.Sections)
+            {
+                for (int i = 0; i < sec.Tables.Count; i++)
+                {
+                    Table table = (Table)sec.Tables[i];
+
+                    foreach (TableRow tableRow in table.Rows)
+                    {
+                        foreach (TableCell tableCell in tableRow.Cells)
+                        {
+                            foreach (Paragraph pr in tableCell.Paragraphs)
+                            {
+                                if (pr.Text.Trim().Replace(" ", "").ToLower().Contains("note2.clause4.3.7"))
+                                {
+                                    //string fullText = pr.Text;
+                                    //string value = fullText.Split(new string[] { "Note" }, StringSplitOptions.None)[0];
+                                    int idx = tableCell.GetCellIndex();
+                                    string value = tableRow.Cells[idx - 1].Paragraphs[0].Text;
+                                    DataRow dtr = dt9.Rows.Add();
+                                    dtr[0] = value.Trim();
+                                    break;
+
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+
+            }
+
+
+
+            return dt9;
+        }
+        private DataTable getdt10(Document document)
+        {  //-	What kinds of stuffing
+            DataTable dt10 = new DataTable();
+            dt10.Locale = CultureInfo.InvariantCulture;
+            dt10.Columns.Add(new DataColumn("Stuffing materials", typeof(string)));
+            foreach (Section sec in document.Sections)
+            {
+                for (int i = 0; i < sec.Tables.Count; i++)
+                {
+                    Table table = (Table)sec.Tables[i];
+
+                    foreach (TableRow tableRow in table.Rows)
+                    {
+                        foreach (TableCell tableCell in tableRow.Cells)
+                        {
+                            if (tableCell.Paragraphs[0].Text.Trim().Replace(" ", "").ToLower() == "b)aftervisualinspectionperclause8.29,shallbefree:")
+                            {
+                                foreach (DocumentObject documentObject in tableCell.ChildObjects)
+                                {
+                                    if (documentObject.DocumentObjectType == DocumentObjectType.Table)
+                                    {
+                                        Table cellTable = (Table)documentObject;
+                                        DataRow dtr = dt10.Rows.Add();
+
+
+
+                                        foreach (TableRow tbr in cellTable.Rows)
+                                        {
+                                            if (tbr.Cells[1].Paragraphs[0].Text.Trim() == "V")
+                                            {
+                                                dtr[0] += tbr.Cells[2].Paragraphs[0].Text;
+
+                                            }
+
+
+                                        }
+                                        //foreach (Paragraph pr in cellTable.Rows[1].Cells[1].Paragraphs)
+                                        //{
+                                        //    dtr[0] += pr.Text;
+
+                                        //}
+
+
+
+                                    }
+                                }
+
+
+
+                            }
+                        }
+
+                    }
+                }
+
+
+            }
+
+
+            return dt10;
+
+
+        }
+
+
+        private DataTable getdt11(Document document)
+        {  //-	What kinds of stuffing
+            DataTable dt10 = new DataTable();
+            dt10.Locale = CultureInfo.InvariantCulture;
+            dt10.Columns.Add(new DataColumn("Flammability", typeof(string)));
+            foreach (Section sec in document.Sections)
+            {
+                for (int i = 0; i < sec.Tables.Count; i++)
+                {
+                    Table table = (Table)sec.Tables[i];
+                    if (table.Rows[0].Cells.Count > 1 && table.Rows[0].Cells[1].Paragraphs[0].Text.Trim().Replace(" ", "").Contains("Note1.Clause4.2Flammabilitytestoftoys(16CFR1500.44/ASTMF963)"))
+                    {
+
+                        DataRow dtr = dt10.Rows.Add();
+                        dtr[0] = table.Rows[0].Cells[0].Paragraphs[0].Text;
+
+
+                    }
+                }
+            }
+
+            return dt10;
+
+
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (textBox1.Text == "" || textBox1.Text == null)
@@ -615,6 +959,11 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             DataTable dt4 = getdt4(document);
             DataTable dt5 = getdt5(document);
             DataTable dt6 = getdt6(document);
+            DataTable dt7 = getdt7(document);
+            DataTable dt8 = getdt8(document);
+            DataTable dt9 = getdt9(document);
+            DataTable dt10 = getdt10(document);
+            DataTable dt11 = getdt11(document);
 
             dtSet1 = dt1;
             dtSet2 = dt2;
@@ -622,6 +971,11 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             dtSet4 = dt4;
             dtSet5 = dt5;
             dtSet6 = dt6;
+            dtSet7 = dt7;
+            dtSet8 = dt8;
+            dtSet9 = dt9;
+            dtSet10 = dt10;
+            dtSet11 = dt11;
 
             //MessageBox.Show("변환이 완료되었습니다!");
             Close();
@@ -656,7 +1010,27 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
         {
             return dtSet6;
         }
+        public DataTable GetVariable7()
+        {
+            return dtSet7;
+        }
+        public DataTable GetVariable8()
+        {
+            return dtSet8;
+        }
+        public DataTable GetVariable9()
+        {
+            return dtSet9;
+        }
+        public DataTable GetVariable10()
+        {
+            return dtSet10;
+        }
 
+        public DataTable GetVariable11()
+        {
+            return dtSet11;
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {

@@ -1860,7 +1860,6 @@
             this.GroupFooter6});
             this.DetailReport2.DataMember = "P40";
             this.DetailReport2.Dpi = 254F;
-            this.DetailReport2.Expanded = false;
             this.DetailReport2.Level = 3;
             this.DetailReport2.Name = "DetailReport2";
             this.DetailReport2.Scripts.OnAfterPrint = "DetailReport2_AfterPrint";
@@ -2062,7 +2061,6 @@
             this.xrLabel17,
             this.xrLabel11});
             this.GroupFooter2.Dpi = 254F;
-            this.GroupFooter2.Expanded = false;
             this.GroupFooter2.HeightF = 337.1569F;
             this.GroupFooter2.Name = "GroupFooter2";
             // 
@@ -2123,7 +2121,7 @@
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
             this.xrTableCell138.Dpi = 254F;
             this.xrTableCell138.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[P41].[burningrate]")});
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[P41].[result]")});
             this.xrTableCell138.Font = new System.Drawing.Font("Arial", 10F);
             this.xrTableCell138.Multiline = true;
             this.xrTableCell138.Name = "xrTableCell138";
@@ -2241,7 +2239,6 @@
             this.xrTable22,
             this.xrLabel42});
             this.GroupFooter6.Dpi = 254F;
-            this.GroupFooter6.Expanded = false;
             this.GroupFooter6.HeightF = 378.4927F;
             this.GroupFooter6.Level = 1;
             this.GroupFooter6.Name = "GroupFooter6";
@@ -2836,6 +2833,7 @@
             this.ReportFooter5});
             this.DetailReport4.DataMember = "P5";
             this.DetailReport4.Dpi = 254F;
+            this.DetailReport4.Expanded = false;
             this.DetailReport4.Level = 6;
             this.DetailReport4.Name = "DetailReport4";
             this.DetailReport4.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -4032,6 +4030,7 @@
             this.GroupFooter3});
             this.DetailReport8.DataMember = "P6";
             this.DetailReport8.Dpi = 254F;
+            this.DetailReport8.Expanded = false;
             this.DetailReport8.Level = 7;
             this.DetailReport8.Name = "DetailReport8";
             // 

@@ -1694,7 +1694,7 @@
             this.physical4Page.Location = new System.Drawing.Point(4, 24);
             this.physical4Page.Margin = new System.Windows.Forms.Padding(0);
             this.physical4Page.Name = "physical4Page";
-            this.physical4Page.Size = new System.Drawing.Size(292, 272);
+            this.physical4Page.Size = new System.Drawing.Size(548, 552);
             this.physical4Page.TabIndex = 3;
             this.physical4Page.Tag = "3";
             this.physical4Page.Text = "  Page 4  ";
@@ -2161,7 +2161,7 @@
             this.p41ResultColumn.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.p41ResultColumn.Caption = "Result";
             this.p41ResultColumn.ColumnEdit = this.p41ResultTextEdit;
-            this.p41ResultColumn.FieldName = "BurningRate";
+            this.p41ResultColumn.FieldName = "Result";
             this.p41ResultColumn.Name = "p41ResultColumn";
             this.p41ResultColumn.OptionsColumn.AllowGroup = DevExpress.Utils.DefaultBoolean.False;
             this.p41ResultColumn.OptionsColumn.AllowIncrementalSearch = false;
@@ -2639,7 +2639,7 @@
             this.gridColumn3.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.gridColumn3.Caption = "Result";
             this.gridColumn3.ColumnEdit = this.repositoryItemComboBox1;
-            this.gridColumn3.FieldName = "BurningRate";
+            this.gridColumn3.FieldName = "burningrate";
             this.gridColumn3.Name = "gridColumn3";
             this.gridColumn3.OptionsColumn.AllowGroup = DevExpress.Utils.DefaultBoolean.False;
             this.gridColumn3.OptionsColumn.AllowIncrementalSearch = false;
@@ -2883,7 +2883,7 @@
             this.p42ResultColumn.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.p42ResultColumn.Caption = "Result";
             this.p42ResultColumn.ColumnEdit = this.p42BurningRateComboBox;
-            this.p42ResultColumn.FieldName = "BurningRate";
+            this.p42ResultColumn.FieldName = "burningrate";
             this.p42ResultColumn.Name = "p42ResultColumn";
             this.p42ResultColumn.OptionsColumn.AllowGroup = DevExpress.Utils.DefaultBoolean.False;
             this.p42ResultColumn.OptionsColumn.AllowIncrementalSearch = false;
@@ -4306,7 +4306,7 @@
             this.physical6Page.Location = new System.Drawing.Point(4, 24);
             this.physical6Page.Name = "physical6Page";
             this.physical6Page.Padding = new System.Windows.Forms.Padding(3);
-            this.physical6Page.Size = new System.Drawing.Size(548, 552);
+            this.physical6Page.Size = new System.Drawing.Size(292, 272);
             this.physical6Page.TabIndex = 8;
             this.physical6Page.Tag = "5";
             this.physical6Page.Text = "Page 6";

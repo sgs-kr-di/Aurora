@@ -43,7 +43,7 @@ namespace Sgs.ReportIntegration
         {
             //string strappname = Application.StartupPath + "\\wordtoword.application";
             //string strappname = "C:\\Users\\hiel_kim\\OneDrive - SGS\\Documents\\All\\Aurora\\wordtoword\\wordtoword\\wordtoword\\publish\\wordtoword.application";
-            string strappname = @"\\10.153.1.33\KR_Automation\SourceCode\Aurora\wordtoword.application";
+            string strappname = @"\\10.153.4.98\KR_Automation\SourceCode\Aurora\wordtoword.application";
             Process.Start(strappname);
         }
 

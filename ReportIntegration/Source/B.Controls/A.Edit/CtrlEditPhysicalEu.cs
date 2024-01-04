@@ -1286,7 +1286,7 @@ namespace Sgs.ReportIntegration
             p4Desc1Edit.Text = MainSet.P4Description1;
             p4Desc2Edit.Text = MainSet.P4Description2;
             //p4_4Desc2Edit.Text = MainSet.P4Description3;
-            p4Desc4Edit.Text = MainSet.P4Description4;
+            p4Desc4Edit.Text = MainSet.P4Description4;            
 
             P40Rows.Clear();
             for (int i = 0; i < P40Set.RowCount; i++)
@@ -1313,7 +1313,7 @@ namespace Sgs.ReportIntegration
                 p4Row.No = P41Set.No;
                 p4Row.Line = P41Set.Line;
                 p4Row.Sample = P41Set.Sample;
-                p4Row.BurningRate = P41Set.BurningRate;
+                p4Row.Result = P41Set.Result;
                 P41Rows.Add(p4Row);
             }
 
@@ -2080,8 +2080,9 @@ namespace Sgs.ReportIntegration
                     P41Set.MainNo = MainSet.RecNo;
                     P41Set.No = i;
                     P41Set.Line = true;
-                    P41Set.Sample = row["Sample"].ToString();
-                    P41Set.BurningRate = row["Result"].ToString();
+                    P41Set.Sample = row["sample"].ToString();
+                    P41Set.BurningRate = "";// row["Result"].ToString();
+                    P41Set.Result = row["result"].ToString();
 
                     P41Set.Insert();
 
@@ -2210,7 +2211,7 @@ namespace Sgs.ReportIntegration
                         }
                         else
                         {
-                            P45Set.Note = "";
+                            P45Set.Note = "\r\n\r\nN.B.: Only applicable clauses were shown.";
                         }
 
                         P45Set.Insert();
@@ -2240,7 +2241,7 @@ namespace Sgs.ReportIntegration
                         }
                         else
                         {
-                            P45Set.Note = "";
+                            P45Set.Note = "\r\n\r\nN.B.: Only applicable clauses were shown.";
                         }
 
                         P45Set.Insert();
@@ -2269,7 +2270,7 @@ namespace Sgs.ReportIntegration
                         }
                         else
                         {
-                            P45Set.Note = "";
+                            P45Set.Note = "\r\n\r\nN.B.: Only applicable clauses were shown.";
                         }
                         P45Set.Insert();
 
@@ -2302,11 +2303,13 @@ namespace Sgs.ReportIntegration
                                           "FAIL: Exceed the limit\r\n" +
                                           "* The sample(s) was (were) not tested as its maximum dimension is 150 mm or less.\r\n" +
                                           //"(The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.)\r\n\r\n" +
-                                          "Requirement: The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.";
+                                          "Requirement: The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.\r\n\r\n"+
+                                          "N.B.: Only applicable clauses were shown.";
+
                         }
                         else
                         {
-                            P45Set.Note = "";
+                            P45Set.Note = "\r\n\r\nN.B.: Only applicable clauses were shown.";
                         }
                         P45Set.Insert();
 

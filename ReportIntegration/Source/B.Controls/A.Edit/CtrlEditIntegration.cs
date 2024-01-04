@@ -463,11 +463,11 @@ namespace Sgs.ReportIntegration
             integReportSet.DataSet.Tables[45].TableName = "SBLEADRT_Metal_US";
             integReportSet.DataSet.Tables[46].TableName = "T61";
             integReportSet.DataSet.Tables[47].TableName = "RT_TIN";
-            integReportSet.DataSet.Tables[48].TableName = "RT_TIN4";
-            integReportSet.DataSet.Tables[49].TableName = "RT_TIN7";
-            integReportSet.DataSet.Tables[50].TableName = "RT_TIN10";
-            integReportSet.DataSet.Tables[51].TableName = "RT_TIN13";
-            integReportSet.DataSet.Tables[52].TableName = "RT_TIN16";
+            integReportSet.DataSet.Tables[48].TableName = "RT_TIN2";
+            integReportSet.DataSet.Tables[49].TableName = "RT_TIN3";
+            integReportSet.DataSet.Tables[50].TableName = "RT_TIN4";
+            integReportSet.DataSet.Tables[51].TableName = "RT_TIN5";
+            integReportSet.DataSet.Tables[52].TableName = "RT_TIN6";
 
             integReportSet.DataSet.Tables[53].TableName = "LT_MET";
             integReportSet.DataSet.Tables[54].TableName = "LT_DBT";
@@ -481,9 +481,12 @@ namespace Sgs.ReportIntegration
             integReportSet.DataSet.Tables[62].TableName = "LT_DMT";
             integReportSet.DataSet.Tables[63].TableName = "LT_MBT";
 
-            integReportSet.DataSet.Tables[64].TableName = "RT_TIN1";
-            integReportSet.DataSet.Tables[65].TableName = "RT_TIN6";
-            integReportSet.DataSet.Tables[66].TableName = "RT_TIN11";
+            integReportSet.DataSet.Tables[64].TableName = "RT_TIN_Long_1";
+            integReportSet.DataSet.Tables[65].TableName = "RT_TIN_Long_6";
+            integReportSet.DataSet.Tables[66].TableName = "RT_TIN_Long_11";
+            integReportSet.DataSet.Tables[67].TableName = "RT_TIN_Long_16";
+            integReportSet.DataSet.Tables[68].TableName = "RT_TIN_Long_21";
+            integReportSet.DataSet.Tables[69].TableName = "T7_EU16";
 
             BindingSource bind = new BindingSource();
             bind.DataSource = integReportSet.DataSet;
