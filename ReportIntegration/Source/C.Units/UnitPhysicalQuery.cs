@@ -289,9 +289,7 @@ namespace Sgs.ReportIntegration
                 MainSet.P4Description4 = "";
 
                 MainSet.P5Description1 =
-                    "Suffing Materials(Clause 4.3.7)\r\n\r\n" +
-                    "Method: With reference to ASTM F963-17 Clause 8.29. Visual inspection is performed using a stereo widefield\r\n" +
-                    "microscope, or equivalent, at 10 x magnification and adequate illumination.";
+                    "Suffing Materials(Clause 4.3.7)";
                 MainSet.P5Description2 = "Polyester fiber";
             }
             else
@@ -802,8 +800,8 @@ namespace Sgs.ReportIntegration
                 //    "   1. Objectionable matter originating from\r\n" +
                 //    "      Insect, bird and rodent or other animal\r\n" +
                 //    "      infestation";
-                      "Objectionable matter originating from insect, bird, rodent, or other animal infestation and of contaminants,\r\n" +
-                      "such as splinters, glass and metal chips";
+                      "Objectionable matter originating from insect, bird, rodent, or other animal infestation\r\n" + 
+                      "and of contaminants, such as splinters, glass and metal chips";
                 P5Set.Result = "Absent";
                 P5Set.Requirement = "Absent";
                 P5Set.Insert(trans);

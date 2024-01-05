@@ -2206,12 +2206,12 @@ namespace Sgs.ReportIntegration
                             P45Set.Note = "DNI = Did not Ignite\r\n" +
                                           "SE = Self-Extinguishing\r\n" +
                                           "FAIL: Exceed the limit\r\n" +
-                                          "Remark: The sample(s) was (were) not tested since the sample as it appears in the toy, did not produce sufficient material for testing.\r\n\r\n" +
-                                          "N.B.: Only applicable clauses were shown.";
+                                          "Remark: The sample(s) was (were) not tested since the sample as it appears in the toy, did not produce sufficient material for testing.";
+                                          //"N.B.: Only applicable clauses were shown.";
                         }
                         else
                         {
-                            P45Set.Note = "\r\n\r\nN.B.: Only applicable clauses were shown.";
+                            P45Set.Note = "";
                         }
 
                         P45Set.Insert();
@@ -2236,12 +2236,11 @@ namespace Sgs.ReportIntegration
                                             "FAIL: Exceed the limit\r\n" +
                                             "Remark1: The sample(s) was (were) not tested since the sample as it appears in the toy, did not produce sufficient material for testing.\r\n" +
                                             "Remark2: Tested burning rate is between 10 mm/s and 30 mm/s. Therefore, both the toy and the packaging shall be permanently marked\r\n" +
-                                            "with the following warning: 'Warning! Keep away from fire'\r\n\r\n" +
-                                            "N.B.: Only applicable clauses were shown.";
+                                            "with the following warning: 'Warning! Keep away from fire'";
                         }
                         else
                         {
-                            P45Set.Note = "\r\n\r\nN.B.: Only applicable clauses were shown.";
+                            P45Set.Note = "";
                         }
 
                         P45Set.Insert();
@@ -2265,12 +2264,11 @@ namespace Sgs.ReportIntegration
                                           "FAIL: Exceed the limit\r\n" +
                                           "Remark1: The sample(s) was (were) not tested since the sample as it appears in the toy, did not produce sufficient material for testing.\r\n" +
                                           "Remark2: Tested burning rate is between 10 mm/s and 30 mm/s. Therefore, both the toy and the packaging shall be permanently marked\r\n" +
-                                          "with the following warning: 'Warning! Keep away from fire'\r\n\r\n" +
-                                          "N.B.: Only applicable clauses were shown.";
+                                          "with the following warning: 'Warning! Keep away from fire'";
                         }
                         else
                         {
-                            P45Set.Note = "\r\n\r\nN.B.: Only applicable clauses were shown.";
+                            P45Set.Note = "";
                         }
                         P45Set.Insert();
 
@@ -2303,13 +2301,12 @@ namespace Sgs.ReportIntegration
                                           "FAIL: Exceed the limit\r\n" +
                                           "* The sample(s) was (were) not tested as its maximum dimension is 150 mm or less.\r\n" +
                                           //"(The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.)\r\n\r\n" +
-                                          "Requirement: The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.\r\n\r\n"+
-                                          "N.B.: Only applicable clauses were shown.";
+                                          "Requirement: The rate of spread of flame on the surface of toy shall not be greater than 30 mm/sec.";
 
                         }
                         else
                         {
-                            P45Set.Note = "\r\n\r\nN.B.: Only applicable clauses were shown.";
+                            P45Set.Note = "";
                         }
                         P45Set.Insert();
 

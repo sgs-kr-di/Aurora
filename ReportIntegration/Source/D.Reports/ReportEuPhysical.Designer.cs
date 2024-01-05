@@ -188,6 +188,7 @@
             this.ReportFooter3 = new DevExpress.XtraReports.UI.ReportFooterBand();
             this.xrRichText6 = new DevExpress.XtraReports.UI.XRRichText();
             this.GroupFooter6 = new DevExpress.XtraReports.UI.GroupFooterBand();
+            this.xrLabel44 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel39 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel40 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrTable21 = new DevExpress.XtraReports.UI.XRTable();
@@ -2233,15 +2234,28 @@
             // GroupFooter6
             // 
             this.GroupFooter6.Controls.AddRange(new DevExpress.XtraReports.UI.XRControl[] {
+            this.xrLabel44,
             this.xrLabel39,
             this.xrLabel40,
             this.xrTable21,
             this.xrTable22,
             this.xrLabel42});
             this.GroupFooter6.Dpi = 254F;
-            this.GroupFooter6.HeightF = 378.4927F;
+            this.GroupFooter6.HeightF = 438.8072F;
             this.GroupFooter6.Level = 1;
             this.GroupFooter6.Name = "GroupFooter6";
+            // 
+            // xrLabel44
+            // 
+            this.xrLabel44.Dpi = 254F;
+            this.xrLabel44.Font = new System.Drawing.Font("Arial", 10F);
+            this.xrLabel44.LocationFloat = new DevExpress.Utils.PointFloat(1.000585F, 370.3653F);
+            this.xrLabel44.Multiline = true;
+            this.xrLabel44.Name = "xrLabel44";
+            this.xrLabel44.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
+            this.xrLabel44.SizeF = new System.Drawing.SizeF(1880F, 48.45844F);
+            this.xrLabel44.StylePriority.UseFont = false;
+            this.xrLabel44.Text = "N.B.: Only applicable clauses were shown.";
             // 
             // xrLabel39
             // 
@@ -4719,5 +4733,6 @@
         private DevExpress.XtraReports.UI.XRRichText xrRichText10;
         private DevExpress.XtraReports.UI.XRLabel xrLabelReportView5;
         private DevExpress.XtraReports.UI.XRLabel xrLabel43;
+        private DevExpress.XtraReports.UI.XRLabel xrLabel44;
     }
 }

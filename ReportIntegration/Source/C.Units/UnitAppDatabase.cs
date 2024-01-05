@@ -5763,7 +5763,7 @@ namespace Sgs.ReportIntegration
         public void Update_P5_Result(SqlTransaction trans = null)
         {
             string sql =
-                $" update TB_PHYP5 set result='{sResult}' " +
+                $" update TB_PHYP5 set result='{Result}' " +
                 $" where fk_phymainno='{MainNo}' and line = '1'";
 
             SetTrans(trans);

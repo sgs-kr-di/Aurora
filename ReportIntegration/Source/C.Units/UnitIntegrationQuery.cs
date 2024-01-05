@@ -1541,7 +1541,7 @@ namespace Sgs.ReportIntegration
                 T4Set.No = P41Set.No;
                 T4Set.Line = P41Set.Line;
                 T4Set.Sample = P41Set.Sample;
-                T4Set.Result = P41Set.BurningRate;  // grid는 result이지만 db column은 burningrate.
+                T4Set.Result = P41Set.Result;  // grid는 result이지만 db column은 burningrate.
                 T4Set.Insert(trans);
             }
             
