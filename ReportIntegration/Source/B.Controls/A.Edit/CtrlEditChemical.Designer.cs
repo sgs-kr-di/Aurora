@@ -63,6 +63,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.reportNoEdit = new DevExpress.XtraEditors.TextEdit();
             this.label1 = new System.Windows.Forms.Label();
+            this.OmNoEdit = new DevExpress.XtraEditors.TextEdit();
+            this.label7 = new System.Windows.Forms.Label();
             this.bgPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chemicalCheckEdit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.viewSplit)).BeginInit();
@@ -79,6 +81,7 @@
             this.ulPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.issuedDateEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.reportNoEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OmNoEdit.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // bgPanel
@@ -131,6 +134,8 @@
             // 
             this.gridPanel.BevelInner = Ulee.Controls.EUlBevelStyle.None;
             this.gridPanel.BevelOuter = Ulee.Controls.EUlBevelStyle.None;
+            this.gridPanel.Controls.Add(this.OmNoEdit);
+            this.gridPanel.Controls.Add(this.label7);
             this.gridPanel.Controls.Add(this.jobNoEdit);
             this.gridPanel.Controls.Add(this.label6);
             this.gridPanel.Controls.Add(this.approvalCombo);
@@ -284,14 +289,14 @@
             // 
             // chemicalGrid
             // 
-            this.chemicalGrid.Location = new System.Drawing.Point(0, 113);
+            this.chemicalGrid.Location = new System.Drawing.Point(0, 149);
             this.chemicalGrid.LookAndFeel.SkinName = "DevExpress Style";
             this.chemicalGrid.LookAndFeel.UseDefaultLookAndFeel = false;
             this.chemicalGrid.MainView = this.chemicalGridView;
             this.chemicalGrid.Name = "chemicalGrid";
             this.chemicalGrid.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
             this.chemicalItemCheckEdit});
-            this.chemicalGrid.Size = new System.Drawing.Size(260, 455);
+            this.chemicalGrid.Size = new System.Drawing.Size(260, 419);
             this.chemicalGrid.TabIndex = 9;
             this.chemicalGrid.TabStop = false;
             this.chemicalGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
@@ -698,6 +703,31 @@
             this.label1.Text = "Test Report No.";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // OmNoEdit
+            // 
+            this.OmNoEdit.EditValue = "";
+            this.OmNoEdit.ImeMode = System.Windows.Forms.ImeMode.Alpha;
+            this.OmNoEdit.Location = new System.Drawing.Point(174, 116);
+            this.OmNoEdit.Name = "OmNoEdit";
+            this.OmNoEdit.Properties.Appearance.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OmNoEdit.Properties.Appearance.Options.UseFont = true;
+            this.OmNoEdit.Properties.AppearanceFocused.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OmNoEdit.Properties.AppearanceFocused.Options.UseFont = true;
+            this.OmNoEdit.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OmNoEdit.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.OmNoEdit.Properties.MaxLength = 20;
+            this.OmNoEdit.Size = new System.Drawing.Size(86, 22);
+            this.OmNoEdit.TabIndex = 107;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(120, 115);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 22);
+            this.label7.TabIndex = 108;
+            this.label7.Text = "OM No.";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // CtrlEditChemical
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -723,6 +753,7 @@
             this.ulPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.issuedDateEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.reportNoEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OmNoEdit.Properties)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -764,5 +795,7 @@
         public DevExpress.XtraEditors.TextEdit jobNoEdit;
         private System.Windows.Forms.Label label6;
         private DevExpress.XtraGrid.Columns.GridColumn chemicalJobNoColumn;
+        public DevExpress.XtraEditors.TextEdit OmNoEdit;
+        private System.Windows.Forms.Label label7;
     }
 }

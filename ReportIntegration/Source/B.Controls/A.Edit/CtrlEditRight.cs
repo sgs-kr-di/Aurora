@@ -25,6 +25,7 @@ namespace Sgs.ReportIntegration
             menuPanel.Controls.Add(physicalMenuPanel);
             menuPanel.Controls.Add(chemicalMenuPanel);
             menuPanel.Controls.Add(integMenuPanel);
+            menuPanel.Controls.Add(receiptMenuPanel);
 
             bomMenuPanel.Left = 2;
             bomMenuPanel.Top = 326;
@@ -43,6 +44,7 @@ namespace Sgs.ReportIntegration
             DefMenu.Add(new CtrlEditPhysical(this), physicalButton);
             DefMenu.Add(new CtrlEditChemical(this), chemicalButton);
             DefMenu.Add(new CtrlEditIntegration(this), integrationButton);
+            DefMenu.Add(new CtrlEditReceipt(this), receiptButton);
             DefMenu.Index = 0;
         }
 
@@ -57,6 +59,7 @@ namespace Sgs.ReportIntegration
             physicalMenuPanel.Top = menuPanel.Size.Height - 300;
             chemicalMenuPanel.Top = menuPanel.Size.Height - 300;
             integMenuPanel.Top = menuPanel.Size.Height - 300;
+            receiptMenuPanel.Top = menuPanel.Size.Height - 300;
         }
 
         private void bomImportButton_Click(object sender, EventArgs e)
@@ -222,6 +225,29 @@ namespace Sgs.ReportIntegration
             }
 
             return fName;
+        }
+
+        private void receiptImportButton_Click(object sender, EventArgs e)
+        {
+            string fName = OpenBomFile();
+            if (string.IsNullOrWhiteSpace(fName) == false)
+            {
+                EReportArea area = EReportArea.None;
+                string dirName = Path.GetDirectoryName(fName);
+
+                if (dirName.EndsWith("AURORA ASTM") == true) area = EReportArea.US;
+                else if (dirName.EndsWith("AURORA EN") == true) area = EReportArea.EU;
+
+                if (area != EReportArea.None)
+                {
+                    (DefMenu.Controls(4) as CtrlEditReceipt).Import(area, fName);
+                }
+            }
+        }
+
+        private void receiptDeleteButton_Click(object sender, EventArgs e)
+        {
+            (DefMenu.Controls(4) as CtrlEditBom).Delete();
         }
     }
 }

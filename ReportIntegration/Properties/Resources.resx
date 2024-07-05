@@ -118,35 +118,38 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="SGS_Logo_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Image\SGS_Logo_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="footer41" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\footer41.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="footer6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\footer6.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="footer5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\footer5.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="sign_aurora" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sign_aurora.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Signature_Leeminok" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Signature_Leeminok.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="sign" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sign.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Footer7" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Footer7.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="footer5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\footer5.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="footer4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\footer4.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SgsLogoOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Image\SgsLogoOrigin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sign_aurora" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sign_aurora.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SGS_Logo_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Image\SGS_Logo_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="footer2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\footer2.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SgsLogoOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Image\SgsLogoOrigin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="footer3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\footer3.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -154,7 +157,7 @@
   <data name="Footer1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Footer1.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="sign" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sign.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="sing_Jeong" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sing_Jeong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

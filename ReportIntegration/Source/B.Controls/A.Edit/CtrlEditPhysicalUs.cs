@@ -1418,6 +1418,7 @@ namespace Sgs.ReportIntegration
         private void btnImportWord_ASTM_Click(object sender, EventArgs e)
         {
             progressBar_PhyASTM_ImportWORD.Value = 0;
+            bool chkAfterWashing = false;
 
             frmImportWord fImportWordToDT = new frmImportWord();
             fImportWordToDT.ShowDialog();
@@ -1471,6 +1472,44 @@ namespace Sgs.ReportIntegration
 
                 progressBar_PhyASTM_ImportWORD.PerformStep();
 
+                if (dtGet3.Rows.Count > 0)
+                {
+                    int i = 0;
+                    P2Set.Delete_PhyPage2();
+
+                    foreach (DataRow row in dtGet3.Rows)
+                    {
+                        P2Set.iColumnNo = i;
+                        P2Set.bColumnLine = false;
+                        P2Set.sTestRequested = row["Test Requested"].ToString();
+
+                        if (chkAfterWashing == false) 
+                        {
+                            if (P2Set.sTestRequested.ToLower().Contains("after washing"))
+                            {
+                                chkAfterWashing = true;
+                            }
+                        }
+
+                        P2Set.sConclusion = row["Conclusion"].ToString();
+                        P2Set.Insert_PhyPage2();
+                        i++;
+                    }
+                }
+
+                if (chkAfterWashing == true)
+                {
+                    P2Set.sP5desc3 = "ASTM F963-23 [After Washing]";
+                    P2Set.Update_Main_P5();
+                }
+                else
+                {
+                    P2Set.sP5desc3 = "ASTM F963-23";
+                    P2Set.Update_Main_P5();
+                }
+
+                progressBar_PhyASTM_ImportWORD.PerformStep();
+
                 if (dtGet2.Rows.Count > 0)
                 {
                     int i = 0;
@@ -1496,6 +1535,12 @@ namespace Sgs.ReportIntegration
                             //P2Set.sColumnDesc = "Flammability Test (16 CFR 1500.44)";
                             P2Set.sColumnDesc = "Flammability Test";
                             P2Set.sColumnResult = "PASS (SEE NOTE 1)";
+                        }
+
+                        if (P2Set.sColumnClause.Trim().Equals("4.5"))
+                        {
+                            //P2Set.sColumnDesc = "Accessible Points (16 CFR 1500.48)";
+                            P2Set.sColumnDesc = "Accessible Points";
                         }
 
                         if (P2Set.sColumnClause.Trim().Equals("4.3.5"))
@@ -1542,7 +1587,7 @@ namespace Sgs.ReportIntegration
 
                         if (P2Set.sColumnResult.ToUpper().Trim().Contains("PASS RE"))
                         {
-                            P2Set.sColumnResult = "PASS\r\nRemark";
+                            P2Set.sColumnResult = "PASS\r\nREMARK";
                         }
                         /*
                         if (P2Set.sColumnClause.Trim().Equals("4.3.5.1"))
@@ -1556,6 +1601,19 @@ namespace Sgs.ReportIntegration
                         }
                         */
                         P2Set.Insert_PhyPage3();
+
+                        if (P2Set.sColumnClause.Trim().Equals("4.3.5"))
+                        {
+                            P2Set.sColumnClause = "";
+                            P2Set.sColumnDesc = "4.3.5.1        Paint and Similar Surface-Coating Materials";
+                            P2Set.sColumnResult = "-";
+                            P2Set.Insert_PhyPage3();
+
+                            P2Set.sColumnClause = "";
+                            P2Set.sColumnDesc = "4.3.5.2        Toy substrate materials";
+                            P2Set.sColumnResult = "-";
+                            P2Set.Insert_PhyPage3();
+                        }
 
                         //P2Set.sColumnRemark  = "Remark: " + P2Set.sColumnRemark;
 
@@ -1621,25 +1679,7 @@ namespace Sgs.ReportIntegration
                         }
                         i++;
                     }
-                }
-
-                progressBar_PhyASTM_ImportWORD.PerformStep();
-
-                if (dtGet3.Rows.Count > 0)
-                {
-                    int i = 0;
-                    P2Set.Delete_PhyPage2();
-
-                    foreach (DataRow row in dtGet3.Rows)
-                    {
-                        P2Set.iColumnNo = i;
-                        P2Set.bColumnLine = false;
-                        P2Set.sTestRequested = row["Test Requested"].ToString();
-                        P2Set.sConclusion = row["Conclusion"].ToString();
-                        P2Set.Insert_PhyPage2();
-                        i++;
-                    }
-                }
+                }                                
 
                 progressBar_PhyASTM_ImportWORD.PerformStep();
 

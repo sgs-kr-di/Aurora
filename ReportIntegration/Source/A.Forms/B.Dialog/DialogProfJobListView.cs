@@ -66,8 +66,13 @@ namespace Sgs.ReportIntegration
             else
             {
                 areaCombo.SelectedIndex = Program.iGetPhysicalAreano() + 1;
-            }            
-            
+            }
+
+            DateTime MonthFirstDay = DateTime.Now.AddDays(1 - DateTime.Now.Day);
+
+            //fromDateEdit.Text = MonthFirstDay.ToString("yyyy-MM-dd");
+            fromDateEdit.Text = MonthFirstDay.ToString("yyyy-01-dd");   // 1월 1일로 변경 요청 - 조재식 과장
+
             reportGridView.Focus();
         }
 

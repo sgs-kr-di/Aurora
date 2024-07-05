@@ -30,6 +30,10 @@ namespace Sgs.ReportIntegration
 
         public IntegrationT7DataSet T7Set { get; set; }
 
+        public IntegrationLimitASTMDataSet LimitASTMSet { get; set; }
+
+        public IntegrationResultASTMDataSet ResultASTMSet { get; set; }
+
         public IntegrationLeadLimitAstmDataSet SurfaceLeadLimitSet { get; set; }
 
         public IntegrationLeadResultAstmDataSet SurfaceLeadResultSet { get; set; }

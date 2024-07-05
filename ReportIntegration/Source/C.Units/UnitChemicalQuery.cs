@@ -35,7 +35,7 @@ namespace Sgs.ReportIntegration
 
         private PartDataSet partSet;
 
-        bool chkCoating = false, chkPlastic = false, chkMetal = false, chkTextile = false, chkCoatingLimit = false, chkNoCoatingLimit = false;
+        bool chkCoating = false, chkPlastic = false, chkMetal = false, chkTextile = false, chkPhthalates = false, chkCoatingLimit = false, chkNoCoatingLimit = false;
 
         public ChemicalQuery(bool local = false)
         {
@@ -300,6 +300,7 @@ namespace Sgs.ReportIntegration
                     ProfJobSchemeSet.fileNo = fileNo;
 
                     ProfJobSchemeSet.SelectDistinctJob_KRCTS01_SCHE_1373_1372_1371(trans);
+                    //ProfJobSchemeSet.SelectDistinctJob_KRCTS01_SCHE_4487(trans);
                     if (ProfJobSchemeSet.RowCount > 0)
                     {
                         bChkLead = true;
@@ -316,20 +317,23 @@ namespace Sgs.ReportIntegration
                     }
 
                     // Count SubJob
-                    ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
+                    //ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
+                    ProfJobSchemeSet.SelectDistinctSubProJob_ASTM_KRCTS01(trans);
                     iChemSubJobRowCount = ProfJobSchemeSet.RowCount;
 
                     chkCoating = false;
                     chkPlastic = false;
                     chkMetal = false;
                     chkTextile = false;
+                    chkPhthalates = false;
                     chkCoatingLimit = false;
                     chkNoCoatingLimit = false;
 
                     // Insert SubJob
                     for (int i = 0; i < iChemSubJobRowCount; i++)
                     {
-                        ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
+                        //ProfJobSchemeSet.SelectDistinctSubProJob_KRCTS01(trans);
+                        ProfJobSchemeSet.SelectDistinctSubProJob_ASTM_KRCTS01(trans);
                         ProfJobSchemeSet.Fetch(i, 0, "check");
                         iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
                         InsertPage2_CHEMICAL_ASTM(iSaveLoopResultCnt, area, trans);
@@ -446,6 +450,7 @@ namespace Sgs.ReportIntegration
                 P2Set.Delete_TB_CHEP2_LEAD_RESULT_ASTM(trans);
                 P2Set.Delete_TB_CHEP2_LIMIT_ASTM(trans);
                 P2Set.Delete_TB_CHEP2_RESULT_ASTM(trans);
+                P2Set.Delete_TB_CHEPPHT_ASTM(trans);
 
                 P2ExtendSet.RecNo = mainNo;
                 P2ExtendSet.Delete(trans);
@@ -503,10 +508,10 @@ namespace Sgs.ReportIntegration
             {
                 MainSet.P1TestRequested =
                     "Selected test(s) as requested by applicant for compliance with Public Law 110-314(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
-                    "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17";
+                    "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-23";
                     //"    4.3.5.2-Heavy Metal in Substrate Materials\r\n";
                 MainSet.P1Conclusion = "\r\n\r\n-";
-                MainSet.P2Description2 = "Method: With reference to ASTM F963-17 Clause 8.3. Analysis was performed by ICP-OES.";
+                MainSet.P2Description2 = "Method: With reference to ASTM F963-23 Clause 8.3. Analysis was performed by ICP-OES.";
                 MainSet.P2Description3 =
                     "1. Black textile\r\n\r\n" +
                     "Note:    -   Soluble results shown are of the adjusted analytical result.\r\n" +
@@ -530,13 +535,22 @@ namespace Sgs.ReportIntegration
                  */
 
                 MainSet.P2Description4 =
-                        "- ND = Not Detected(<MDL)\r\n" +
+                        "- N.D. = Not Detected(<MDL)\r\n" +
                         "- MDL = Method Detection Limit\r\n";
 
                 MainSet.P3Description1 =
                         "- Soluble results shown are of the adjusted analytical result.\r\n" +
-                        "- ND = Not Detected(<MDL)\r\n" +
+                        "- N.D. = Not Detected(<MDL)\r\n" +
                         "- MDL = Method Detection Limit\r\n";
+
+                MainSet.P4Description1 =
+                        "1. % = percentage by weight\r\n" +
+                        "2. 1 % = 10000 ppm (mg/kg)\r\n" +
+                        "3. N.D. = Not Detected\r\n" +
+                        "4. Method Detection Limit for each phthalate = 0.015 %\r\n";
+                
+                MainSet.P2Description1 = "ASTM F963-23, Clause 4.3.5.2 - Heavy Elements in Toys Substrate Materials";
+
 
                 // 슬림 스킴네임에 따른 스킴코드 값 (납 없을때) - 2400
                 /*
@@ -672,6 +686,7 @@ namespace Sgs.ReportIntegration
                         "      2. N.D. = Not Detected ( < Reporting Limit )\r\n" +
                         "      3. 1% = 10,000 mg/kg = 10,000 ppm\r\n" +
                         "      4. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n";
+                    MainSet.P4Description1 = "";
                 }
                 else
                 {
@@ -686,7 +701,8 @@ namespace Sgs.ReportIntegration
                             "      2. N.D. = Not Detected (< Reporting Limit )\r\n" +
                             "      3. 1% = 10,000 mg/kg = 10,000 ppm\r\n" +
                             "      4. Soluble Chromium (III) = Soluble Total Chromium - Soluble Chromium (VI)\r\n" +
-                            "      5. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test for soluble organic tin on component exceeding the screening limit of 4.9mg/kg soluble Sn.";
+                            "      5. ^ = The test result of soluble organic tin was derived from soluble tin screening and then confirmation test for soluble organic tin on component exceeding the screening limit of 4.9 mg/kg soluble Sn.";
+                    MainSet.P4Description1 = "";
                 }
             }
 
@@ -709,15 +725,15 @@ namespace Sgs.ReportIntegration
         private void InsertImage(SqlTransaction trans)
         {
             ImageSet.RecNo = ProfJobSchemeSet.JobNo;
-            ImageSet.Select(trans);
-
-            ProfImageJobSet.JobNo = ProfJobSchemeSet.JobNo;            
-            ProfImageJobSet.PHOTORTFKEY = ProfJobSet.PHOTORTFKEY_SAMPLE;
-            ProfImageJobSet.Select(trans);
-            ProfImageJobSet.Fetch();
+            ImageSet.Select(trans);            
 
             if (ImageSet.Empty == true)
             {
+                ProfImageJobSet.JobNo = ProfJobSchemeSet.JobNo;
+                ProfImageJobSet.PHOTORTFKEY = ProfJobSet.PHOTORTFKEY_SAMPLE;
+                ProfImageJobSet.Select(trans);
+                ProfImageJobSet.Fetch();
+
                 ImageSet.RecNo = ProfJobSchemeSet.JobNo;
                 ImageSet.Signature = null;
                 ImageSet.Picture = ProfImageJobSet.Image;
@@ -989,28 +1005,47 @@ namespace Sgs.ReportIntegration
 
             if (P2Set.Empty == true)
             {
-                ProfJobSchemeSet.SelectSampleidentPro_KRCTS01(trans);
+                //ProfJobSchemeSet.SelectSampleidentPro_KRCTS01(trans);
+                ProfJobSchemeSet.SelectSampleidentPro_ASTM_KRCTS01(trans);
 
                 for (int i = 0; i < ProfJobSchemeSet.RowCount; i++)
                 {
                     ProfJobSchemeSet.Fetch(i,0,"other" );
+
+                    if (Convert.ToDouble(ProfJobSchemeSet.FINALVALUE) < Convert.ToDouble(ProfJobSchemeSet.ReportValue))
+                    {
+                        ProfJobSchemeSet.FormatValue = "N.D.";
+                    }
+                    else
+                    {
+                        ProfJobSchemeSet.FormatValue = ProfJobSchemeSet.FINALVALUE;
+                    }
 
                     P2Set.MainNo = ProfJobSchemeSet.JobNo;
                     P2Set.Name = ProfJobSchemeSet.Name.Trim();
                     P2Set.LoValue = ProfJobSchemeSet.LoValue;
                     P2Set.HiValue = ProfJobSchemeSet.HiValue;
                     P2Set.ReportValue = ProfJobSchemeSet.ReportValue;
-                    P2Set.FormatValue = ProfJobSchemeSet.FormatValue;
+
+                    try
+                    {
+                        P2Set.FormatValue = Math.Round(Convert.ToDouble(ProfJobSchemeSet.FormatValue), 2).ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        P2Set.FormatValue = ProfJobSchemeSet.FormatValue;
+                    }
+
                     P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
                     P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
                     P2Set.Pro_Proj = ProfJobSchemeSet.fileNo;
-                    
+
                     P2Set.Insert(trans);
                 }
             }
 
             //if (true)
-            if (index != 0)            
+            if (index != 0)
             {
                 P2Set.MainNo = ProfJobSchemeSet.JobNo;
                 P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
@@ -1021,6 +1056,11 @@ namespace Sgs.ReportIntegration
                 if (P2Set.SampleRemarks.Trim().ToLower().Equals("coating"))
                 {
                     chkCoating = true;
+                }
+                else if (P2Set.SampleRemarks.Trim().ToLower().Equals("plastic") && P2Set.Sch_Code.Trim().ToUpper().Equals("HCEEPHTHALATE_09"))
+                {
+                    chkPhthalates = true;
+                    chkPlastic = true;
                 }
                 else if (P2Set.SampleRemarks.Trim().ToLower().Equals("plastic"))
                 {
@@ -1033,7 +1073,7 @@ namespace Sgs.ReportIntegration
                 else if (P2Set.SampleRemarks.Trim().ToLower().Equals("textile"))
                 {
                     chkTextile = true;
-                }
+                }                
                 else
                 {
 
@@ -1042,11 +1082,12 @@ namespace Sgs.ReportIntegration
                 if (P2Set.Empty == false)
                 {
                     // No Lead
-                    if (P2Set.Sch_Code.Equals("HCEEASTMICP_05"))
+                    //if (P2Set.Sch_Code.Equals("HCEEASTMICP_05"))
+                    if (P2Set.Sch_Code.Equals("HCEEASTMICP_09"))
                     {
                         //P2Set.No = index;
                         // Sampleident의 맨마지막 값 추후에 10의 자리인 경우도 찾아야 한다면 10자리의 수가 0인지 체크하여 가져오기. 그 이후도 동일한 로직으로
-                        P2Set.No = Convert.ToInt32(P2Set.Sampleident.Substring(P2Set.Sampleident.Length - 1));                        
+                        P2Set.No = Convert.ToInt32(P2Set.Sampleident.Substring(P2Set.Sampleident.Length - 1));
                         for (int i = 0; i < P2Set.RowCount; i++)
                         {
                             P2Set.Fetch(i);
@@ -1271,7 +1312,23 @@ namespace Sgs.ReportIntegration
                         }
 
                         P2Set.SampleDescription = ProfJobSchemeSet.SampleDescription;
-                        P2Set.Mg = ProfJobSchemeSet.DESCRIPTION_4;
+                        //P2Set.Mg = ProfJobSchemeSet.DESCRIPTION_4;
+                        try
+                        {
+                            if (Convert.ToDouble(ProfJobSchemeSet.WEIGHT) <= 0.0999)
+                            {
+                                P2Set.Mg = (Convert.ToDouble(ProfJobSchemeSet.WEIGHT) * 1000).ToString();
+                            }
+                            else 
+                            {
+                                P2Set.Mg = "--";
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            //P2Set.Mg = (Convert.ToDouble(ProfJobSchemeSet.WEIGHT) * 1000).ToString();
+                            P2Set.Mg = ProfJobSchemeSet.WEIGHT.ToString();
+                        }                        
 
                         if (string.IsNullOrEmpty(P2Set.Mg)) 
                         {
@@ -1281,7 +1338,8 @@ namespace Sgs.ReportIntegration
                         P2Set.Insert_Result_ASTM(trans);
                     }
                     // Yes Lead
-                    else if (!P2Set.Sch_Code.Equals("HCEEASTMICP_05"))
+                    //else if (!P2Set.Sch_Code.Equals("HCEEASTMICP_05"))
+                    else if (!P2Set.Sch_Code.Equals("HCEEASTMICP_09") && !P2Set.Sch_Code.Equals("HCEEPHTHALATE_09"))
                     {
                         for (int i = 0; i < P2Set.RowCount; i++)
                         {
@@ -1340,6 +1398,64 @@ namespace Sgs.ReportIntegration
                             Console.WriteLine("Chemical job - None Case - Yes Lead");
                         }
                     }
+                    // Yes Phthalates
+                    else if (P2Set.Sch_Code.Equals("HCEEPHTHALATE_09"))
+                    {
+                        for (int i = 0; i < P2Set.RowCount; i++)
+                        {
+                            P2Set.Fetch(i);
+
+                            if (P2Set.Name.ToUpper().Contains("DBP"))
+                            {
+                                P2Set.DBP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("BBP"))
+                            {
+                                P2Set.BBP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("DEHP"))
+                            {
+                                P2Set.DEHP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("DINP"))
+                            {
+                                P2Set.DINP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("DCHP"))
+                            {
+                                P2Set.DCHP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("DNHP"))
+                            {
+                                P2Set.DnHP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("DIBP"))
+                            {
+                                P2Set.DIBP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("DNPP"))
+                            {
+                                P2Set.DnPP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("DNOP"))
+                            {
+                                P2Set.DNOP = P2Set.FormatValue;
+                            }
+                            else if (P2Set.Name.ToUpper().Contains("DIDP"))
+                            {
+                                P2Set.DIDP = P2Set.FormatValue;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Chemical job - None Case - Yes Phthalates");
+                            }
+                        }
+                        // Sampleident의 맨마지막 값 추후에 10의 자리인 경우도 찾아야 한다면 10자리의 수가 0인지 체크하여 가져오기. 그 이후도 동일한 로직으로
+                        P2Set.No = Convert.ToInt32(P2Set.Sampleident.Substring(P2Set.Sampleident.Length - 1));
+                        P2Set.SampleDescription = ProfJobSchemeSet.SampleDescription;
+                        P2Set.SampleRemarks = ProfJobSchemeSet.SampleRemarks;
+                        P2Set.Insert_Result_Phthalates(trans);
+                    }
                 }
             }
             
@@ -1355,9 +1471,9 @@ namespace Sgs.ReportIntegration
                     {
                         MainSet.P1TestRequested =
                         "Selected test(s) as requested by applicant for compliance with Public Law 110-314\r\n(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
-                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-23\r\n\r\n" +
                         "    4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials\r\n" +
-                        "    4.3.5.2 - Heavy Metal in Substrate Materials\r\n";
+                        "    4.3.5.2 - Heavy Elements in Substrate Materials\r\n";
                         MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS\r\nPASS";
                         MainSet.UpdateP2Description3(trans);
                     }
@@ -1365,7 +1481,7 @@ namespace Sgs.ReportIntegration
                     {
                         MainSet.P1TestRequested =
                         "Selected test(s) as requested by applicant for compliance with Public Law 110-314\r\n(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
-                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-23\r\n\r\n" +
                         "    4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials";
                         MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS";
                         MainSet.UpdateP2Description3(trans);
@@ -1377,11 +1493,24 @@ namespace Sgs.ReportIntegration
                     {
                         MainSet.P1TestRequested =
                         "Selected test(s) as requested by applicant for compliance with Public Law 110-314\r\n(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
-                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-17\r\n\r\n" +
-                        "    4.3.5.2 - Heavy Metal in Substrate Materials";
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-23\r\n\r\n" +
+                        "    4.3.5.2 - Heavy Elements in Substrate Materials";
                         MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS";
                         MainSet.UpdateP2Description3(trans);
                     }
+                }
+            }
+            else
+            {
+                if (chkPlastic && chkPhthalates)
+                {
+                    MainSet.P1TestRequested =
+                        "Selected test(s) as requested by applicant for compliance with Public Law 110-314\r\n(Consumer Product Safety Improvement Act of 2008, CPSIA):-\r\n" +
+                        "- To determine Heavy Elements in the submitted samples with reference to ASTM F963-23\r\n\r\n" +
+                        "    4.3.5.2 - Heavy Elements in Substrate Materials\r\n\r\n" +
+                        "    4.3.8 - Phthalates content";
+                    MainSet.P1Conclusion = "\r\n\r\n-\r\n\r\nPASS\r\n\r\nPASS";
+                    MainSet.UpdateP2Description3_SubJob(trans);
                 }
             }
         }

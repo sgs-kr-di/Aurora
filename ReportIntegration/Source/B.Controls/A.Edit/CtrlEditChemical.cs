@@ -133,10 +133,18 @@ namespace Sgs.ReportIntegration
             set.RecNo = jobNoEdit.Text.Trim();
             set.Select();
 
+            set.P1FileNo = "";
+            set.Select();
+
             AppHelper.SetGridDataSource(chemicalGrid, set);
 
             bookmark.Goto();
             chemicalGrid.Focus();
+
+            DateTime MonthFirstDay = DateTime.Now.AddDays(1 - DateTime.Now.Day);
+
+            //fromDateEdit.Text = MonthFirstDay.ToString("yyyy-MM-dd");
+            fromDateEdit.Text = MonthFirstDay.ToString("yyyy-01-dd");   // 1월 1일로 변경 요청 - 조재식 과장
 
             //parent.SetMenu(2);
             //resetButton.PerformClick();
@@ -164,6 +172,7 @@ namespace Sgs.ReportIntegration
             set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
             set.MaterialNo = itemNoEdit.Text.Trim();
             set.RecNo = jobNoEdit.Text.Trim();
+            set.P1FileNo = OmNoEdit.Text.Trim();
             set.Select();
 
             AppHelper.SetGridDataSource(chemicalGrid, set);
@@ -182,6 +191,7 @@ namespace Sgs.ReportIntegration
             itemNoEdit.Text = string.Empty;
             jobNoEdit.Text = string.Empty;
             findButton.PerformClick();
+            OmNoEdit.Text = string.Empty;
 
             chemicalRegTimeColumn.SortOrder = ColumnSortOrder.Descending;
         }
@@ -209,6 +219,7 @@ namespace Sgs.ReportIntegration
 
             itemNoEdit.Width = width - 174;
             jobNoEdit.Width = width - 174;
+            OmNoEdit.Width = width - 174;
 
             chemicalGrid.Size = new Size(width, gridPanel.Height - 113);
         }
@@ -432,6 +443,12 @@ namespace Sgs.ReportIntegration
                 cheReportSet.DataSet.Tables[13].TableName = "NoCoating_NoLead_Result";
 
                 cheReportSet.DataSet.Tables[14].TableName = "NoCoating_Lead_Result";
+
+                cheReportSet.DataSet.Tables[15].TableName = "RT_PHY";
+                cheReportSet.DataSet.Tables[16].TableName = "P1_SubJob1";
+                cheReportSet.DataSet.Tables[17].TableName = "P1_SubJob2";
+                cheReportSet.DataSet.Tables[18].TableName = "P1_requiredTime_Last";
+                cheReportSet.DataSet.Tables[19].TableName = "P1_testPeriod_Last";
 
                 /*
                 cheReportSet.DataSet.Tables[10].TableName = "LT_Al";

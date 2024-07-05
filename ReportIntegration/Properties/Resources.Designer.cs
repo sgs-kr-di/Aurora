@@ -189,5 +189,15 @@ namespace Sgs.ReportIntegration.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap sing_Jeong {
+            get {
+                object obj = ResourceManager.GetObject("sing_Jeong", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

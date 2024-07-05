@@ -77,6 +77,7 @@ namespace Sgs.ReportIntegration
             {
                 trans = AppRes.DB.BeginTrans();
             }
+
             // ASTM, EN은 insert 안에서 분기처리하여 insert
             try
             {
@@ -251,6 +252,7 @@ namespace Sgs.ReportIntegration
             MainSet.P1TestAge = "None";
             MainSet.P1AssessedAge = "All ages";
             MainSet.P1ReceivedDate = ProfJobSet.ReceivedTime.ToString("yyyy. MM. dd");
+            //MainSet.P1ReceivedDate = ProfJobSet.RequiredTime.ToString("yyyy. MM. dd");
             MainSet.P1TestPeriod = $"{ProfJobSet.ReceivedTime.ToString("yyyy. MM. dd")}  to  {ProfJobSet.RequiredTime.ToString("yyyy. MM. dd")}";
             MainSet.P1TestMethod = "For further details, please refer to following page(s)";
             MainSet.P1TestResults = "For further details, please refer to following page(s)";
@@ -272,18 +274,22 @@ namespace Sgs.ReportIntegration
 
             if (area == EReportArea.US)
             {
-                MainSet.P3Description1 = "As specified in ASTM F963-17 standard consumer safety specification on toys safety.";
+                MainSet.P3Description1 = "As specified in ASTM F963-23 standard consumer safety specification on toys safety.";
                 MainSet.P3Description2 =
-                    "N/A = Not Applicable                *Visual Examination\r\n" +
-                    "NT = Not tested as per client's request.\r\n\r\n" +
-                    "N.B. : - Only applicable clauses were shown";
+                    //"N/A = Not Applicable                *Visual Examination\r\n" +
+                    //"NT = Not tested as per client's request.\r\n\r\n" +
+                    //"N.B. : - Only applicable clauses were shown";
+                    "N/A = Not Applicable.       NT = Not tested as per client's request.       *Visual Examination\r\n\r\n" +
+                    //"N.B. : - Only applicable clauses were shown";
+                    "Only applicable clauses were shown";
 
                 MainSet.P4Description1 = "Flammability (Clause 4.2)";
                 MainSet.P4Description2 =
                     "*Burning rate has been rounded to the nearest one tenth of an inch per second.\r\n" +
                     "SE = Self-Extinguished\r\n" +
-                    "DNI = Did Not Ignite\r\n\r\n";
-                    //"Requirement:             A toy / component is considered a \"flammable solid\" if it ignites and burns with a self-sustaining \r\n\t\tflame at a rate greater than 0.1 in./s along its major axis.";
+                    "DNI = Did Not Ignite\r\n" +
+                    "NA = A major dimension of 1 in. (25 mm) or less.\r\n\r\n";
+                //"Requirement:             A toy / component is considered a \"flammable solid\" if it ignites and burns with a self-sustaining \r\n\t\tflame at a rate greater than 0.1 in./s along its major axis.";
                 MainSet.P4Description3 = "     A toy / component is considered a \"flammable solid\" if it ignites and burns with a self-sustaining \r\n" +
                                          "     flame at a rate greater than 0.1 in./s along its major axis.";
                 MainSet.P4Description4 = "";
@@ -800,8 +806,8 @@ namespace Sgs.ReportIntegration
                 //    "   1. Objectionable matter originating from\r\n" +
                 //    "      Insect, bird and rodent or other animal\r\n" +
                 //    "      infestation";
-                      "Objectionable matter originating from insect, bird, rodent, or other animal infestation\r\n" + 
-                      "and of contaminants, such as splinters, glass and metal chips";
+                      "Objectionable matter originating from insect, bird, rodent, or other animal\r\n" +
+                      "infestation and of contaminants, such as splinters, glass and metal chips";
                 P5Set.Result = "Absent";
                 P5Set.Requirement = "Absent";
                 P5Set.Insert(trans);

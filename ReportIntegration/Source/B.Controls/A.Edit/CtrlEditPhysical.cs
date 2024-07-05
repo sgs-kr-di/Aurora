@@ -179,6 +179,12 @@ namespace Sgs.ReportIntegration
 
             bookmark.Goto();
             physicalGrid.Focus();
+
+            DateTime MonthFirstDay = DateTime.Now.AddDays(1 - DateTime.Now.Day);
+
+            //fromDateEdit.Text = MonthFirstDay.ToString("yyyy-MM-dd");
+            fromDateEdit.Text = MonthFirstDay.ToString("yyyy-01-dd");   // 1월 1일로 변경 요청 - 조재식 과장
+
         }
 
         private void CtrlEditPhysical_Resize(object sender, EventArgs e)
@@ -404,6 +410,8 @@ namespace Sgs.ReportIntegration
             phyReportSet.DataSet.Tables[13].TableName = "PReportView_Page7";
             phyReportSet.DataSet.Tables[14].TableName = "P7";
             phyReportSet.DataSet.Tables[15].TableName = "PReportView_Page4_1";
+            phyReportSet.DataSet.Tables[16].TableName = "P3_Clause4";
+            phyReportSet.DataSet.Tables[17].TableName = "P3_Clause5";
 
             BindingSource bind = new BindingSource();
             bind.DataSource = phyReportSet.DataSet;

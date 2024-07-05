@@ -363,7 +363,6 @@
             this.printPreviewBarItem24.ButtonStyle = DevExpress.XtraBars.BarButtonStyle.DropDown;
             this.printPreviewBarItem24.Caption = "Export Document...";
             this.printPreviewBarItem24.Command = DevExpress.XtraPrinting.PrintingSystemCommand.ExportFile;
-            this.printPreviewBarItem24.Enabled = false;
             this.printPreviewBarItem24.Hint = "Export Document...";
             this.printPreviewBarItem24.Id = 30;
             this.printPreviewBarItem24.ImageOptions.ImageIndex = 18;

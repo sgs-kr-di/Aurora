@@ -764,7 +764,6 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             dt8.Columns.Add(new DataColumn("How to comply", typeof(string)));
             dt8.Columns.Add(new DataColumn("Results", typeof(string)));
 
-
             foreach (Section sec in document.Sections)
             {
                 for (int i = 0; i < sec.Tables.Count; i++)
@@ -791,20 +790,14 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                                 }
                                 foreach (Paragraph pr in tableRow.Cells[2].Paragraphs)
                                 {
-                                    if (pr.Text.Contains("^p") == true)
-                                    {
-                                        dtr[2] += pr.Text.Replace("^p", "\r\n");
-                                    }
-                                    else 
-                                    {
-                                        dtr[2] += pr.Text;
-                                    }
-                                }
+                                    dtr[2] += pr.Text + "\r\n";
+                                }                                
                             }
                         }
                     }
                 }
             }
+
             return dt8;
         }
 
@@ -961,9 +954,10 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             DataTable dt6 = getdt6(document);
             DataTable dt7 = getdt7(document);
             DataTable dt8 = getdt8(document);
-            DataTable dt9 = getdt9(document);
+            
             DataTable dt10 = getdt10(document);
             DataTable dt11 = getdt11(document);
+            DataTable dt9 = getdt9(document);
 
             dtSet1 = dt1;
             dtSet2 = dt2;

@@ -19,7 +19,7 @@ using Sgs.ReportIntegration.Source.A.Forms.B.Dialog;
 
 namespace Sgs.ReportIntegration
 {
-    public partial class CtrlEditBom : UlUserControlEng
+    public partial class CtrlEditReceipt : UlUserControlEng
     {
         private CtrlEditRight parent;
 
@@ -49,7 +49,7 @@ namespace Sgs.ReportIntegration
 
         private bool ChkErr;
 
-        public CtrlEditBom(CtrlEditRight parent)
+        public CtrlEditReceipt(CtrlEditRight parent)
         {
             this.parent = parent;
 
@@ -611,7 +611,7 @@ namespace Sgs.ReportIntegration
                 cheQuery.ProfJobSet.JobNo = "";
                 cheQuery.ProfJobSet.AreaNo = bomSet.AreaNo;
                 cheQuery.ProfJobSet.ItemNo = col.MaterialNo;
-                //cheQuery.ProfJobSet.ExtendASTM = true;
+                cheQuery.ProfJobSet.ExtendASTM = true;
 
                 //cheQuery.ProfJobSet.Select_Aurora(trans);
                 cheQuery.ProfJobSet.Select_KRSCT01(trans);

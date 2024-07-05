@@ -50,6 +50,10 @@ namespace Sgs.ReportIntegration
 
         public IntegrationResultEnDataSet ResultEnSet { get; set; }
 
+        public IntegrationLimitASTMDataSet LimitASTMSet { get; set; }
+
+        public IntegrationResultASTMDataSet ResultASTMSet { get; set; }
+
         public IntegrationLeadLimitAstmDataSet SurfaceLeadLimitAstmSet { get; set; }
 
         public IntegrationLeadResultAstmDataSet SurfaceLeadResultAstmSet { get; set; }
@@ -87,6 +91,8 @@ namespace Sgs.ReportIntegration
         public CtrlEditIntegrationEu CtrlEu { get; set; }
 
         private bool local;
+
+        private bool bChkNoCoating = false, bChkCoating = false;
 
         private bool bSubstratePlasticLeadCheck;
 
@@ -128,6 +134,8 @@ namespace Sgs.ReportIntegration
                 T7Set = new IntegrationT7DataSet(AppRes.DB.Connect, null, null);
                 LimitEnSet = new IntegrationLimitEnDataSet(AppRes.DB.Connect, null, null);
                 ResultEnSet = new IntegrationResultEnDataSet(AppRes.DB.Connect, null, null);
+                LimitASTMSet = new IntegrationLimitASTMDataSet(AppRes.DB.Connect, null, null);
+                ResultASTMSet = new IntegrationResultASTMDataSet(AppRes.DB.Connect, null, null);
                 SurfaceLeadLimitAstmSet = new IntegrationLeadLimitAstmDataSet(AppRes.DB.Connect, null, null);
                 SurfaceLeadResultAstmSet = new IntegrationLeadResultAstmDataSet(AppRes.DB.Connect, null, null);
                 SurfaceLimitAstmSet = new IntegrationLimitAstmDataSet(AppRes.DB.Connect, null, null);
@@ -254,6 +262,17 @@ namespace Sgs.ReportIntegration
                 T61Set.Delete(trans);
                 T7Set.MainNo = mainNo;
                 T7Set.Delete(trans);
+
+                LimitASTMSet.MainNo = mainNo;
+                LimitASTMSet.Delete(trans);
+                ResultASTMSet.MainNo = mainNo;
+                ResultASTMSet.Delete(trans);
+
+                ResultASTMSet.Delete_TB_INTEG_LEAD_LIMIT_ASTM(trans);
+                ResultASTMSet.Delete_TB_INTEG_LEAD_RESULT_ASTM(trans);
+                ResultASTMSet.Delete_TB_INTEG_LIMIT_ASTM(trans);
+                ResultASTMSet.Delete_TB_INTEG_PHT_ASTM(trans);
+
                 LimitEnSet.MainNo = mainNo;
                 LimitEnSet.Delete(trans);
                 ResultEnSet.MainNo = mainNo;
@@ -332,12 +351,14 @@ namespace Sgs.ReportIntegration
             //MainSet.P1Manufacturer = ProfJobSet.Manufacturer;
             MainSet.P1Manufacturer = phyMainSet.P1Manufacturer;
 
-            if (string.IsNullOrEmpty(ProfJobSet.CountryOfOrigin))
+            if (string.IsNullOrEmpty(phyMainSet.P1CountryOfOrigin))
             {
-                ProfJobSet.CountryOfOrigin = "-";
+                MainSet.P1CountryOfOrigin = "-";
             }
-
-            MainSet.P1CountryOfOrigin = ProfJobSet.CountryOfOrigin;
+            else 
+            {
+                MainSet.P1CountryOfOrigin = phyMainSet.P1CountryOfOrigin;
+            }
                 
             MainSet.P1CountryOfDestination = "-";
             //MainSet.P1LabeledAge = "None";
@@ -394,25 +415,30 @@ namespace Sgs.ReportIntegration
             {
                 MainSet.P1TestPeriod = "";
                 MainSet.P1TestMethod = "For further details, please refer to following page(s)";
-                MainSet.Description1 = "As specified in ASTM F963-17 standard consumer safety specification on toy safety.";
+                MainSet.Description1 = "As specified in ASTM F963-23 standard consumer safety specification on toy safety.";
                 MainSet.Description2 =
-                    //$"The below results are extracted from the test report number\r\n" +
-                    $"Picture of Sample as copied from the test report no.\r\n" +
-                    $"{fileNoDate}";
-                //$"{fileNoDate} where the samples are claimed to be identical.";
+                    $"The below results are extracted from the test report number {fileNoDate}\r\n"+
+                    $"where the samples are claimed to be identical.";
+                //$"Picture of Sample as copied from the test report no.\r\n" +
+                //$"{fileNoDate}";
                 //MainSet.Description3 = $"N/A = Only applicable clauses were shown               **Visual Examination";
                 MainSet.Description3 = $"N.B. Only applicable clauses were shown               *Visual Examination";
                 MainSet.Description4 = $"Flammability Test(Clauses 4.2)";
+                //MainSet.Description5 =
+                //    "*Burning rate has been rounded to the nearest one tenth of an inch per second.\r\n\r\n" +
+                //    "Requirement: A toy / component is considered a \"flammable solid\" if it ignites and burns with a self-sustaining\r\n" +
+                //    "             flame at a rate greater than 0.1 in./s along its major axis.";
                 MainSet.Description5 =
-                    "*Burning rate has been rounded to the nearest one tenth of an inch per second.\r\n\r\n" +
-                    "Requirement: A toy / component is considered a \"flammable solid\" if it ignites and burns with a self-sustaining\r\n" +
-                    "             flame at a rate greater than 0.1 in./s along its major axis.";
+                    "*Burning rate has been rounded to the nearest one tenth of an inch per second.\r\n" +
+                    "SE = Self-Exinguished\r\n" +
+                    "DNI = Did Not Ignite\r\n" +
+                    "NA = A major dimension of 1 in. (25 mm) or less.";
                 MainSet.Description6 =
                     "Heavy Elements(Clause 4.3.5)\r\n\r\n" +            
-                    "ASTM F963-17, Clause 4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials";
+                    "ASTM F963-23, Clause 4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials";
                 MainSet.Description7 =
                     "Method: With reference to CPSC-CH-E1003-09.1 - Standard Operating Procedure for Determing Heavy Metal in Paint and Other Similar Surface Coatings. Analysis was performed by ICP-OES.";
-                MainSet.Description8 = "Method: With reference to ASTM F963-17 Clause 8.3. Analysis was performed by ICP-OES.";
+                MainSet.Description8 = "Method: With reference to ASTM F963-23 Clause 8.3. Analysis was performed by ICP-OES.";
                 MainSet.Description9 =
                     "Note: - Soluble results shown are of the adjusted analytical result.\r\n" +
                     "      - ND = Not Detected(<MDL)";
@@ -421,7 +447,7 @@ namespace Sgs.ReportIntegration
                 //    "ASTM F963-17, Clause 4.3.5.1 - Heavy Elements in Paint/Similar Surface Coating Materials";
                 MainSet.Description10 =
                     "Heavy Elements(Clause 4.3.5)\r\n\r\n" +
-                    "ASTM F963-17, Clause 4.3.5.2 - Heavy Elements in Toys Substrate Materials";
+                    "ASTM F963-23, Clause 4.3.5.2 - Heavy Elements in Toys Substrate Materials";
 
                 //MainSet.Description11 =
                 //    "Method: With reference to CPSC-CH-E1003-09.1 - Standard Operating Procedure for Determing Heavy Metal in Paint and Other Similar Surface Coatings. Analysis was performed by ICP-OES.";
@@ -429,17 +455,27 @@ namespace Sgs.ReportIntegration
                     "Method (non-metallic materials): CPSC-CH-E1002-08.3 -Standard Operation Procedure for Determining Total Lead\r\n" +
                     "(Pb) in Non-Metal Children Product. Analysis was performed by ICP-OES.";
 
-                MainSet.Description12 = "Method: With reference to ASTM F963-17 Clause 8.3. Analysis was performed by ICP-OES.";
+                MainSet.Description12 = "Method: With reference to ASTM F963-23 Clause 8.3. Analysis was performed by ICP-OES.";
+                //MainSet.Description13 =
+                //    "      - Soluble results shown are of the adjusted analytical result.\r\n" +
+                //    "      - ND = Not Detected(<MDL)\r\n" +
+                //    "      - MDL = Method Detection Limit";
                 MainSet.Description13 =
-                    "Note: - Soluble results shown are of the adjusted analytical result.\r\n" +
-                    "      - ND = Not Detected(<MDL)";
+                    "      - Soluble results shown are of the adjusted analytical result.\r\n" +
+                    "      - N.D. = Not Detected(<MDL)\r\n" +
+                    "      - MDL = Method Detection Limit";
                 MainSet.Description14 = "Stuffing Materials(Clause 4.3.7)";
                 MainSet.Description15 =
-                    "Method: With reference to ASTM F963-17 Clause 8.29. Visual inspection is performed using a stereo widefield microscope, or equivalent, at 10 x magnification and adequate ilumination.";
+                    "Method: With reference to ASTM F963-23 Clause 8.29. Visual inspection is performed using a stereo widefield microscope, or equivalent, at 10 x magnification and adequate ilumination.";
                 MainSet.Description16 = $"Picture of Sample as copied from the test report no.\r\n{fileNoDate}";
-                MainSet.Description17 = "";
-                MainSet.Description18 = "";
-                MainSet.Description19 = "";
+                MainSet.Description17 = phyMainSet.P1FileNo;
+                MainSet.Description18 = $"1. % = percentage by weight\r\n" +
+                                        $"2. 1 % = 10000 ppm (mg/kg)\r\n" +
+                                        $"3. N.D. = Not Detected\r\n" +
+                                        $"4. Method Detection Limit for each phthalate = 0.015 %";
+                MainSet.Description19 =
+                    "      - N.D. = Not Detected(<MDL)\r\n" +
+                    "      - MDL = Method Detection Limit";
             }
             else
             {
@@ -537,36 +573,51 @@ namespace Sgs.ReportIntegration
             if (area == EReportArea.US)
             {
                 T1Set.MainNo = MainSet.RecNo;
+                //P2Set.MainNo = ProductSet.PhyJobNo;
+                //P2Set.Select(trans);
+
+                //for (int i = 0; i < P2Set.RowCount; i++)
+                //{
+                //    P2Set.Fetch(i);
+
+                //    T1Set.No = P2Set.No;
+                //    T1Set.Line = P2Set.Line;
+                //    T1Set.Requested = P2Set.Requested;
+                //    T1Set.Conclusion = P2Set.Conclusion;
+                //    T1Set.Insert(trans);
+                //}
+                
+                T1Set.MainNo = MainSet.RecNo;
                 T1Set.No = 0;
                 T1Set.Line = false;
-                T1Set.Requested = "US Public Law 110-314(Comsumer Plroduct Safety Improvement Act of 2008, CPSIA):";
+                T1Set.Requested = "US Public Law 110-314 (Consumer Product Safety Improvement Act of 2008, CPSIA):";
                 T1Set.Conclusion = "-";
                 T1Set.Insert(trans);
                                 
                 T1Set.No = 1;
                 T1Set.Line = false;
-                T1Set.Requested = "- ASTM F963-17: Standard Consumer Safety Specification on Toy Safety";
-                //T1Set.Requested = "- ASTM F963-17: Standard Consumer Safety Specification on Toy Safety\r\n  (Excluding clause 4.3.5 Heavy Element)";
+                T1Set.Requested = "- ASTM F963-23 : Standard Consumer Safety Specification on Toy Safety";
                 T1Set.Conclusion = "PASS";
                 T1Set.Insert(trans);
                 
                 T1Set.No = 1;
                 T1Set.Line = false;
-                T1Set.Requested = "Flammability of toys(16 C.F.R. 1500.44)";
+                T1Set.Requested = "- Flammability of toys (16 C.F.R. 1500.44)";
                 T1Set.Conclusion = "PASS";
                 T1Set.Insert(trans);
 
                 T1Set.No = 2;
                 T1Set.Line = false;
-                T1Set.Requested = "Small part(16 C.F.R. 1501)";
+                T1Set.Requested = "- Small part (16 C.F.R. 1501)";
                 T1Set.Conclusion = "PASS";
                 T1Set.Insert(trans);
 
                 T1Set.No = 3;
                 T1Set.Line = false;
-                T1Set.Requested = "Sharp points and edges(16 C.F.R. 1500.48 and 49)";
+                T1Set.Requested = "- Sharp points and edges (16 C.F.R. 1500.48 and 49)";
                 T1Set.Conclusion = "PASS";
                 T1Set.Insert(trans);
+                
             }
             else
             {
@@ -624,10 +675,10 @@ namespace Sgs.ReportIntegration
                 {
                     T1Set.Conclusion = "PASS";
                 }
-                else 
+                else
                 {
                     T1Set.Conclusion = "FAIL";
-                }                
+                }
                 T1Set.Insert(trans);
             }
         }
@@ -638,24 +689,50 @@ namespace Sgs.ReportIntegration
 
             if (area == EReportArea.US)
             {
-                T2Set.MainNo = MainSet.RecNo;
+                //P3Set.No = 0;
+                P3Set.SelectPhymain_P3(trans);
 
-                for (int i = 0; i < 50; i++) 
+                for (int i = 0; i < P3Set.RowCount; i++)
                 {
-                    P3Set.No = i;
-                    P3Set.SelectPhymainNo_No(trans);
-                    P3Set.Fetch();
+                    P3Set.Fetch(i);
 
-                    if (P3Set.RecNo != 0) 
+                    if (string.IsNullOrEmpty(P3Set.Result))
                     {
-                        T2Set.No = P3Set.No;
-                        T2Set.Line = P3Set.Line;
-                        T2Set.Clause = P3Set.Clause;
-                        T2Set.Description = P3Set.Description;
-                        T2Set.Result = P3Set.Result;
-                        T2Set.Insert(trans);
-                    }                    
+                        P3Set.Result = "";
+                    }
+
+                    T2Set.MainNo = MainSet.RecNo;
+                    T2Set.No = P3Set.No;
+                    T2Set.Line = P3Set.Line;
+                    T2Set.Clause = P3Set.Clause;
+                    T2Set.Description = P3Set.Description;
+                    T2Set.Result = P3Set.Result;
+                    T2Set.Insert(trans);
                 }
+
+                //T2Set.MainNo = MainSet.RecNo;
+                //P3Set.SelectPhymainNo_No(trans);
+
+                //for (int i = 0; i < P3Set.RowCount; i++)
+                //{
+                //    P3Set.Fetch(i);
+
+                //    if (P3Set.RecNo != 0)
+                //    {
+                //        if (string.IsNullOrEmpty(P3Set.Result)) 
+                //        {
+                //            P3Set.Result = "";
+                //        }
+
+                //        T2Set.MainNo = MainSet.RecNo;
+                //        T2Set.No = P3Set.No;
+                //        T2Set.Line = P3Set.Line;
+                //        T2Set.Clause = P3Set.Clause;
+                //        T2Set.Description = P3Set.Description;
+                //        T2Set.Result = P3Set.Result;
+                //        T2Set.Insert(trans);
+                //    }
+                //}
 
                 //P3Set.No = 0;
                 //P3Set.SelectPhymainNo_No(trans);
@@ -1174,7 +1251,7 @@ namespace Sgs.ReportIntegration
                     T2Set.Description = P3Set.Description;
                     T2Set.Result = P3Set.Result;
                     T2Set.Insert(trans);
-                }                
+                }
 
                 ///*
                 //T2Set.MainNo = MainSet.RecNo;
@@ -1557,15 +1634,26 @@ namespace Sgs.ReportIntegration
         {
             if (area == EReportArea.US)
             {
+                P41Set.MainNo = ProductSet.PhyJobNo;
                 P41Set.Select(trans);
-                P41Set.Fetch();
 
-                T5Set.MainNo = MainSet.RecNo;
-                T5Set.No = P41Set.No;
-                T5Set.Line = P41Set.Line;
-                T5Set.Sample = P41Set.Sample;
-                T5Set.BurningRate = P41Set.BurningRate;
-                T5Set.Insert(trans);
+                for (int i = 0; i < P41Set.RowCount; i++)
+                {
+                    P41Set.Fetch(i);
+
+                    if (string.IsNullOrEmpty(P41Set.Result))
+                    {
+                        P41Set.Result = "";
+                    }
+
+                    T5Set.MainNo = MainSet.RecNo;
+                    T5Set.No = P41Set.No;
+                    T5Set.Line = P41Set.Line;
+                    T5Set.Sample = P41Set.Sample;
+                    T5Set.BurningRate = P41Set.BurningRate;
+                    T5Set.Result = P41Set.Result;
+                    T5Set.Insert(trans);
+                }
             }
             else
             {
@@ -1598,42 +1686,67 @@ namespace Sgs.ReportIntegration
         {
             P5Set.MainNo = ProductSet.PhyJobNo;
 
+            //P5Set.Fetch(i);
+            //T6Set.MainNo = MainSet.RecNo;
+            //T6Set.No = P5Set.No;
+            //T6Set.Line = P5Set.Line;
+            //T6Set.TestItem = P5Set.TestItem;
+            //T6Set.Result = P5Set.Result;
+            //T6Set.Requirement = P5Set.Requirement;
+            //T6Set.Insert(trans);
+
             if (area == EReportArea.US)
             {
-                T6Set.MainNo = MainSet.RecNo;
-                T6Set.No = 0;
-                T6Set.Line = false;
-                /*
-                T6Set.TestItem =
-                    "   1. Objectionable matter originating from\r\n" +
-                    "      Insect, bird and rodent or other animal\r\n" +
-                    "      infestation";
-                T6Set.Result = "Absent";
-                T6Set.Requirement = "Absent";
-                */
+                P5Set.Select(trans);
 
-                T6Set.MainNo = MainSet.RecNo;
-                P5Set.No = 0;
-                P5Set.SelectPhymainNo_No(trans);
-                P5Set.Fetch();
+                for (int i = 0; i < P5Set.RowCount; i++)
+                {
+                    //T6Set.No = P5Set.No;
+                    //P5Set.SelectPhymainNo_No(trans);
+                    P5Set.Fetch(i);
+                    T6Set.No = P5Set.No;
+                    T6Set.MainNo = MainSet.RecNo;
+                    T6Set.Line = P5Set.Line;
+                    T6Set.TestItem = P5Set.TestItem;
+                    T6Set.Result = P5Set.Result;
+                    T6Set.Requirement = P5Set.Requirement;
+                    T6Set.Insert(trans);
+                }
 
-                T6Set.No = P5Set.No;
-                T6Set.Line = P5Set.Line;
-                T6Set.TestItem = P5Set.TestItem;
-                T6Set.Result = P5Set.Result;
-                T6Set.Requirement = P5Set.Requirement;
-                T6Set.Insert(trans);
+                //T6Set.MainNo = MainSet.RecNo;
+                //T6Set.No = 0;
+                //T6Set.Line = false;
+                ///*
+                //T6Set.TestItem =
+                //    "   1. Objectionable matter originating from\r\n" +
+                //    "      Insect, bird and rodent or other animal\r\n" +
+                //    "      infestation";
+                //T6Set.Result = "Absent";
+                //T6Set.Requirement = "Absent";
+                //*/
 
-                P5Set.No = 1;
-                P5Set.SelectPhymainNo_No(trans);
-                P5Set.Fetch();
+                //T6Set.MainNo = MainSet.RecNo;
+                //P5Set.No = 0;
+                //P5Set.SelectPhymainNo_No(trans);
+                //P5Set.Fetch();
 
-                T6Set.No = P5Set.No;
-                T6Set.Line = P5Set.Line;
-                T6Set.TestItem = P5Set.TestItem;
-                T6Set.Result = P5Set.Result;
-                T6Set.Requirement = P5Set.Requirement;
-                T6Set.Insert(trans);
+                //T6Set.No = P5Set.No;
+                //T6Set.Line = P5Set.Line;
+                //T6Set.TestItem = P5Set.TestItem;
+                //T6Set.Result = P5Set.Result;
+                //T6Set.Requirement = P5Set.Requirement;
+                //T6Set.Insert(trans);
+
+                //P5Set.No = 1;
+                //P5Set.SelectPhymainNo_No(trans);
+                //P5Set.Fetch();
+
+                //T6Set.No = P5Set.No;
+                //T6Set.Line = P5Set.Line;
+                //T6Set.TestItem = P5Set.TestItem;
+                //T6Set.Result = P5Set.Result;
+                //T6Set.Requirement = P5Set.Requirement;
+                //T6Set.Insert(trans);
 
                 /*
                 T6Set.No = 1;
@@ -1812,12 +1925,14 @@ namespace Sgs.ReportIntegration
             substrateLeadIndex = 0;
             substrateResultIndex = 0;
 
+            Dictionary<string, int> dicTinNo = new Dictionary<string, int>(); // 시료에서 추가 분석된 Lead의 No와 동일하게 매칭하기 위한 Dictionary 변수
+
             partSet.ProductNo = ProductSet.RecNo;
             partSet.Select(trans);
 
             for (int i=0; i < partSet.RowCount; i++)
             {
-                var vDictionaryReportInsertNo = new Dictionary<string, int>();
+                //var vDictionaryReportInsertNo = new Dictionary<string, int>();
                 partSet.Fetch(i);
 
                 if (string.IsNullOrWhiteSpace(partSet.JobNo) == false)
@@ -1829,11 +1944,31 @@ namespace Sgs.ReportIntegration
                         iSaveLoopIntegrationCnt = iSaveLoopIntegrationCnt + 1;
 
                         cheP2Set.MainNo = partSet.JobNo;
-                        cheP2Set.Select_Che2Sampleident_HYPEN_EN(trans);
+
+                        if (area == EReportArea.US)
+                        {
+                            cheP2Set.Select_Che2Sampleident_RESULT_ASTM(trans);
+                        }
+                        else if(area == EReportArea.EU)
+                        {
+                            cheP2Set.Select_Che2Sampleident_HYPEN_EN(trans);
+                        }
+                        else 
+                        {
+                            Console.WriteLine("Area 미분류");                            
+                        }
 
                         for (int j = 0; j < cheP2Set.RowCount; j++)
                         {
-                            cheP2Set.Fetch(j, 0, "Integr_EN");
+                            if (area == EReportArea.US)
+                            {
+                                cheP2Set.Fetch(j, 0, "Integr_ASTM");
+                            }
+                            else if (area == EReportArea.EU)
+                            {
+                                cheP2Set.Fetch(j, 0, "Integr_EN");
+                            }
+                            
                             //cheMainSet.Fetch();
 
                             ProfJobSet.JobNo = cheMainSet.RecNo;
@@ -1889,6 +2024,7 @@ namespace Sgs.ReportIntegration
                             T7Set.IssuedDate = cheMainSet.RequiredTime.ToString("yyyy.MM.dd");
                             T7Set.Insert(trans);
                             //vDictionaryReportInsertNo.Add(cheMainSet.RecNo, iSaveLoopIntegrationCnt);
+
                         }
 
                         iSaveLoopResultCnt = iSaveLoopResultCnt + 1;
@@ -1896,6 +2032,21 @@ namespace Sgs.ReportIntegration
                         switch (area)
                         {
                             case EReportArea.US:
+                                cheMainSet.RecNo = partSet.JobNo;
+
+                                for (int k = 0; k < cheMainSet.RowCount; k++)
+                                {
+                                    iSaveLoopResultCnt = iSaveLoopResultCnt + k;
+                                    //if (i == 0) InsertLimitASTM(cheMainSet.RecNo, cheMainSet.P1FileNo, trans);
+                                    InsertLimitASTM(cheMainSet.RecNo, cheMainSet.P1FileNo, trans);
+                                    InsertResultAstm_New(iSaveLoopResultCnt, cheMainSet.RecNo, cheMainSet.P1FileNo, dicTinNo, trans);
+
+                                    //InsertResultAstm(cheMainSet.RecNo, cheMainSet.LeadType, trans);
+                                    //iSaveLoopResultCnt = iSaveLoopResultCnt + k;
+                                    ////InsertSubstrateLeadResultAstm
+                                    //if (i == 0) InsertLimitASTM(cheMainSet.RecNo, trans);
+                                    //InsertResultEn(iSaveLoopResultCnt, cheMainSet.RecNo, trans);
+                                }
                                 break;
 
                             case EReportArea.EU:
@@ -2435,7 +2586,7 @@ namespace Sgs.ReportIntegration
                     SubstrateLeadLimitAstmSet.LoValue = cheP2ExtendSet.LoValue;
                     SubstrateLeadLimitAstmSet.HiValue = cheP2ExtendSet.HiValue;
                     SubstrateLeadLimitAstmSet.ReportValue = cheP2ExtendSet.ReportValue;
-
+                    
                     SubstrateLeadLimitAstmSet.Insert(trans, iLeadType);
                 }
             }
@@ -2473,6 +2624,264 @@ namespace Sgs.ReportIntegration
             SubstrateLeadResultAstmSet.Insert(trans, iLeadType);
 
             substrateLeadIndex++;
+        }
+
+        private void InsertResultAstm_New(int index, string recNo, string fileNo, Dictionary<string, int> dicTinNo, SqlTransaction trans)
+        {
+            //Dictionary<string, int> dicTinNo = new Dictionary<string, int>(); // 시료에서 추가 분석된 Lead의 No와 동일하게 매칭하기 위한 Dictionary 변수
+            cheP2Set.MainNo = recNo;
+            //cheP2Set.Pro_Proj = fileNo;
+            cheP2Set.Select_Che2Sampleident_RESULT_ASTM(trans);
+            ResultASTMSet.MainNo = MainSet.RecNo;
+
+            if (cheP2Set.Empty == false)
+            {
+                for (int i = 0; i < cheP2Set.RowCount; i++)
+                {
+                    if (i > 0)
+                    {
+                        index = index + 1;
+                        iSaveLoopResultCnt = index;
+                    }
+
+                    cheP2Set.Fetch(i, 0, "Integr_ASTM");
+
+                    if (cheP2Set.Sch_Code.Equals("HCEEASTMICP_09"))
+                    {
+                        ResultASTMSet.Pro_proj = cheP2Set.Pro_Proj;
+                        ResultASTMSet.Sampleident = cheP2Set.Sampleident;
+                        ResultASTMSet.Sch_code = cheP2Set.Sch_Code;
+                        ResultASTMSet.Sam_description = cheP2Set.SampleDescription;
+                        ResultASTMSet.Sam_remarks = cheP2Set.SampleRemarks;
+                        ResultASTMSet.No = index;
+                        ResultASTMSet.Mg = cheP2Set.Mg;
+                        ResultASTMSet.Pb = cheP2Set.Pb;
+                        ResultASTMSet.Sb = cheP2Set.Sb;
+                        ResultASTMSet.As = cheP2Set.As;
+                        ResultASTMSet.Ba = cheP2Set.Ba;
+                        ResultASTMSet.Cd = cheP2Set.Cd;
+                        ResultASTMSet.Cr = cheP2Set.Cr;
+                        ResultASTMSet.Hg = cheP2Set.Hg;
+                        ResultASTMSet.Se = cheP2Set.Se;
+                        ResultASTMSet.Insert(trans);
+                        try
+                        {
+                            dicTinNo.Add(cheP2Set.Pro_Proj + "-1", index);
+                        }
+                        catch (Exception e) 
+                        {
+
+                        }
+                    }
+                }
+            }
+
+            cheP2Set.Pro_Proj = fileNo + "-1";
+            cheP2Set.Select_TB_CHEP2_LEAD_LIMIT_ASTM(trans);
+            if (cheP2Set.Empty == false)
+            {
+                for (int i = 0; i < cheP2Set.RowCount; i++)
+                {
+                    cheP2Set.Fetch(i, 0, "Integr_ASTM_Lead_Limit");
+
+                    if (!cheP2Set.Sch_Code.Equals("HCEEASTMICP_09") && !cheP2Set.Sch_Code.Equals("HCEEPHTHALATE_09"))
+                    {
+                        ResultASTMSet.Pro_proj = cheP2Set.Pro_Proj;
+                        ResultASTMSet.Sampleident = cheP2Set.Sampleident;
+                        ResultASTMSet.lovalue = cheP2Set.LoValue;
+                        ResultASTMSet.hivalue = cheP2Set.HiValue;
+                        ResultASTMSet.reportvalue = cheP2Set.ReportValue;
+                        ResultASTMSet.Sch_code = cheP2Set.Sch_Code;
+                        ResultASTMSet.Sam_remarks = cheP2Set.SampleRemarks;
+                        ResultASTMSet.Insert_TB_INTEG_LEAD_LIMIT_ASTM(trans);
+                    }
+                }
+            }
+
+            cheP2Set.Pro_Proj = fileNo + "-1";
+            cheP2Set.Select_TB_CHEP2_LEAD_RESULT_ASTM(trans);
+            if (cheP2Set.Empty == false)
+            {
+                for (int i = 0; i < cheP2Set.RowCount; i++)
+                {
+                    cheP2Set.Fetch(i, 0, "Integr_ASTM_Lead_Result");
+
+                    if (!cheP2Set.Sch_Code.Equals("HCEEASTMICP_09") && !cheP2Set.Sch_Code.Equals("HCEEPHTHALATE_09"))
+                    {
+                        ResultASTMSet.Pro_proj = cheP2Set.Pro_Proj;
+                        ResultASTMSet.Sampleident = cheP2Set.Sampleident;
+                        //ResultASTMSet.No = index;
+                        ResultASTMSet.No = dicTinNo[cheP2Set.Pro_Proj];
+                        ResultASTMSet.Pb = cheP2Set.Pb;
+                        ResultASTMSet.Sch_code = cheP2Set.Sch_Code;
+                        ResultASTMSet.Sam_description = cheP2Set.SampleDescription;
+                        ResultASTMSet.Sam_remarks = cheP2Set.SampleRemarks;
+
+                        ResultASTMSet.Insert_TB_INTEG_LEAD_RESULT_ASTM(trans);
+                    }
+                }
+            }
+
+            cheP2Set.Pro_Proj = fileNo + "-1";
+            cheP2Set.Select_TB_CHEPPHT_ASTM(trans);
+            if (cheP2Set.Empty == false)
+            {
+                for (int i = 0; i < cheP2Set.RowCount; i++)
+                {
+                    cheP2Set.Fetch(i, 0, "Integr_ASTM_Pht");
+
+                    if (cheP2Set.Sch_Code.Equals("HCEEPHTHALATE_09"))
+                    {
+                        ResultASTMSet.Pro_proj = cheP2Set.Pro_Proj;
+                        ResultASTMSet.Sampleident = cheP2Set.Sampleident;
+                        ResultASTMSet.Sch_code = cheP2Set.Sch_Code;
+                        ResultASTMSet.Sam_description = cheP2Set.SampleDescription;
+                        ResultASTMSet.Sam_remarks = cheP2Set.SampleRemarks;
+                        //ResultASTMSet.No = index;
+                        ResultASTMSet.No = dicTinNo[cheP2Set.Pro_Proj];
+                        ResultASTMSet.DBP = cheP2Set.DBP;
+                        ResultASTMSet.BBP = cheP2Set.DBP;
+                        ResultASTMSet.DEHP = cheP2Set.DEHP;
+                        ResultASTMSet.DINP = cheP2Set.DINP;
+                        ResultASTMSet.DCHP = cheP2Set.DCHP;
+                        ResultASTMSet.DnHP = cheP2Set.DnHP;
+                        ResultASTMSet.DIBP = cheP2Set.DIBP;
+                        ResultASTMSet.DnPP = cheP2Set.DnPP;
+                        ResultASTMSet.DNOP = cheP2Set.DNOP;
+                        ResultASTMSet.DIDP = cheP2Set.DIDP;
+
+                        ResultASTMSet.Insert_TB_INTEG_PHT_ASTM(trans);
+                    }
+                }
+            }
+        }
+
+        private void InsertLimitASTM(string recNo, string fileNo, SqlTransaction trans)
+        {
+            //if (bChkNoCoating == true) return;
+            //if (bChkCoating == true) return;
+
+            /*
+            if (bChkCoating && bChkNoCoating) return;
+
+            cheP2Set.MainNo = recNo;
+            //cheP2Set.Select(trans);
+            cheP2Set.Select_Limit_ASTM(trans);
+
+            if (cheP2Set.Empty == false)
+            {
+                for (int i = 0; i < cheP2Set.RowCount; i++)
+                {
+                    cheP2Set.Fetch(i);
+
+                    LimitASTMSet.MainNo = MainSet.RecNo;
+                    LimitASTMSet.Sampleident = cheP2Set.Sampleident;
+                    LimitASTMSet.Pro_proj = cheP2Set.Pro_Proj;
+                    LimitASTMSet.Name = cheP2Set.Name;
+                    LimitASTMSet.LoValue = cheP2Set.LoValue;
+                    LimitASTMSet.HiValue = cheP2Set.HiValue;
+                    LimitASTMSet.ReportValue = cheP2Set.ReportValue;
+                    LimitASTMSet.Sch_code = cheP2Set.Sch_Code;
+                    LimitASTMSet.Sam_remarks = cheP2Set.SampleRemarks;
+
+                    if ((LimitASTMSet.Sam_remarks.ToLower() == "textile" || LimitASTMSet.Sam_remarks.ToLower() == "plastic" || LimitASTMSet.Sam_remarks.ToLower() == "metal") && bChkNoCoating)
+                    {
+                        break;
+                    }
+
+                    if ((LimitASTMSet.Sam_remarks.ToLower() == "coating") && bChkCoating)
+                    {
+                        break;
+                    }
+
+                    LimitASTMSet.Insert(trans);
+                }
+
+                if (LimitASTMSet.Sam_remarks.ToLower() == "textile" || LimitASTMSet.Sam_remarks.ToLower() == "plastic" || LimitASTMSet.Sam_remarks.ToLower() == "metal")
+                {
+                    bChkNoCoating = true;
+                }
+
+                if ((LimitASTMSet.Sam_remarks.ToLower() == "coating"))
+                {
+                    bChkCoating = true;
+                }
+                
+
+
+            }
+            
+            //cheP2Set.Pro_Proj = fileNo;
+            //cheP2Set.Select_Limit_FileNo_ASTM(trans);
+
+            //if (cheP2Set.Empty == false)
+            //{
+            //    for (int i = 0; i < cheP2Set.RowCount; i++)
+            //    {
+            //        cheP2Set.Fetch(i);
+
+            //        LimitASTMSet.MainNo = MainSet.RecNo;
+            //        LimitASTMSet.Sampleident = cheP2Set.Sampleident;
+            //        LimitASTMSet.Pro_proj = cheP2Set.Pro_Proj;
+            //        LimitASTMSet.Name = cheP2Set.Name;
+            //        LimitASTMSet.LoValue = cheP2Set.LoValue;
+            //        LimitASTMSet.HiValue = cheP2Set.HiValue;
+            //        LimitASTMSet.ReportValue = cheP2Set.ReportValue;
+            //        LimitASTMSet.Sch_code = cheP2Set.Sch_Code;
+            //        LimitASTMSet.Sam_remarks = cheP2Set.SampleRemarks;
+            //        LimitASTMSet.Insert(trans);
+            //    }
+            //}
+            */
+
+            cheP2Set.MainNo = recNo;            
+            cheP2Set.Select_Limit_ASTM(trans);
+
+            if (cheP2Set.Empty == false)
+            {
+                for (int i = 0; i < cheP2Set.RowCount; i++)
+                {
+                    cheP2Set.Fetch(i);
+
+                    LimitASTMSet.MainNo = MainSet.RecNo;
+                    LimitASTMSet.Sampleident = cheP2Set.Sampleident;
+                    LimitASTMSet.Pro_proj = cheP2Set.Pro_Proj;
+                    LimitASTMSet.Name = cheP2Set.Name;
+                    LimitASTMSet.LoValue = cheP2Set.LoValue;
+                    LimitASTMSet.HiValue = cheP2Set.HiValue;
+                    LimitASTMSet.ReportValue = cheP2Set.ReportValue;
+                    LimitASTMSet.Sch_code = cheP2Set.Sch_Code;
+                    LimitASTMSet.Sam_remarks = cheP2Set.SampleRemarks;
+
+                    cheP2ExtendSet.MainNo = MainSet.RecNo;
+                    cheP2ExtendSet.SampleRemarks = cheP2Set.SampleRemarks.ToLower().Trim();
+                    cheP2ExtendSet.Select_Limit_Sam_remarks_ASTM(trans);
+
+                    if (cheP2ExtendSet.RowCount < 8)
+                    {
+                        if (cheP2Set.SampleRemarks.ToLower().Trim().Equals("textile")) 
+                        {                            
+                            cheP2ExtendSet.Select_Limit_Sam_remarks_Plastic_ASTM(trans);
+                            if (cheP2ExtendSet.RowCount < 8)
+                            {
+                                LimitASTMSet.Insert(trans);
+                            }
+                        }
+                        else if (cheP2Set.SampleRemarks.ToLower().Trim().Equals("plastic"))
+                        {
+                            cheP2ExtendSet.Select_Limit_Sam_remarks_Textile_ASTM(trans);
+                            if (cheP2ExtendSet.RowCount < 8)
+                            {
+                                LimitASTMSet.Insert(trans);
+                            }
+                        }
+                        else if (cheP2Set.SampleRemarks.ToLower().Trim().Equals("coating"))
+                        {
+                            LimitASTMSet.Insert(trans);
+                        }
+                    }
+                }
+            }
         }
 
         private void InsertLimitEn(string recNo, SqlTransaction trans)
@@ -2855,3 +3264,4 @@ namespace Sgs.ReportIntegration
         }
     }
 }
+

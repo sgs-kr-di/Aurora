@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtrlEditRight));
             this.menuPanel = new Ulee.Controls.UlPanel();
+            this.receiptButton = new DevExpress.XtraEditors.SimpleButton();
             this.integrationButton = new DevExpress.XtraEditors.SimpleButton();
             this.bomButton = new DevExpress.XtraEditors.SimpleButton();
             this.chemicalButton = new DevExpress.XtraEditors.SimpleButton();
@@ -50,6 +51,9 @@
             this.bomDeleteButton = new DevExpress.XtraEditors.SimpleButton();
             this.bomImportButton = new DevExpress.XtraEditors.SimpleButton();
             this.viewPanel = new Ulee.Controls.UlPanel();
+            this.receiptMenuPanel = new Ulee.Controls.UlPanel();
+            this.receiptDeleteButton = new DevExpress.XtraEditors.SimpleButton();
+            this.receiptImportButton = new DevExpress.XtraEditors.SimpleButton();
             this.integMenuPanel = new Ulee.Controls.UlPanel();
             this.integSaveButton = new DevExpress.XtraEditors.SimpleButton();
             this.integCancelButton = new DevExpress.XtraEditors.SimpleButton();
@@ -62,6 +66,7 @@
             this.physicalMenuPanel.SuspendLayout();
             this.bomMenuPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
+            this.receiptMenuPanel.SuspendLayout();
             this.integMenuPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,6 +83,7 @@
             this.menuPanel.BackColor = System.Drawing.Color.Silver;
             this.menuPanel.BevelInner = Ulee.Controls.EUlBevelStyle.None;
             this.menuPanel.BevelOuter = Ulee.Controls.EUlBevelStyle.Lowered;
+            this.menuPanel.Controls.Add(this.receiptButton);
             this.menuPanel.Controls.Add(this.integrationButton);
             this.menuPanel.Controls.Add(this.bomButton);
             this.menuPanel.Controls.Add(this.chemicalButton);
@@ -93,6 +99,26 @@
             this.menuPanel.TabIndex = 8;
             this.menuPanel.TextHAlign = Ulee.Controls.EUlHoriAlign.Center;
             this.menuPanel.TextVAlign = Ulee.Controls.EUlVertAlign.Middle;
+            // 
+            // receiptButton
+            // 
+            this.receiptButton.AllowFocus = false;
+            this.receiptButton.Appearance.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.receiptButton.Appearance.Options.UseFont = true;
+            this.receiptButton.Appearance.Options.UseTextOptions = true;
+            this.receiptButton.Appearance.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Bottom;
+            this.receiptButton.Enabled = false;
+            this.receiptButton.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("receiptButton.ImageOptions.Image")));
+            this.receiptButton.ImageOptions.Location = DevExpress.XtraEditors.ImageLocation.TopCenter;
+            this.receiptButton.Location = new System.Drawing.Point(2, 243);
+            this.receiptButton.LookAndFeel.SkinName = "DevExpress Style";
+            this.receiptButton.LookAndFeel.UseDefaultLookAndFeel = false;
+            this.receiptButton.Name = "receiptButton";
+            this.receiptButton.Size = new System.Drawing.Size(80, 58);
+            this.receiptButton.TabIndex = 40;
+            this.receiptButton.TabStop = false;
+            this.receiptButton.Tag = "0";
+            this.receiptButton.Text = "RECEIPT.";
             // 
             // integrationButton
             // 
@@ -477,6 +503,7 @@
             // 
             this.viewPanel.BevelInner = Ulee.Controls.EUlBevelStyle.None;
             this.viewPanel.BevelOuter = Ulee.Controls.EUlBevelStyle.None;
+            this.viewPanel.Controls.Add(this.receiptMenuPanel);
             this.viewPanel.Controls.Add(this.integMenuPanel);
             this.viewPanel.Controls.Add(this.physicalMenuPanel);
             this.viewPanel.Controls.Add(this.bomMenuPanel);
@@ -492,6 +519,65 @@
             this.viewPanel.TabIndex = 9;
             this.viewPanel.TextHAlign = Ulee.Controls.EUlHoriAlign.Center;
             this.viewPanel.TextVAlign = Ulee.Controls.EUlVertAlign.Middle;
+            // 
+            // receiptMenuPanel
+            // 
+            this.receiptMenuPanel.BackColor = System.Drawing.Color.Silver;
+            this.receiptMenuPanel.BevelInner = Ulee.Controls.EUlBevelStyle.None;
+            this.receiptMenuPanel.BevelOuter = Ulee.Controls.EUlBevelStyle.None;
+            this.receiptMenuPanel.Controls.Add(this.receiptDeleteButton);
+            this.receiptMenuPanel.Controls.Add(this.receiptImportButton);
+            this.receiptMenuPanel.InnerColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
+            this.receiptMenuPanel.InnerColor2 = System.Drawing.Color.White;
+            this.receiptMenuPanel.Location = new System.Drawing.Point(393, 328);
+            this.receiptMenuPanel.Name = "receiptMenuPanel";
+            this.receiptMenuPanel.OuterColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
+            this.receiptMenuPanel.OuterColor2 = System.Drawing.Color.White;
+            this.receiptMenuPanel.Size = new System.Drawing.Size(80, 240);
+            this.receiptMenuPanel.Spacing = 0;
+            this.receiptMenuPanel.TabIndex = 43;
+            this.receiptMenuPanel.TextHAlign = Ulee.Controls.EUlHoriAlign.Center;
+            this.receiptMenuPanel.TextVAlign = Ulee.Controls.EUlVertAlign.Middle;
+            // 
+            // receiptDeleteButton
+            // 
+            this.receiptDeleteButton.AllowFocus = false;
+            this.receiptDeleteButton.Appearance.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.receiptDeleteButton.Appearance.Options.UseFont = true;
+            this.receiptDeleteButton.Appearance.Options.UseTextOptions = true;
+            this.receiptDeleteButton.Appearance.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Bottom;
+            this.receiptDeleteButton.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("receiptDeleteButton.ImageOptions.Image")));
+            this.receiptDeleteButton.ImageOptions.Location = DevExpress.XtraEditors.ImageLocation.TopCenter;
+            this.receiptDeleteButton.Location = new System.Drawing.Point(0, 182);
+            this.receiptDeleteButton.LookAndFeel.SkinName = "DevExpress Style";
+            this.receiptDeleteButton.LookAndFeel.UseDefaultLookAndFeel = false;
+            this.receiptDeleteButton.Name = "receiptDeleteButton";
+            this.receiptDeleteButton.Size = new System.Drawing.Size(80, 58);
+            this.receiptDeleteButton.TabIndex = 37;
+            this.receiptDeleteButton.TabStop = false;
+            this.receiptDeleteButton.Tag = "0";
+            this.receiptDeleteButton.Text = "DELETE";
+            this.receiptDeleteButton.Click += new System.EventHandler(this.receiptDeleteButton_Click);
+            // 
+            // receiptImportButton
+            // 
+            this.receiptImportButton.AllowFocus = false;
+            this.receiptImportButton.Appearance.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.receiptImportButton.Appearance.Options.UseFont = true;
+            this.receiptImportButton.Appearance.Options.UseTextOptions = true;
+            this.receiptImportButton.Appearance.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Bottom;
+            this.receiptImportButton.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("receiptImportButton.ImageOptions.Image")));
+            this.receiptImportButton.ImageOptions.Location = DevExpress.XtraEditors.ImageLocation.TopCenter;
+            this.receiptImportButton.Location = new System.Drawing.Point(0, 122);
+            this.receiptImportButton.LookAndFeel.SkinName = "DevExpress Style";
+            this.receiptImportButton.LookAndFeel.UseDefaultLookAndFeel = false;
+            this.receiptImportButton.Name = "receiptImportButton";
+            this.receiptImportButton.Size = new System.Drawing.Size(80, 58);
+            this.receiptImportButton.TabIndex = 36;
+            this.receiptImportButton.TabStop = false;
+            this.receiptImportButton.Tag = "0";
+            this.receiptImportButton.Text = "IMPORT";
+            this.receiptImportButton.Click += new System.EventHandler(this.receiptImportButton_Click);
             // 
             // integMenuPanel
             // 
@@ -628,6 +714,7 @@
             this.physicalMenuPanel.ResumeLayout(false);
             this.bomMenuPanel.ResumeLayout(false);
             this.viewPanel.ResumeLayout(false);
+            this.receiptMenuPanel.ResumeLayout(false);
             this.integMenuPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -662,5 +749,9 @@
         private DevExpress.XtraEditors.SimpleButton integPrintButton;
         private DevExpress.XtraEditors.SimpleButton integDeleteButton;
         private DevExpress.XtraEditors.SimpleButton integImportButton;
+        private DevExpress.XtraEditors.SimpleButton receiptButton;
+        private Ulee.Controls.UlPanel receiptMenuPanel;
+        private DevExpress.XtraEditors.SimpleButton receiptDeleteButton;
+        private DevExpress.XtraEditors.SimpleButton receiptImportButton;
     }
 }

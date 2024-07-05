@@ -42,6 +42,7 @@
             this.reportAreaColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.reportJobNoColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.reportItemNoColumn = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.reportFileNoColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.reportProductColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.reportClientColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.itemNoLabel = new System.Windows.Forms.Label();
@@ -53,7 +54,6 @@
             this.JobNoLabel = new System.Windows.Forms.Label();
             this.OmNoLabel = new System.Windows.Forms.Label();
             this.OmNoEdit = new DevExpress.XtraEditors.TextEdit();
-            this.reportFileNoColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.bgPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.itemNoEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.reportGrid)).BeginInit();
@@ -122,6 +122,7 @@
             // 
             // fromDateEdit
             // 
+            this.fromDateEdit.Checked = false;
             this.fromDateEdit.CustomFormat = "yyyy-MM-dd";
             this.fromDateEdit.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fromDateEdit.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
@@ -335,6 +336,14 @@
             this.reportItemNoColumn.VisibleIndex = 3;
             this.reportItemNoColumn.Width = 170;
             // 
+            // reportFileNoColumn
+            // 
+            this.reportFileNoColumn.Caption = "OM No.";
+            this.reportFileNoColumn.FieldName = "pro_proj";
+            this.reportFileNoColumn.Name = "reportFileNoColumn";
+            this.reportFileNoColumn.Visible = true;
+            this.reportFileNoColumn.VisibleIndex = 2;
+            // 
             // reportProductColumn
             // 
             this.reportProductColumn.Caption = "Product Desc";
@@ -484,14 +493,6 @@
             this.OmNoEdit.Properties.MaxLength = 20;
             this.OmNoEdit.Size = new System.Drawing.Size(92, 22);
             this.OmNoEdit.TabIndex = 113;
-            // 
-            // reportFileNoColumn
-            // 
-            this.reportFileNoColumn.Caption = "OM No.";
-            this.reportFileNoColumn.FieldName = "pro_proj";
-            this.reportFileNoColumn.Name = "reportFileNoColumn";
-            this.reportFileNoColumn.Visible = true;
-            this.reportFileNoColumn.VisibleIndex = 2;
             // 
             // DialogProfJobListView
             // 
