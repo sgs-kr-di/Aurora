@@ -2711,7 +2711,18 @@ namespace Sgs.ReportIntegration
                         ResultASTMSet.Pro_proj = cheP2Set.Pro_Proj;
                         ResultASTMSet.Sampleident = cheP2Set.Sampleident;
                         //ResultASTMSet.No = index;
-                        ResultASTMSet.No = dicTinNo[cheP2Set.Pro_Proj];
+
+                        int No_Calc = Convert.ToInt32(ResultASTMSet.Sampleident.Substring(ResultASTMSet.Sampleident.Length - 1));
+
+                        if (No_Calc > 1)
+                        {
+                            ResultASTMSet.No = (dicTinNo[cheP2Set.Pro_Proj] + No_Calc - 1);
+                        }
+                        else
+                        {
+                            ResultASTMSet.No = dicTinNo[cheP2Set.Pro_Proj];
+                        }
+
                         ResultASTMSet.Pb = cheP2Set.Pb;
                         ResultASTMSet.Sch_code = cheP2Set.Sch_Code;
                         ResultASTMSet.Sam_description = cheP2Set.SampleDescription;
@@ -2738,7 +2749,18 @@ namespace Sgs.ReportIntegration
                         ResultASTMSet.Sam_description = cheP2Set.SampleDescription;
                         ResultASTMSet.Sam_remarks = cheP2Set.SampleRemarks;
                         //ResultASTMSet.No = index;
-                        ResultASTMSet.No = dicTinNo[cheP2Set.Pro_Proj];
+
+                        int No_Calc = Convert.ToInt32(ResultASTMSet.Sampleident.Substring(ResultASTMSet.Sampleident.Length - 1));
+
+                        if (No_Calc > 1)
+                        {
+                            ResultASTMSet.No = (dicTinNo[cheP2Set.Pro_Proj] + No_Calc - 1);
+                        }
+                        else
+                        {
+                            ResultASTMSet.No = dicTinNo[cheP2Set.Pro_Proj];
+                        }
+                        
                         ResultASTMSet.DBP = cheP2Set.DBP;
                         ResultASTMSet.BBP = cheP2Set.DBP;
                         ResultASTMSet.DEHP = cheP2Set.DEHP;

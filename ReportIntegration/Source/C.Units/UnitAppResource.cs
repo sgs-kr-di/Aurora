@@ -59,6 +59,8 @@ namespace Sgs.ReportIntegration
             DbLog.Path = Path.GetFullPath(Ini.GetString("Log", "DatabasePath"));
             DbLog.FName = Ini.GetString("Log", "DatabaseFileName");
 
+            //string test = crypto.Encrypt(Ini.GetString("Database", "ConnectString"));
+
             DB = new AppDatabase(crypto.Decrypt(Ini.GetString("Database", "ConnectString")));
             DB.Open();
 

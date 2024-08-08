@@ -269,6 +269,16 @@ private void PageHeader1_AfterPrint(object sender, System.EventArgs e) {
 	}
 //
 */
+
+	string sFileNo = xrLabel54.Text.ToString();
+	string sJobNo = xrLabel53.Text.ToString();
+	string sItemNo = xrLabel55.Text.ToString();
+
+	// 물성 ASTM 파일명 설정
+	this.DisplayName = sJobNo.ToString() + "_" +sFileNo.ToString() + "_ AURORA _# " + sItemNo + " (ASTM F963-23 Physical)";
+
+
+
 }
 
 private void xrTable3_BeforePrint(object sender, System.Drawing.Printing.PrintEventArgs e) {

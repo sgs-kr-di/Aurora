@@ -229,8 +229,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                                 if (row.Cells.Count > 2 && IsBold(row) == true)
                                 {
                                     DataRow dtrow = dt3.Rows.Add();
-                                    dtrow =
-                                        Readvaluefordt3(row, dtrow);
+                                    dtrow = Readvaluefordt3(row, dtrow);
                                 }
                             }
                         }
@@ -332,7 +331,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                     {
                         if (!dtrow[2].ToString().Contains("Remark"))
                         {
-                            dtrow[2] += "Remark";
+                            dtrow[2] += "REMARK";
                         }
                     }
                     else

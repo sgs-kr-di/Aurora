@@ -1537,11 +1537,11 @@ namespace Sgs.ReportIntegration
                             P2Set.sColumnResult = "PASS (SEE NOTE 1)";
                         }
 
-                        if (P2Set.sColumnClause.Trim().Equals("4.5"))
-                        {
-                            //P2Set.sColumnDesc = "Accessible Points (16 CFR 1500.48)";
-                            P2Set.sColumnDesc = "Accessible Points";
-                        }
+                        //if (P2Set.sColumnClause.Trim().Equals("4.5"))
+                        //{
+                        //    //P2Set.sColumnDesc = "Accessible Points (16 CFR 1500.48)";
+                        //    P2Set.sColumnDesc = "Accessible Points";
+                        //}
 
                         if (P2Set.sColumnClause.Trim().Equals("4.3.5"))
                         {
@@ -1617,21 +1617,14 @@ namespace Sgs.ReportIntegration
 
                         //P2Set.sColumnRemark  = "Remark: " + P2Set.sColumnRemark;
 
-                        if (P2Set.sColumnRemark.Trim().Contains("Any toy or game that is intended for use by children who are at least three years old (36 months) but less than six years of age (72 months) and includes a small part is subject to the labeling requirements in accordance with 5.11.2."))
+                        if (P2Set.sColumnRemark.Trim().Contains("Any toy or game that is intended for use by children who are at least three years old (36 months) but less than six years of age (72 months) and includes a small part is subject to the labeling requirements in accordance with 5.11.2"))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
                             P2Set.sColumnResult = "";
                             P2Set.Insert_PhyPage3();
                         }
-                        else if (P2Set.sColumnRemark.Trim().Contains("Toys containing non-replaceable batteries shall be labeled in accordance with 5.15."))
-                        {
-                            P2Set.sColumnClause = "";
-                            P2Set.sColumnDesc = P2Set.sColumnRemark;
-                            P2Set.sColumnResult = "";
-                            P2Set.Insert_PhyPage3();
-                        }
-                        else if (P2Set.sColumnRemark.Trim().Contains("Toys with non-replaceable batteries that are accessible with the use of a coin, screwdriver, or other common household tool shall bear a statement that the battery is not replaceable"))
+                        else if (P2Set.sColumnRemark.Trim().Contains("Battery-operated toys shall meet the requirements of 6.5 for instructions on safe battery usage"))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;
@@ -1645,7 +1638,7 @@ namespace Sgs.ReportIntegration
                             P2Set.sColumnResult = "";
                             P2Set.Insert_PhyPage3();
                         }
-                        else if (P2Set.sColumnRemark.Trim().Contains("It is drawn to your attention that the toy or its packaging shall be marked with appropriate small part warning in accordance with 16 CFR 1500.19"))
+                        else if (P2Set.sColumnRemark.Trim().Contains("(carbon-zinc), or rechargeable batteries"))
                         {
                             P2Set.sColumnClause = "";
                             P2Set.sColumnDesc = P2Set.sColumnRemark;

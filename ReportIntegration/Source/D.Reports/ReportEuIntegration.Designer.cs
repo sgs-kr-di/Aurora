@@ -3297,6 +3297,7 @@
             this.GroupFooter8});
             this.DetailReport1.DataMember = "T2";
             this.DetailReport1.Dpi = 254F;
+            this.DetailReport1.Expanded = false;
             this.DetailReport1.Level = 2;
             this.DetailReport1.Name = "DetailReport1";
             this.DetailReport1.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -4361,7 +4362,6 @@
             this.ReportFooter5});
             this.DetailReport6.DataMember = "RT_EU";
             this.DetailReport6.Dpi = 254F;
-            this.DetailReport6.Expanded = false;
             this.DetailReport6.Level = 7;
             this.DetailReport6.Name = "DetailReport6";
             this.DetailReport6.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;

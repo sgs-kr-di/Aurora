@@ -12,6 +12,7 @@ using DevExpress.XtraGrid.Views.Base;
 
 using Ulee.Controls;
 using Ulee.Utils;
+using LoadingIndicator.WinForms;
 
 namespace Sgs.ReportIntegration
 {
@@ -62,6 +63,8 @@ namespace Sgs.ReportIntegration
         private PhysicalQuery phyQuery;
 
         private ProductDataSet productSet;
+
+        private LongOperation _longOperation;
 
         public CtrlEditPhysical(CtrlEditRight parent)
         {
@@ -146,12 +149,19 @@ namespace Sgs.ReportIntegration
             areaCombo.ValueMember = "Value";
 
             SetControl(null);
+
+            // Initialize long operation with control which will
+            // be overlayed during long operations
+            _longOperation = new LongOperation(this);
+
+            // You can pass settings to customize indicator view/behavior
+            // _longOperation = new LongOperation(this, LongOperationSettings.Default);
         }
 
         private void CtrlEditPhysical_Enter(object sender, EventArgs e)
         {
             parent.SetMenu(1);
-            resetButton.PerformClick();
+            //resetButton.PerformClick();
 
             PhysicalMainDataSet set = phyMainSet;
             bookmark.Get();
@@ -161,30 +171,34 @@ namespace Sgs.ReportIntegration
             set.From = "";
             set.To = "";
 
-            set.AreaNo = (EReportArea)Program.iGetPhysicalAreano();
-            set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
-            set.ProductNo = Program.sGetPhysicalCode();
             set.RecNo = Program.sGetPhysicalJobno();
-            set.P1FileNo = "";
-            //set.RecNo = Program.sGetPhysicalJobno();
 
-            //set.AreaNo = (EReportArea)areaCombo.SelectedValue;
-            //set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
-            //set.ProductNo = itemNoEdit.Text.Trim();
-            //set.RecNo = jobNoEdit.Text.Trim();
+            if (!string.IsNullOrEmpty(set.RecNo))
+            {
+                set.AreaNo = (EReportArea)Program.iGetPhysicalAreano();
+                set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
+                set.ProductNo = Program.sGetPhysicalCode();
+                
+                set.P1FileNo = "";
+                //set.RecNo = Program.sGetPhysicalJobno();
 
-            set.Select();
+                //set.AreaNo = (EReportArea)areaCombo.SelectedValue;
+                //set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
+                //set.ProductNo = itemNoEdit.Text.Trim();
+                //set.RecNo = jobNoEdit.Text.Trim();
 
-            AppHelper.SetGridDataSource(physicalGrid, set);
+                set.Select();
 
-            bookmark.Goto();
-            physicalGrid.Focus();
+                AppHelper.SetGridDataSource(physicalGrid, set);
+
+                bookmark.Goto();
+                physicalGrid.Focus();
+            }
 
             DateTime MonthFirstDay = DateTime.Now.AddDays(1 - DateTime.Now.Day);
 
             //fromDateEdit.Text = MonthFirstDay.ToString("yyyy-MM-dd");
             fromDateEdit.Text = MonthFirstDay.ToString("yyyy-01-dd");   // 1월 1일로 변경 요청 - 조재식 과장
-
         }
 
         private void CtrlEditPhysical_Resize(object sender, EventArgs e)
@@ -352,27 +366,31 @@ namespace Sgs.ReportIntegration
 
         public void Import()
         {
-            DialogProfJobListView dialog = new DialogProfJobListView();
+            using (_longOperation.Start())
+            {
+                DialogProfJobListView dialog = new DialogProfJobListView();
 
-            try
-            {
-                dialog.Type = EReportType.Physical;
-                dialog.ShowDialog();
-            }
-            finally
-            {
-                if (dialog.DialogResult == DialogResult.OK)
+                try
                 {
-                    profJobSet.Type = EReportType.Physical;
-                    profJobSet.JobNo = dialog.JobNo;
-                    //profJobSet.FileNo = dialog.OmNo;
-                    //profJobSet.OmNo = dialog.OmNo;
-                    profJobSet.ExtendASTM = false;
-                    profJobSet.Select_Physical_Import();
-                    profJobSet.Fetch();
-                    Insert();
+                    dialog.Type = EReportType.Physical;
+                    dialog.ShowDialog();
                 }
-            }
+                finally
+                {
+                    if (dialog.DialogResult == DialogResult.OK)
+                    {
+                        profJobSet.Type = EReportType.Physical;
+                        profJobSet.JobNo = dialog.JobNo;
+                        //profJobSet.FileNo = dialog.OmNo;
+                        //profJobSet.OmNo = dialog.OmNo;
+                        profJobSet.ExtendASTM = false;
+                        profJobSet.Select_Physical_Import();
+                        profJobSet.Fetch();
+                        Insert();
+                        MessageBox.Show("Physical Completed!");
+                    }
+                }
+            }            
         }
 
         public void Delete()
@@ -387,52 +405,55 @@ namespace Sgs.ReportIntegration
 
         public void Print()
         {
-            if (physicalGridView.FocusedRowHandle < 0) return;
+            using (_longOperation.Start())
+            {
+                if (physicalGridView.FocusedRowHandle < 0) return;
 
-            this.Cursor = Cursors.WaitCursor;
+                this.Cursor = Cursors.WaitCursor;
 
-            phyReportSet.RecNo = phyMainSet.RecNo;
-            phyReportSet.Select();
+                phyReportSet.RecNo = phyMainSet.RecNo;
+                phyReportSet.Select();
 
-            phyReportSet.DataSet.Tables[0].TableName = "P1";
-            phyReportSet.DataSet.Tables[1].TableName = "P2";
-            phyReportSet.DataSet.Tables[2].TableName = "P3";
-            phyReportSet.DataSet.Tables[3].TableName = "P40";
-            phyReportSet.DataSet.Tables[4].TableName = "P41";
-            phyReportSet.DataSet.Tables[5].TableName = "P42";
-            phyReportSet.DataSet.Tables[6].TableName = "P5";
-            phyReportSet.DataSet.Tables[7].TableName = "Image";
-            phyReportSet.DataSet.Tables[8].TableName = "PReportView_Page5";
-            phyReportSet.DataSet.Tables[9].TableName = "PReportView_Page6";
-            phyReportSet.DataSet.Tables[10].TableName = "P6";
-            phyReportSet.DataSet.Tables[11].TableName = "P45";
-            phyReportSet.DataSet.Tables[12].TableName = "PReportView_Page5_1";
-            phyReportSet.DataSet.Tables[13].TableName = "PReportView_Page7";
-            phyReportSet.DataSet.Tables[14].TableName = "P7";
-            phyReportSet.DataSet.Tables[15].TableName = "PReportView_Page4_1";
-            phyReportSet.DataSet.Tables[16].TableName = "P3_Clause4";
-            phyReportSet.DataSet.Tables[17].TableName = "P3_Clause5";
+                phyReportSet.DataSet.Tables[0].TableName = "P1";
+                phyReportSet.DataSet.Tables[1].TableName = "P2";
+                phyReportSet.DataSet.Tables[2].TableName = "P3";
+                phyReportSet.DataSet.Tables[3].TableName = "P40";
+                phyReportSet.DataSet.Tables[4].TableName = "P41";
+                phyReportSet.DataSet.Tables[5].TableName = "P42";
+                phyReportSet.DataSet.Tables[6].TableName = "P5";
+                phyReportSet.DataSet.Tables[7].TableName = "Image";
+                phyReportSet.DataSet.Tables[8].TableName = "PReportView_Page5";
+                phyReportSet.DataSet.Tables[9].TableName = "PReportView_Page6";
+                phyReportSet.DataSet.Tables[10].TableName = "P6";
+                phyReportSet.DataSet.Tables[11].TableName = "P45";
+                phyReportSet.DataSet.Tables[12].TableName = "PReportView_Page5_1";
+                phyReportSet.DataSet.Tables[13].TableName = "PReportView_Page7";
+                phyReportSet.DataSet.Tables[14].TableName = "P7";
+                phyReportSet.DataSet.Tables[15].TableName = "PReportView_Page4_1";
+                phyReportSet.DataSet.Tables[16].TableName = "P3_Clause4";
+                phyReportSet.DataSet.Tables[17].TableName = "P3_Clause5";
 
-            BindingSource bind = new BindingSource();
-            bind.DataSource = phyReportSet.DataSet;
+                BindingSource bind = new BindingSource();
+                bind.DataSource = phyReportSet.DataSet;
 
-            XtraReport report;
+                XtraReport report;
 
-            if (phyMainSet.AreaNo == EReportArea.US)
-                report = new ReportUsPhysical();
-            else
-                report = new ReportEuPhysical();
+                if (phyMainSet.AreaNo == EReportArea.US)
+                    report = new ReportUsPhysical();
+                else
+                    report = new ReportEuPhysical();
 
-            report.DataSource = bind;
-            report.CreateDocument();
-            new ReportPrintTool(report);
+                report.DataSource = bind;
+                report.CreateDocument();
+                new ReportPrintTool(report);
 
-            this.Cursor = Cursors.Default;
+                this.Cursor = Cursors.Default;
 
-            DialogReportPreview dialog = new DialogReportPreview();
-            dialog.Source = report;
-            dialog.WindowState = FormWindowState.Maximized;
-            dialog.ShowDialog();
+                DialogReportPreview dialog = new DialogReportPreview();
+                dialog.Source = report;
+                dialog.WindowState = FormWindowState.Maximized;
+                dialog.ShowDialog();
+            }
         }
 
         public void Save()
@@ -481,11 +502,6 @@ namespace Sgs.ReportIntegration
 
             phyQuery.Insert();
             findButton.PerformClick();
-        }
-
-        private void CtrlEditPhysical_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

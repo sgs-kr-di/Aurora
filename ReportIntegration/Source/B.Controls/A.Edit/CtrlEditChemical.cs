@@ -10,6 +10,7 @@ using DevExpress.XtraReports.UI;
 using Ulee.Controls;
 using Ulee.Utils;
 using DevExpress.CodeParser;
+using LoadingIndicator.WinForms;
 
 namespace Sgs.ReportIntegration
 {
@@ -46,6 +47,10 @@ namespace Sgs.ReportIntegration
         private CtrlEditChemicalUs ctrlUs;
 
         private CtrlEditChemicalEu ctrlEu;
+
+        public bool ChkAlready;
+
+        private LongOperation _longOperation;
 
         public CtrlEditChemical(CtrlEditRight parent)
         {
@@ -107,15 +112,24 @@ namespace Sgs.ReportIntegration
 
             areaCombo.DataSource = EnumHelper.GetNameValues<EReportArea>();
             areaCombo.DisplayMember = "Name";
-            areaCombo.ValueMember = "Value";
+            areaCombo.ValueMember = "Value";            
 
             SetControl(null);
+
+            ChkAlready = false;
+
+            // Initialize long operation with control which will
+            // be overlayed during long operations
+            _longOperation = new LongOperation(this);
+
+            // You can pass settings to customize indicator view/behavior
+            // _longOperation = new LongOperation(this, LongOperationSettings.Default);
         }
 
         private void CtrlEditChemical_Enter(object sender, EventArgs e)
         {
             parent.SetMenu(2);
-            resetButton.PerformClick();
+            //resetButton.PerformClick();
 
             ChemicalMainDataSet set = cheMainSet;
             bookmark.Get();
@@ -124,27 +138,31 @@ namespace Sgs.ReportIntegration
             
             set.From = "";
             set.To = "";
-
-            set.RecNo = Program.sGetPhysicalJobno();
-
-            set.AreaNo = (EReportArea)Program.iGetPhysicalAreano();
-            set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
-            set.MaterialNo = Program.sGetPartMaterialNo();
             set.RecNo = jobNoEdit.Text.Trim();
-            set.Select();
 
-            set.P1FileNo = "";
-            set.Select();
+            if (!string.IsNullOrEmpty(set.RecNo)) 
+            {
+                set.RecNo = Program.sGetPhysicalJobno();
 
-            AppHelper.SetGridDataSource(chemicalGrid, set);
+                set.AreaNo = (EReportArea)Program.iGetPhysicalAreano();
+                set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
+                set.MaterialNo = Program.sGetPartMaterialNo();
+                
+                //set.Select();
 
-            bookmark.Goto();
-            chemicalGrid.Focus();
+                set.P1FileNo = "";
+                set.Select();
+
+                AppHelper.SetGridDataSource(chemicalGrid, set);
+
+                bookmark.Goto();
+                chemicalGrid.Focus();
+            }
 
             DateTime MonthFirstDay = DateTime.Now.AddDays(1 - DateTime.Now.Day);
 
-            //fromDateEdit.Text = MonthFirstDay.ToString("yyyy-MM-dd");
-            fromDateEdit.Text = MonthFirstDay.ToString("yyyy-01-dd");   // 1월 1일로 변경 요청 - 조재식 과장
+            fromDateEdit.Text = MonthFirstDay.ToString("yyyy-MM-dd");
+            //fromDateEdit.Text = MonthFirstDay.ToString("yyyy-01-dd");   // 1월 1일로 변경 요청 - 조재식 과장
 
             //parent.SetMenu(2);
             //resetButton.PerformClick();
@@ -310,31 +328,46 @@ namespace Sgs.ReportIntegration
 
         public void Import()
         {
-            DialogProfJobListView dialog = new DialogProfJobListView();
+            using (_longOperation.Start())
+            {
+                DialogProfJobListView dialog = new DialogProfJobListView();
 
-            try
-            {
-                dialog.Type = EReportType.Chemical;
-                dialog.ShowDialog();
-            }
-            finally
-            {
-                if (dialog.DialogResult == DialogResult.OK)
+                try
                 {
-                    if (dialog.AreaNo == EReportArea.None)
+                    dialog.Type = EReportType.Chemical;
+                    dialog.ShowDialog();
+                }
+                finally
+                {
+                    if (dialog.DialogResult == DialogResult.OK)
                     {
-                        MessageBox.Show("Can't import chemical report because AreaNo is none!",
-                            "SGS", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else if (string.IsNullOrWhiteSpace(dialog.ItemNo) == true)
-                    {
-                        MessageBox.Show("Can't import chemical report because MaterialNo is none!",
-                            "SGS", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        Insert(dialog.AreaNo, dialog.ItemNo.Split(',')[0], dialog.JobNo);
-                        MessageBox.Show("Chemical Completed!");
+                        if (dialog.AreaNo == EReportArea.None)
+                        {
+                            MessageBox.Show("Can't import chemical report because AreaNo is none!",
+                                "SGS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else if (string.IsNullOrWhiteSpace(dialog.ItemNo) == true)
+                        {
+                            MessageBox.Show("Can't import chemical report because MaterialNo is none!",
+                                "SGS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            Insert(dialog.AreaNo, dialog.ItemNo.Split(',')[0], dialog.JobNo);
+
+                            if (!ChkAlready)
+                            {
+                                if (cheQuery.ChkErr)
+                                {
+                                    MessageBox.Show("Import failed!");
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Import completed successfully!");
+                                }
+                            }
+                            //MessageBox.Show("Chemical Completed!");
+                        }
                     }
                 }
             }
@@ -353,166 +386,169 @@ namespace Sgs.ReportIntegration
 
         public void Print()
         {
-            if (chemicalGridView.FocusedRowHandle < 0) return;
-
-            this.Cursor = Cursors.WaitCursor;
-
-            if (cheMainSet.AreaNo == EReportArea.EU) 
+            using (_longOperation.Start())
             {
-                cheReportSet.RecNo = cheMainSet.RecNo;
-                //cheReportSet.SampleIdent = profJobSchemeSet.SAMPLEIDENT;
-                cheReportSet.Select();
+                if (chemicalGridView.FocusedRowHandle < 0) return;
 
-                cheReportSet.DataSet.Tables[0].TableName = "P1";
-                cheReportSet.DataSet.Tables[1].TableName = "P2";
-                cheReportSet.DataSet.Tables[2].TableName = "P2EXTEND";
-                cheReportSet.DataSet.Tables[3].TableName = "Image";
+                this.Cursor = Cursors.WaitCursor;
 
-                cheReportSet.DataSet.Tables[4].TableName = "RT_EU";
-                cheReportSet.DataSet.Tables[5].TableName = "RT_EU6";
-                cheReportSet.DataSet.Tables[6].TableName = "RT_EU11";
-                cheReportSet.DataSet.Tables[7].TableName = "RT_EU16";
-                cheReportSet.DataSet.Tables[8].TableName = "RT_EU21";
-                cheReportSet.DataSet.Tables[9].TableName = "RT_EU26";
+                if (cheMainSet.AreaNo == EReportArea.EU)
+                {
+                    cheReportSet.RecNo = cheMainSet.RecNo;
+                    //cheReportSet.SampleIdent = profJobSchemeSet.SAMPLEIDENT;
+                    cheReportSet.Select();
 
-                cheReportSet.DataSet.Tables[10].TableName = "LT_Al";
-                cheReportSet.DataSet.Tables[11].TableName = "LT_As";
-                cheReportSet.DataSet.Tables[12].TableName = "LT_B";
-                cheReportSet.DataSet.Tables[13].TableName = "LT_Ba";
-                cheReportSet.DataSet.Tables[14].TableName = "LT_Cd";
-                cheReportSet.DataSet.Tables[15].TableName = "LT_Co";
-                cheReportSet.DataSet.Tables[16].TableName = "LT_Cr";
-                cheReportSet.DataSet.Tables[17].TableName = "LT_lll";
-                cheReportSet.DataSet.Tables[18].TableName = "LT_Vl";
-                cheReportSet.DataSet.Tables[19].TableName = "LT_Cu";
-                cheReportSet.DataSet.Tables[20].TableName = "LT_Hg";
-                cheReportSet.DataSet.Tables[21].TableName = "LT_Mn";
-                cheReportSet.DataSet.Tables[22].TableName = "LT_Ni";
-                cheReportSet.DataSet.Tables[23].TableName = "LT_Pb";
-                cheReportSet.DataSet.Tables[24].TableName = "LT_Sb";
-                cheReportSet.DataSet.Tables[25].TableName = "LT_Se";
-                cheReportSet.DataSet.Tables[26].TableName = "LT_Sn";
-                cheReportSet.DataSet.Tables[27].TableName = "LT_Sr";
-                cheReportSet.DataSet.Tables[28].TableName = "LT_Zn";
-                cheReportSet.DataSet.Tables[29].TableName = "LT_Organic";
+                    cheReportSet.DataSet.Tables[0].TableName = "P1";
+                    cheReportSet.DataSet.Tables[1].TableName = "P2";
+                    cheReportSet.DataSet.Tables[2].TableName = "P2EXTEND";
+                    cheReportSet.DataSet.Tables[3].TableName = "Image";
 
-                cheReportSet.DataSet.Tables[30].TableName = "RT_TIN";
-                cheReportSet.DataSet.Tables[31].TableName = "RT_TIN6";
-                cheReportSet.DataSet.Tables[32].TableName = "RT_TIN11";
-                cheReportSet.DataSet.Tables[33].TableName = "RT_TIN16";
-                cheReportSet.DataSet.Tables[34].TableName = "RT_TIN21";
-                cheReportSet.DataSet.Tables[35].TableName = "RT_TIN26";
+                    cheReportSet.DataSet.Tables[4].TableName = "RT_EU";
+                    cheReportSet.DataSet.Tables[5].TableName = "RT_EU6";
+                    cheReportSet.DataSet.Tables[6].TableName = "RT_EU11";
+                    cheReportSet.DataSet.Tables[7].TableName = "RT_EU16";
+                    cheReportSet.DataSet.Tables[8].TableName = "RT_EU21";
+                    cheReportSet.DataSet.Tables[9].TableName = "RT_EU26";
 
-                cheReportSet.DataSet.Tables[36].TableName = "LT_MET";
-                cheReportSet.DataSet.Tables[37].TableName = "LT_DBT";
-                cheReportSet.DataSet.Tables[38].TableName = "LT_TBT";
-                cheReportSet.DataSet.Tables[39].TableName = "LT_TeBT";
-                cheReportSet.DataSet.Tables[40].TableName = "LT_MOT";
-                cheReportSet.DataSet.Tables[41].TableName = "LT_DOT";
-                cheReportSet.DataSet.Tables[42].TableName = "LT_DProT";
-                cheReportSet.DataSet.Tables[43].TableName = "LT_DPhT";
-                cheReportSet.DataSet.Tables[44].TableName = "LT_TPhT";
-                cheReportSet.DataSet.Tables[45].TableName = "LT_DMT";
-                cheReportSet.DataSet.Tables[46].TableName = "LT_MBT";
-            }
-            else
-            {
-                cheReportSet.RecNo = cheMainSet.RecNo;
-                cheReportSet.Pro_proj = cheMainSet.P1FileNo;
-                //cheReportSet.Sam_Remarks = profJobSchemeSet.SampleRemarks;
-                //cheReportSet.SampleIdent = profJobSchemeSet.SAMPLEIDENT;
-                cheReportSet.Select_US();
+                    cheReportSet.DataSet.Tables[10].TableName = "LT_Al";
+                    cheReportSet.DataSet.Tables[11].TableName = "LT_As";
+                    cheReportSet.DataSet.Tables[12].TableName = "LT_B";
+                    cheReportSet.DataSet.Tables[13].TableName = "LT_Ba";
+                    cheReportSet.DataSet.Tables[14].TableName = "LT_Cd";
+                    cheReportSet.DataSet.Tables[15].TableName = "LT_Co";
+                    cheReportSet.DataSet.Tables[16].TableName = "LT_Cr";
+                    cheReportSet.DataSet.Tables[17].TableName = "LT_lll";
+                    cheReportSet.DataSet.Tables[18].TableName = "LT_Vl";
+                    cheReportSet.DataSet.Tables[19].TableName = "LT_Cu";
+                    cheReportSet.DataSet.Tables[20].TableName = "LT_Hg";
+                    cheReportSet.DataSet.Tables[21].TableName = "LT_Mn";
+                    cheReportSet.DataSet.Tables[22].TableName = "LT_Ni";
+                    cheReportSet.DataSet.Tables[23].TableName = "LT_Pb";
+                    cheReportSet.DataSet.Tables[24].TableName = "LT_Sb";
+                    cheReportSet.DataSet.Tables[25].TableName = "LT_Se";
+                    cheReportSet.DataSet.Tables[26].TableName = "LT_Sn";
+                    cheReportSet.DataSet.Tables[27].TableName = "LT_Sr";
+                    cheReportSet.DataSet.Tables[28].TableName = "LT_Zn";
+                    cheReportSet.DataSet.Tables[29].TableName = "LT_Organic";
 
-                cheReportSet.DataSet.Tables[0].TableName = "P1";
-                cheReportSet.DataSet.Tables[1].TableName = "P2";
-                cheReportSet.DataSet.Tables[2].TableName = "P2EXTEND";
-                cheReportSet.DataSet.Tables[3].TableName = "Image";
+                    cheReportSet.DataSet.Tables[30].TableName = "RT_TIN";
+                    cheReportSet.DataSet.Tables[31].TableName = "RT_TIN6";
+                    cheReportSet.DataSet.Tables[32].TableName = "RT_TIN11";
+                    cheReportSet.DataSet.Tables[33].TableName = "RT_TIN16";
+                    cheReportSet.DataSet.Tables[34].TableName = "RT_TIN21";
+                    cheReportSet.DataSet.Tables[35].TableName = "RT_TIN26";
 
-                cheReportSet.DataSet.Tables[4].TableName = "Coating_Lead_Limit";
-                cheReportSet.DataSet.Tables[5].TableName = "NoCoating_Lead_Limit_Plastic";
-                cheReportSet.DataSet.Tables[6].TableName = "NoCoating_Lead_Limit_Metal";
+                    cheReportSet.DataSet.Tables[36].TableName = "LT_MET";
+                    cheReportSet.DataSet.Tables[37].TableName = "LT_DBT";
+                    cheReportSet.DataSet.Tables[38].TableName = "LT_TBT";
+                    cheReportSet.DataSet.Tables[39].TableName = "LT_TeBT";
+                    cheReportSet.DataSet.Tables[40].TableName = "LT_MOT";
+                    cheReportSet.DataSet.Tables[41].TableName = "LT_DOT";
+                    cheReportSet.DataSet.Tables[42].TableName = "LT_DProT";
+                    cheReportSet.DataSet.Tables[43].TableName = "LT_DPhT";
+                    cheReportSet.DataSet.Tables[44].TableName = "LT_TPhT";
+                    cheReportSet.DataSet.Tables[45].TableName = "LT_DMT";
+                    cheReportSet.DataSet.Tables[46].TableName = "LT_MBT";
+                }
+                else
+                {
+                    cheReportSet.RecNo = cheMainSet.RecNo;
+                    cheReportSet.Pro_proj = cheMainSet.P1FileNo;
+                    //cheReportSet.Sam_Remarks = profJobSchemeSet.SampleRemarks;
+                    //cheReportSet.SampleIdent = profJobSchemeSet.SAMPLEIDENT;
+                    cheReportSet.Select_US();
 
-                cheReportSet.DataSet.Tables[7].TableName = "Coating_Lead_Result";
-                cheReportSet.DataSet.Tables[8].TableName = "NoCoating_Lead_Result_Plastic";
-                cheReportSet.DataSet.Tables[9].TableName = "NoCoating_Lead_Result_Metal";
+                    cheReportSet.DataSet.Tables[0].TableName = "P1";
+                    cheReportSet.DataSet.Tables[1].TableName = "P2";
+                    cheReportSet.DataSet.Tables[2].TableName = "P2EXTEND";
+                    cheReportSet.DataSet.Tables[3].TableName = "Image";
 
-                cheReportSet.DataSet.Tables[10].TableName = "Coating_NoLead_Limit";
-                cheReportSet.DataSet.Tables[11].TableName = "NoCoating_NoLead_Limit";
+                    cheReportSet.DataSet.Tables[4].TableName = "Coating_Lead_Limit";
+                    cheReportSet.DataSet.Tables[5].TableName = "NoCoating_Lead_Limit_Plastic";
+                    cheReportSet.DataSet.Tables[6].TableName = "NoCoating_Lead_Limit_Metal";
 
-                cheReportSet.DataSet.Tables[12].TableName = "Coating_NoLead_Result";
-                cheReportSet.DataSet.Tables[13].TableName = "NoCoating_NoLead_Result";
+                    cheReportSet.DataSet.Tables[7].TableName = "Coating_Lead_Result";
+                    cheReportSet.DataSet.Tables[8].TableName = "NoCoating_Lead_Result_Plastic";
+                    cheReportSet.DataSet.Tables[9].TableName = "NoCoating_Lead_Result_Metal";
 
-                cheReportSet.DataSet.Tables[14].TableName = "NoCoating_Lead_Result";
+                    cheReportSet.DataSet.Tables[10].TableName = "Coating_NoLead_Limit";
+                    cheReportSet.DataSet.Tables[11].TableName = "NoCoating_NoLead_Limit";
 
-                cheReportSet.DataSet.Tables[15].TableName = "RT_PHY";
-                cheReportSet.DataSet.Tables[16].TableName = "P1_SubJob1";
-                cheReportSet.DataSet.Tables[17].TableName = "P1_SubJob2";
-                cheReportSet.DataSet.Tables[18].TableName = "P1_requiredTime_Last";
-                cheReportSet.DataSet.Tables[19].TableName = "P1_testPeriod_Last";
+                    cheReportSet.DataSet.Tables[12].TableName = "Coating_NoLead_Result";
+                    cheReportSet.DataSet.Tables[13].TableName = "NoCoating_NoLead_Result";
 
-                /*
-                cheReportSet.DataSet.Tables[10].TableName = "LT_Al";
-                cheReportSet.DataSet.Tables[11].TableName = "LT_As";
-                cheReportSet.DataSet.Tables[12].TableName = "LT_B";
-                cheReportSet.DataSet.Tables[13].TableName = "LT_Ba";
-                cheReportSet.DataSet.Tables[14].TableName = "LT_Cd";
-                cheReportSet.DataSet.Tables[15].TableName = "LT_Co";
-                cheReportSet.DataSet.Tables[16].TableName = "LT_Cr";
-                cheReportSet.DataSet.Tables[17].TableName = "LT_lll";
-                cheReportSet.DataSet.Tables[18].TableName = "LT_Vl";
-                cheReportSet.DataSet.Tables[19].TableName = "LT_Cu";
-                cheReportSet.DataSet.Tables[20].TableName = "LT_Hg";
-                cheReportSet.DataSet.Tables[21].TableName = "LT_Mn";
-                cheReportSet.DataSet.Tables[22].TableName = "LT_Ni";
-                cheReportSet.DataSet.Tables[23].TableName = "LT_Pb";
-                cheReportSet.DataSet.Tables[24].TableName = "LT_Sb";
-                cheReportSet.DataSet.Tables[25].TableName = "LT_Se";
-                cheReportSet.DataSet.Tables[26].TableName = "LT_Sn";
-                cheReportSet.DataSet.Tables[27].TableName = "LT_Sr";
-                cheReportSet.DataSet.Tables[28].TableName = "LT_Zn";
-                cheReportSet.DataSet.Tables[29].TableName = "LT_Organic";
+                    cheReportSet.DataSet.Tables[14].TableName = "NoCoating_Lead_Result";
 
-                cheReportSet.DataSet.Tables[30].TableName = "RT_TIN";
-                cheReportSet.DataSet.Tables[31].TableName = "RT_TIN6";
-                cheReportSet.DataSet.Tables[32].TableName = "RT_TIN11";
-                cheReportSet.DataSet.Tables[33].TableName = "RT_TIN16";
-                cheReportSet.DataSet.Tables[34].TableName = "RT_TIN21";
-                cheReportSet.DataSet.Tables[35].TableName = "RT_TIN26";
+                    cheReportSet.DataSet.Tables[15].TableName = "RT_PHY";
+                    cheReportSet.DataSet.Tables[16].TableName = "P1_SubJob1";
+                    cheReportSet.DataSet.Tables[17].TableName = "P1_SubJob2";
+                    cheReportSet.DataSet.Tables[18].TableName = "P1_requiredTime_Last";
+                    cheReportSet.DataSet.Tables[19].TableName = "P1_testPeriod_Last";
 
-                cheReportSet.DataSet.Tables[36].TableName = "LT_MET";
-                cheReportSet.DataSet.Tables[37].TableName = "LT_DBT";
-                cheReportSet.DataSet.Tables[38].TableName = "LT_TBT";
-                cheReportSet.DataSet.Tables[39].TableName = "LT_TeBT";
-                cheReportSet.DataSet.Tables[40].TableName = "LT_MOT";
-                cheReportSet.DataSet.Tables[41].TableName = "LT_DOT";
-                cheReportSet.DataSet.Tables[42].TableName = "LT_DProT";
-                cheReportSet.DataSet.Tables[43].TableName = "LT_DPhT";
-                cheReportSet.DataSet.Tables[44].TableName = "LT_TPhT";
-                cheReportSet.DataSet.Tables[45].TableName = "LT_DMT";
-                cheReportSet.DataSet.Tables[46].TableName = "LT_MBT";
-                */
+                    /*
+                    cheReportSet.DataSet.Tables[10].TableName = "LT_Al";
+                    cheReportSet.DataSet.Tables[11].TableName = "LT_As";
+                    cheReportSet.DataSet.Tables[12].TableName = "LT_B";
+                    cheReportSet.DataSet.Tables[13].TableName = "LT_Ba";
+                    cheReportSet.DataSet.Tables[14].TableName = "LT_Cd";
+                    cheReportSet.DataSet.Tables[15].TableName = "LT_Co";
+                    cheReportSet.DataSet.Tables[16].TableName = "LT_Cr";
+                    cheReportSet.DataSet.Tables[17].TableName = "LT_lll";
+                    cheReportSet.DataSet.Tables[18].TableName = "LT_Vl";
+                    cheReportSet.DataSet.Tables[19].TableName = "LT_Cu";
+                    cheReportSet.DataSet.Tables[20].TableName = "LT_Hg";
+                    cheReportSet.DataSet.Tables[21].TableName = "LT_Mn";
+                    cheReportSet.DataSet.Tables[22].TableName = "LT_Ni";
+                    cheReportSet.DataSet.Tables[23].TableName = "LT_Pb";
+                    cheReportSet.DataSet.Tables[24].TableName = "LT_Sb";
+                    cheReportSet.DataSet.Tables[25].TableName = "LT_Se";
+                    cheReportSet.DataSet.Tables[26].TableName = "LT_Sn";
+                    cheReportSet.DataSet.Tables[27].TableName = "LT_Sr";
+                    cheReportSet.DataSet.Tables[28].TableName = "LT_Zn";
+                    cheReportSet.DataSet.Tables[29].TableName = "LT_Organic";
+
+                    cheReportSet.DataSet.Tables[30].TableName = "RT_TIN";
+                    cheReportSet.DataSet.Tables[31].TableName = "RT_TIN6";
+                    cheReportSet.DataSet.Tables[32].TableName = "RT_TIN11";
+                    cheReportSet.DataSet.Tables[33].TableName = "RT_TIN16";
+                    cheReportSet.DataSet.Tables[34].TableName = "RT_TIN21";
+                    cheReportSet.DataSet.Tables[35].TableName = "RT_TIN26";
+
+                    cheReportSet.DataSet.Tables[36].TableName = "LT_MET";
+                    cheReportSet.DataSet.Tables[37].TableName = "LT_DBT";
+                    cheReportSet.DataSet.Tables[38].TableName = "LT_TBT";
+                    cheReportSet.DataSet.Tables[39].TableName = "LT_TeBT";
+                    cheReportSet.DataSet.Tables[40].TableName = "LT_MOT";
+                    cheReportSet.DataSet.Tables[41].TableName = "LT_DOT";
+                    cheReportSet.DataSet.Tables[42].TableName = "LT_DProT";
+                    cheReportSet.DataSet.Tables[43].TableName = "LT_DPhT";
+                    cheReportSet.DataSet.Tables[44].TableName = "LT_TPhT";
+                    cheReportSet.DataSet.Tables[45].TableName = "LT_DMT";
+                    cheReportSet.DataSet.Tables[46].TableName = "LT_MBT";
+                    */
+                }
+
+                BindingSource bind = new BindingSource();
+                bind.DataSource = cheReportSet.DataSet;
+
+                XtraReport report;
+
+                if (cheMainSet.AreaNo == EReportArea.US)
+                    report = new ReportUsChemical();
+                else
+                    report = new ReportEuChemical();
+
+                report.DataSource = bind;
+                report.CreateDocument();
+                new ReportPrintTool(report);
+
+                this.Cursor = Cursors.Default;
+
+                DialogReportPreview dialog = new DialogReportPreview();
+                dialog.Source = report;
+                dialog.WindowState = FormWindowState.Maximized;
+                dialog.ShowDialog();
             }            
-
-            BindingSource bind = new BindingSource();
-            bind.DataSource = cheReportSet.DataSet;
-
-            XtraReport report;
-
-            if (cheMainSet.AreaNo == EReportArea.US)
-                report = new ReportUsChemical();
-            else
-                report = new ReportEuChemical();
-
-            report.DataSource = bind;
-            report.CreateDocument();
-            new ReportPrintTool(report);
-
-            this.Cursor = Cursors.Default;
-
-            DialogReportPreview dialog = new DialogReportPreview();
-            dialog.Source = report;
-            dialog.WindowState = FormWindowState.Maximized;
-            dialog.ShowDialog();
         }
 
         public void Save()
@@ -560,6 +596,8 @@ namespace Sgs.ReportIntegration
 
                     if (cheCheckSet.Empty == false)
                     {
+                        ChkAlready = true;
+
                         MessageBox.Show("Can't import chemical report because this report already exist in DB!",
                             "SGS", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
@@ -583,11 +621,11 @@ namespace Sgs.ReportIntegration
                         //}
                         //cheQuery.Insert(areaNo, extendJobNo);
                         cheQuery.Insert_Chemical_Import(areaNo, jobNo, fileNo);
+
                         //cheQuery.Insert(extendJobNo);
                     }
                 }
             }
-
             findButton.PerformClick();
         }
     }

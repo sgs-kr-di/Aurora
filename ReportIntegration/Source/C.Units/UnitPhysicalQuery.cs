@@ -296,7 +296,7 @@ namespace Sgs.ReportIntegration
 
                 MainSet.P5Description1 =
                     "Suffing Materials(Clause 4.3.7)";
-                MainSet.P5Description2 = "Polyester fiber";
+                MainSet.P5Description2 = "Polyester fibers & Plastic pellets";
             }
             else
             {

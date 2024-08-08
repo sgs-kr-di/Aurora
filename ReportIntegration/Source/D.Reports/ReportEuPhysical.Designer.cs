@@ -1971,7 +1971,7 @@
             this.xrLabel52.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
             this.xrLabel52.SizeF = new System.Drawing.SizeF(1880F, 48.45844F);
             this.xrLabel52.StylePriority.UseFont = false;
-            this.xrLabel52.Text = "N.B.: Only applicable clauses were shown.";
+            this.xrLabel52.Text = "- Only applicable clauses were shown.";
             // 
             // DetailReport2
             // 
@@ -1987,7 +1987,6 @@
             this.DetailReport12,
             this.DetailReport13});
             this.DetailReport2.Dpi = 254F;
-            this.DetailReport2.Expanded = false;
             this.DetailReport2.Level = 3;
             this.DetailReport2.Name = "DetailReport2";
             this.DetailReport2.PageBreak = DevExpress.XtraReports.UI.PageBreak.AfterBand;
@@ -2375,6 +2374,7 @@
             this.xrTable22,
             this.xrLabel42});
             this.GroupFooter6.Dpi = 254F;
+            this.GroupFooter6.Expanded = false;
             this.GroupFooter6.HeightF = 438.8072F;
             this.GroupFooter6.Level = 1;
             this.GroupFooter6.Name = "GroupFooter6";
@@ -2390,7 +2390,7 @@
             this.xrLabel44.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
             this.xrLabel44.SizeF = new System.Drawing.SizeF(1880F, 48.45844F);
             this.xrLabel44.StylePriority.UseFont = false;
-            this.xrLabel44.Text = "N.B.: Only applicable clauses were shown.";
+            this.xrLabel44.Text = "- Only applicable clauses were shown.";
             // 
             // xrLabel39
             // 
@@ -3086,7 +3086,7 @@
             this.xrLabel51.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
             this.xrLabel51.SizeF = new System.Drawing.SizeF(1880F, 48.45844F);
             this.xrLabel51.StylePriority.UseFont = false;
-            this.xrLabel51.Text = "N.B.: Only applicable clauses were shown.";
+            this.xrLabel51.Text = "- Only applicable clauses were shown.";
             // 
             // DetailReport3
             // 
@@ -3450,7 +3450,7 @@
             this.xrLabel43.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
             this.xrLabel43.SizeF = new System.Drawing.SizeF(1880F, 48.45844F);
             this.xrLabel43.StylePriority.UseFont = false;
-            this.xrLabel43.Text = "N.B.: Only applicable clauses were shown.";
+            this.xrLabel43.Text = "- Only applicable clauses were shown.";
             this.xrLabel43.TextFormatString = "{0}";
             // 
             // xrLabel14
@@ -3878,6 +3878,7 @@
             this.Detail8,
             this.ReportFooter});
             this.DetailReport6.Dpi = 254F;
+            this.DetailReport6.Expanded = false;
             this.DetailReport6.Level = 0;
             this.DetailReport6.Name = "DetailReport6";
             // 
@@ -4675,6 +4676,7 @@
             this.DetailReport7.Expanded = false;
             this.DetailReport7.Level = 5;
             this.DetailReport7.Name = "DetailReport7";
+            this.DetailReport7.Visible = false;
             // 
             // Detail9
             // 

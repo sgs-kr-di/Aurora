@@ -547,9 +547,9 @@ namespace Sgs.ReportIntegration
         {
             string sql =
                 $" insert into TB_PART values " +
-                $" ({ProductNo}, '{JobNo}', '{MaterialNo}', '{Name}', '{MaterialName}'); " +
+                $" ({ProductNo}, '{JobNo.Replace("'", "''")}', '{MaterialNo.Replace("'", "''")}', '{Name.Replace("'", "''")}', '{MaterialName.Replace("'", "''")}'); " +
                 $" select cast(scope_identity() as bigint); ";
-
+            
             SetTrans(trans);
 
             try
@@ -903,8 +903,8 @@ namespace Sgs.ReportIntegration
                 $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=16 and no<=20);   " +
                 $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=21 and no<=25);   " +
                 $" select * from TB_INTEGT7 where fk_integmainno='{RecNo}' and no >= 16 and no <= 30; " +
-                $" select * from TB_INTEGT2 where (LTRIM(clause) like '4%' or clause = '') and fk_integmainno = '{RecNo}'; " +
-                $" select * from TB_INTEGT2 where NOT(LTRIM(clause) like '4%' or clause = '') and fk_integmainno = '{RecNo}'; " +
+                $" select * from TB_INTEGT2 where (LTRIM(clause) like '4%' or clause = '') and fk_integmainno = '{RecNo}' and no <= (select MAX(no) as 'no' from TB_INTEGT2 WHERE (Ltrim(clause) LIKE '4%%') AND fk_integmainno = '{RecNo}'); " +
+                $" select * from TB_INTEGT2 where (NOT(LTRIM(clause) like '4%') or (clause = '')) and fk_integmainno = '{RecNo}' and no > (select MAX(no) as 'no' from TB_INTEGT2 WHERE (Ltrim(clause) LIKE '4%%') AND fk_integmainno = '{RecNo}'); " +
 
                 // NoCoating_NoLead_Limit
                 $" select * from TB_INTEG_LIMIT_ASTM where fk_integmainno = '{RecNo}' and sam_remarks <> 'coating' order by" +
@@ -971,71 +971,71 @@ namespace Sgs.ReportIntegration
                 $" select * from TB_INTEGRESULT_EN where fk_integmainno='{RecNo}' and (no>=21 and no<=25);  " +
                 $" select * from TB_INTEGRESULT_EN where fk_integmainno='{RecNo}' and (no>=26 and no<=30);  " +
                 */
-                $" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=6 and no<=10);   " +
-                $" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=11 and no<=15);  " +
-                $" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=16 and no<=20);  " +
-                $" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=21 and no<=25);  " +
-                $" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=26 and no<=30);  " +
+                //$" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=6 and no<=10);   " +
+                //$" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=11 and no<=15);  " +
+                //$" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=16 and no<=20);  " +
+                //$" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=21 and no<=25);  " +
+                //$" select * from TB_INTEGRESULT_HYPHEN_EN where fk_integmainno='{RecNo}' and (no>=26 and no<=30);  " +
                 // Report 6페이지 이상 출력
 
                 // Report limit  출력 - 시작
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Al)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(As)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(B)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Ba)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Cd)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Co)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Cr)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(III)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(VI)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Cu)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Hg)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Mn)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Ni)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Pb)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Sb)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Se)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Sn)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Sr)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Zn)%'; " +
-                $" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%Organic%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Al)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(As)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(B)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Ba)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Cd)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Co)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Cr)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(III)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(VI)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Cu)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Hg)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Mn)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Ni)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Pb)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Sb)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Se)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Sn)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Sr)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%(Zn)%'; " +
+                //$" select * from TB_INTEGLIMIT_EN where fk_integmainno='{RecNo}' and name like '%Organic%'; " +
                 // Report limit  출력 - 끝
 
                 // ASTM Substrate Lead Metal  출력 - 시작
-                $" select * from TB_INTEGLEADLIMIT_ASTM where fk_integmainno='{RecNo}' and leadtype<>1 and reportcase = 'Metal'; " +
-                $" select * from TB_INTEGLEADRESULT_ASTM where fk_integmainno='{RecNo}' and leadtype<>1 and reportcase = 'Metal'; " +
+                //$" select * from TB_INTEGLEADLIMIT_ASTM where fk_integmainno='{RecNo}' and leadtype<>1 and reportcase = 'Metal'; " +
+                //$" select * from TB_INTEGLEADRESULT_ASTM where fk_integmainno='{RecNo}' and leadtype<>1 and reportcase = 'Metal'; " +
                 // ASTM Substrate Lead Metal  출력 - 끝
 
-                $" select * from TB_INTEGT61 where fk_integmainno='{RecNo}' and result <> '' ; " +
-
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 1 AND 1;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 2 AND 2;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 3 AND 3;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 4 AND 4;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 5 AND 5;" +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 6 AND 6;" +
+                //$" select * from TB_INTEGT61 where fk_integmainno='{RecNo}' and result <> '' ; " +
+                //$" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 1 AND 1;" +
+                //$" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 2 AND 2;" +
+                //$" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 3 AND 3;" +
+                //$" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 4 AND 4;" +
+                //$" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 5 AND 5;" +
+                //$" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEGTIN_EN] WHERE fk_integmainno='{RecNo}') t WHERE t.rownum BETWEEN 6 AND 6;" +
 
                 // Report limit  출력 - 시작
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(MET)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DBT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(TBT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(TeBT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(MOT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DOT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DProT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DPhT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(TPhT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DMT)%'; " +
-                $" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(MBT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(MET)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DBT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(TBT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(TeBT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(MOT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DOT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DProT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DPhT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(TPhT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(DMT)%'; " +
+                //$" select b.* from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] as a inner join TB_CHEP2 as b on LEFT(a.sampleident,12) = b.fk_chemainno where a.fk_integmainno='{RecNo}' and b.name like '%(MBT)%'; " +
 
-                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=1 and no<=5);   " +
-                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=6 and no<=10);   " +
-                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=11 and no<=15);   " +
-                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=16 and no<=20);   " +
-                $" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=21 and no<=25);   " +
-                $" select * from TB_INTEGT7 where fk_integmainno='{RecNo}' and no >= 16 and no <= 30; " +
-                $" select * from TB_INTEGT2 where (LTRIM(clause) like '4%' or clause = '') and fk_integmainno = '{RecNo}'; " +
-                $" select * from TB_INTEGT2 where NOT(LTRIM(clause) like '4%' or clause = '') and fk_integmainno = '{RecNo}'; " +
+                //$" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=1 and no<=5);   " +
+                //$" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=6 and no<=10);   " +
+                //$" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=11 and no<=15);   " +
+                //$" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=16 and no<=20);   " +
+                //$" select * from [ReportIntegration].[dbo].[TB_INTEGTIN_EN] where fk_integmainno='{RecNo}' and (no>=21 and no<=25);   " +
+
+                //$" select * from TB_INTEGT7 where fk_integmainno='{RecNo}' and no >= 16 and no <= 30; " +
+                $" select * from TB_INTEGT2 where (LTRIM(clause) like '4%' or clause = '') and fk_integmainno = '{RecNo}' and no <= (select MAX(no) as 'no' from TB_INTEGT2 WHERE (Ltrim(clause) LIKE '4%%') AND fk_integmainno = '{RecNo}'); " +
+                $" select * from TB_INTEGT2 where (NOT(LTRIM(clause) like '4%') or (clause = '')) and fk_integmainno = '{RecNo}' and no > (select MAX(no) as 'no' from TB_INTEGT2 WHERE (Ltrim(clause) LIKE '4%%') AND fk_integmainno = '{RecNo}'); " +
 
                 // Report Lead Limit 출력 - coating, plastic, metal 순으로
                 $" select top 1 * from TB_INTEG_LEAD_LIMIT_ASTM where fk_integmainno='{RecNo}' and sam_remarks = 'coating';   " +
@@ -1046,7 +1046,7 @@ namespace Sgs.ReportIntegration
                 $" select * from TB_INTEG_LEAD_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks = 'coating'; " +
                 $" select * from TB_INTEG_LEAD_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks = 'plastic';   " +
                 $" select * from TB_INTEG_LEAD_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks = 'metal';   " +
-                
+
                 // Report Not Lead LIMIT 출력 - coating인 것과 coating 아닌 것 순으로
                 $" select * from TB_INTEG_LIMIT_ASTM where fk_integmainno='{RecNo}' and sam_remarks = 'coating' order by" +
                 $" (case when name = 'Pb' then 1 " +
@@ -1072,16 +1072,19 @@ namespace Sgs.ReportIntegration
 
                 // Report Not Lead Result 출력 - coating인 것과 coating 아닌 것 순으로
                 $" select * from TB_INTEG_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks = 'coating';   " +
-                $" select * from TB_INTEG_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks <> 'coating';   " +
+                $" select * from TB_INTEG_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks <> 'coating' and no >= 1 and no <= 19;   " +
                 $" select * from TB_INTEG_LEAD_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks <> 'coating';   " +
-                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY no asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEG_PHT_ASTM] where fk_integmainno='{RecNo}' and sam_remarks = 'plastic') t WHERE t.rownum BETWEEN 1 AND 3;";
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY pk_recno asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEG_PHT_ASTM] where fk_integmainno='{RecNo}' and sam_remarks = 'plastic') t WHERE t.rownum BETWEEN 1 AND 2;" +
+                $" select * from TB_INTEGT7 where fk_integmainno='{RecNo}' and no >= 16 and no <= 30; " +
+                $" select * from TB_INTEG_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks <> 'coating' and no >= 20 and no <= 39;   " +
+                $" select * from TB_INTEG_RESULT_ASTM where fk_integmainno='{RecNo}' and sam_remarks <> 'coating' and no >= 40 and no <= 59;   " +
+                $" SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY pk_recno asc) rownum, * FROM [ReportIntegration].[dbo].[TB_INTEG_PHT_ASTM] where fk_integmainno='{RecNo}' and sam_remarks = 'plastic') t WHERE t.rownum BETWEEN 3 AND 4;";
 
             dataSet.Clear();
             dataSet.Tables.Clear();
             dataAdapter.Fill(dataSet);
         }
     }
-
 
 
     public class IntegrationMainDataSet : UlSqlDataSet
@@ -3686,8 +3689,8 @@ namespace Sgs.ReportIntegration
                 $" select * from TB_PHYRPTVIEW where fk_phymainno='{RecNo}' and page='7'; " +
                 $" select * from TB_PHYP7 where fk_phymainno='{RecNo}'; " +
                 $" select * from TB_PHYRPTVIEW where fk_phymainno='{RecNo}' and page='4_Note1'; " +
-                $" select * from TB_PHYP3 where (LTRIM(clause) like '4%' or clause = '') and fk_phymainno = '{RecNo}'; " +
-                $" select * from TB_PHYP3 where NOT(LTRIM(clause) like '4%' or clause = '') and fk_phymainno = '{RecNo}'; ";
+                $" select * from TB_PHYP3 where (LTRIM(clause) like '4%' or clause = '') and fk_phymainno = '{RecNo}' and no <= (select MAX(no) as 'no' from tb_phyp3 WHERE (Ltrim(clause) LIKE '4%%') AND fk_phymainno = '{RecNo}'); " +
+                $" select * from TB_PHYP3 where (NOT(LTRIM(clause) like '4%') or (clause = '')) and fk_phymainno = '{RecNo}' and no > (select MAX(no) as 'no' from tb_phyp3 WHERE (Ltrim(clause) LIKE '4%%') AND fk_phymainno = '{RecNo}'); ";
 
             dataSet.Clear();
             dataSet.Tables.Clear();
@@ -4471,6 +4474,7 @@ namespace Sgs.ReportIntegration
             command.CommandText = sql;
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
+
         }
 
         public void Insert(SqlTransaction trans = null)
@@ -4766,6 +4770,7 @@ namespace Sgs.ReportIntegration
                 $" order by no asc ";
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
+            //dataAdapter.Dispose();
         }
 
         public void Select_Phy41(SqlTransaction trans = null)
@@ -7783,6 +7788,8 @@ namespace Sgs.ReportIntegration
 
         public string Tin { get; set; }
 
+        public string Result { get; set; }
+
         public string DBT { get; set; }
 
         public string DMT { get; set; }
@@ -9010,6 +9017,10 @@ namespace Sgs.ReportIntegration
 
         public bool ExtendASTM { get; set; }
 
+        public string FName { get; set; }
+
+        public string FPath { get; set; }
+
         public ProfJobDataSet(SqlConnection connect, SqlCommand command, SqlDataAdapter adapter)
             : base(connect, command, adapter)
         {
@@ -9127,7 +9138,7 @@ namespace Sgs.ReportIntegration
         {
             //dataSet = new DataSet();
             //dataAdapter.InitializeLifetimeService();
-            //dataAdapter.
+            //dataAdapter.           
 
             string sql =
                 //" SET ARITHABORT ON " +
@@ -9161,16 +9172,22 @@ namespace Sgs.ReportIntegration
                 switch (Type)
                 {
                     case EReportType.Physical:
+                        string Fname_ts_Ph = FName.Substring(0, FName.LastIndexOf(')') + 1);
                         if (string.IsNullOrWhiteSpace(ItemNo) == false)
                         {
-                            sql += $" and t1.orderno like '{ItemNo}%%' and (REPLACE(t1.orderno,' ','') like '%%-ASTM' or REPLACE(t1.orderno,' ','') like '%%-EN' OR REPLACE(t1.orderno,' ','') LIKE '%%-EN/UKCA') ";
+                            sql += $" and t1.orderno like '{ItemNo}%' " +
+                                $"AND ( Replace(t1.orderno, ' ', '') LIKE '%-ASTM' " +
+                                $"OR Replace(t1.orderno, ' ', '') LIKE '%-EN' " +
+                                $"OR Replace(t1.orderno, ' ', '') LIKE '%-EN/UKCA' ) " +                                
+                                $"AND t1.NOTES1 LIKE '%TOY'　";
                         }
                         if (AreaNo != EReportArea.None)
                         {
-                            sql += $" and t1.orderno like '%%{AreaNo.ToDescription()}%%' ";
+                            sql += $" and t1.orderno like '%{AreaNo.ToDescription()}%' ";
                         }
                         //sql += $" and t1.pro_job in (select distinct pro_job from PROFJOB_CUID_SCHEME_ANALYTE where formattedvalue is null and finalvalue is null)";
                         sql += $" AND (t1.FINALISED >= '1900-01-01' Or t1.completed >= '1900-01-01' and t1.LASTREPORTED >= '1900-01-01')";
+                        sql += $" and t1.notes1 like '{Fname_ts_Ph}%' ";
                         break;
 
                     case EReportType.Chemical:
@@ -9182,7 +9199,7 @@ namespace Sgs.ReportIntegration
                             }
                             else
                             {
-                                sql += $" and t1.notes1 like '%%HL_ASTM%%' ";
+                                sql += $" and t1.notes1 like '%HL_ASTM%' ";
                             }
                         }
                         else if (AreaNo == EReportArea.EU)
@@ -9192,7 +9209,7 @@ namespace Sgs.ReportIntegration
                         }
                         if (string.IsNullOrWhiteSpace(ItemNo) == false)
                         {
-                            sql += $" and t3.jobcomments like '%%{ItemNo}%%' ";
+                            sql += $" and t3.jobcomments like '%{ItemNo}%' ";
                         }
                         //sql += $" and t1.pro_job not in (select distinct pro_job from PROFJOB_CUID_SCHEME_ANALYTE where formattedvalue is null and finalvalue is null)";
                         sql += $" AND (t1.FINALISED >= '1900-01-01' Or t1.completed >= '1900-01-01' and t1.LASTREPORTED >= '1900-01-01')";
@@ -9200,6 +9217,7 @@ namespace Sgs.ReportIntegration
                         break;
 
                     case EReportType.Integration:
+                        string Fname_ts_In = FName.Substring(0, FName.LastIndexOf(')') + 1);
                         //if (AreaNo == EReportArea.US)
                         //{
                         //    sql += $" and (t1.notes1 like '%HL_ASTM%' or t1.notes1='HL ASTM') ";
@@ -9211,13 +9229,15 @@ namespace Sgs.ReportIntegration
                         //}
                         if (string.IsNullOrWhiteSpace(ItemNo) == false)
                         {
-                            sql += $" and t1.orderno like '{ItemNo}%%' ";
+                            sql += $" and t1.orderno like '{ItemNo}%' ";
                         }
                         if (AreaNo != EReportArea.None)
                         {
-                            sql += $" and t1.orderno like '%%{AreaNo.ToDescription()}%%' ";
+                            sql += $" and t1.orderno like '{AreaNo.ToDescription()}%' ";
                         }
-                        sql += $" and t1.orderno like '%%COMBINE%%' ";
+                        sql += $" and t1.orderno like '%COMBINE%' ";
+                        
+                        sql += $" and t1.notes1 like '{Fname_ts_In}%' ";
                         break;
                 }
 
@@ -9225,7 +9245,7 @@ namespace Sgs.ReportIntegration
                 {
                     if (From == To)
                     {
-                        sql += $" and t1.registered like '{From}%%' ";
+                        sql += $" and t1.registered like '{From}%' ";
                     }
                     else
                     {
@@ -9234,8 +9254,9 @@ namespace Sgs.ReportIntegration
                     }
                 }
             }
+
             sql += $" AND t2.LABCODE ='GLOBAL' AND t1.PRO_JOB LIKE 'AYN%'  ";
-            sql += $" order by t1.pro_proj desc ";
+            sql += $" order by t1.pro_proj desc ";            
             //sql += $" SET ARITHABORT OFF ";
 
             SetTrans(trans);
@@ -9497,13 +9518,32 @@ namespace Sgs.ReportIntegration
         public void Select_Physical_Import(SqlTransaction trans = null)
         {
             string sql =
-                " SET ARITHABORT ON " +
-                " select t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
+                //" SET ARITHABORT ON " +
+                //" select t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
+                //"     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
+                //"     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
+                //"     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1, t3.TESTCOMMENTS,   " +
+                //"     t4.sam_remarks, t4.sam_description, t4.description_1,            " +
+                ////"     t4.description_3, t4.description_4, null as 'photo' " +
+                //"     t4.description_3, t4.description_4, t5.PHOTO " +
+                ////", t5.photo                     " +
+                ////" from Aurora.dbo.PROFJOB t1                                                      " +
+                ////"     join Aurora.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
+                ////"     join Aurora.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
+                ////"     join Aurora.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
+                ////"     left join Aurora.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job = t1.pro_job AND t1.LABCODE = t5.LABCODE AND(t3.PHOTORTFKEY = t5.IDKEY OR t4.PHOTORTFKEY = t5.IDKEY)" +
+                //" from KRCTS01.dbo.PROFJOB t1                                                      " +
+                //"     join KRCTS01.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
+                //"     join KRCTS01.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
+                //"     join KRCTS01.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
+                //"     left join KRCTS01.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job = t1.pro_job AND t1.LABCODE = t5.LABCODE AND(t3.PHOTORTFKEY = t5.IDKEY OR t4.PHOTORTFKEY = t5.IDKEY)       " +
+                //" where t1.labcode<>''                                                 ";
+                //" SET ARITHABORT ON " +
+                " select top 1 t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
                 "     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
                 "     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
                 "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1, t3.TESTCOMMENTS,   " +
                 "     t4.sam_remarks, t4.sam_description, t4.description_1,            " +
-                //"     t4.description_3, t4.description_4, null as 'photo' " +
                 "     t4.description_3, t4.description_4, t5.PHOTO " +
                 //", t5.photo                     " +
                 //" from Aurora.dbo.PROFJOB t1                                                      " +
@@ -9515,7 +9555,7 @@ namespace Sgs.ReportIntegration
                 "     join KRCTS01.dbo.CLIENT t2 on t2.cli_code=t1.cli_code                        " +
                 "     join KRCTS01.dbo.PROFJOBUSER t3 on t3.pro_job=t1.pro_job                     " +
                 "     join KRCTS01.dbo.PROFJOB_CUIDUSER t4 on t4.pro_job=t1.pro_job                " +
-                "     left join KRCTS01.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job = t1.pro_job AND t1.LABCODE = t5.LABCODE AND(t3.PHOTORTFKEY = t5.IDKEY OR t4.PHOTORTFKEY = t5.IDKEY)       " +
+                "     left join Aurora.dbo.USERPROFJOB_PHOTORTF t5 on t5.pro_job = t1.pro_job AND t1.LABCODE = t5.LABCODE AND(t3.PHOTORTFKEY = t5.IDKEY OR t4.PHOTORTFKEY = t5.IDKEY)" +
                 " where t1.labcode<>''                                                 ";
 
             if (string.IsNullOrWhiteSpace(JobNo) == false)
@@ -9595,6 +9635,7 @@ namespace Sgs.ReportIntegration
                 }
             }
             sql += $" AND t2.LABCODE ='GLOBAL' AND t1.PRO_JOB LIKE 'AYN%'  ";
+            sql += $" AND t2.STATE LIKE 'AURORA%'  ";
             sql += $" order by t1.pro_proj desc ";
             sql += $" SET ARITHABORT OFF ";
 
@@ -9610,9 +9651,10 @@ namespace Sgs.ReportIntegration
         {
             string sql =
                 //" SET ARITHABORT ON " +
-                " select top 1 t2.cli_code, t2.cli_name, t2.address1, t2.address2,           " +
+                " select top 1 t2.cli_code, t2.cli_name, t2.address1, t2.address2,     " +
                 "     t2.address3, t2.state, t2.country, t1.orderno, t1.pro_job,       " +
                 "     t1.pro_proj, t1.notes1, t1.registered, t1.received, t1.required, " +
+                //"     t1.lastreported, t1.validatedby, t1.orderno as 'jobcomments', t3.comments1, t3.TESTCOMMENTS,   " +
                 "     t1.lastreported, t1.validatedby, t3.jobcomments, t3.comments1, t3.TESTCOMMENTS,   " +
                 "     t4.sam_remarks, t4.sam_description, t4.description_1,            " +
                 "     t4.description_3, t4.description_4, null as 'photo' " +
@@ -9706,6 +9748,7 @@ namespace Sgs.ReportIntegration
                 }
             }
             sql += $" AND t2.LABCODE ='GLOBAL' AND t1.PRO_JOB LIKE 'AYN%'  ";
+            sql += $" AND t2.STATE LIKE 'AURORA%'  ";
             sql += $" order by t1.pro_proj desc ";
             //sql += $" SET ARITHABORT OFF ";
 
@@ -10284,7 +10327,7 @@ namespace Sgs.ReportIntegration
             $"	WHERE  t1.PRO_PROJ like '%%{ProjJobNo}%%'                   " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"	       AND t1.NOTES1 = '6F'                                 " +
-            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
+            $"		   --AND t2.formattedvalue <> 'N.A.'                      ";
 
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
@@ -10330,7 +10373,8 @@ namespace Sgs.ReportIntegration
             $"	WHERE  t1.PRO_JOB = '{JobNo}'                               " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"	       AND t1.NOTES1 <> '6F'                                " +
-            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
+            $"	       AND t2.ANALYTESTATUS <> 'NA'                         " +
+            $"		   --AND t2.formattedvalue <> 'N.A.'                      ";
 
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
@@ -10376,7 +10420,9 @@ namespace Sgs.ReportIntegration
             $"	WHERE  t1.PRO_JOB = '{JobNo}'                               " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"	       AND t1.NOTES1 <> '6F'                                " +
-            $"         AND t6.ANALYSED IS NOT NULL                          ";
+            $"	       AND t2.ANALYTESTATUS <> 'NA'                         " +
+            $"         --AND t2.formattedvalue <> 'N.A.'                      " +
+            $"         --AND t6.ANALYSED IS NOT NULL                          ";
 
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
@@ -10418,7 +10464,8 @@ namespace Sgs.ReportIntegration
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"	       AND t1.NOTES1 <> '6F'                                " +
             $"	       AND t6.SCH_CODE = 'HCEEORGANOTIN_11_01'              " +
-            $"		   AND t2.formattedvalue <> 'N.A.'                      ";
+            $"	       AND t2.ANALYTESTATUS <> 'NA'                         " +
+            $"		   --AND t2.formattedvalue <> 'N.A.'                      ";
 
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
@@ -10459,8 +10506,9 @@ namespace Sgs.ReportIntegration
             $"	       WHERE  t1.PRO_JOB = '{JobNo}'                        " +
             $"		   AND t1.completed > '2000-01-01'                      " +
             $"	       AND t1.NOTES1 <> '6F'                                " +
+            $"	       AND t2.ANALYTESTATUS <> 'NA'                         " +
             $"	       AND (t6.SCH_CODE = 'HCEECPSC09' or t6.SCH_CODE = 'HCEECPSC08' or t6.SCH_CODE = 'HCEECPSC07') " +
-            $"         AND t6.ANALYSED IS NOT NULL ";
+            $"         --AND t6.ANALYSED IS NOT NULL ";
 
             dataSet.Clear();
             dataAdapter.Fill(dataSet);
@@ -10813,6 +10861,55 @@ namespace Sgs.ReportIntegration
             SetTrans(trans);
 
             command.CommandText =
+            //$"   SELECT t1.pro_job,											" +
+            //$"   t1.PRO_PROJ,                                               " +
+            //$"   t5.CUID,                                                   " +
+            //$"   t5.SAMPLEIDENT,                                            " +
+            //$"   t1.registered,                                             " +
+            //$"   t4.sch_code,                                               " +
+            //$"   t4.description,                                            " +
+            //$"   t4.lvl1lowerlimit,                                         " +
+            //$"   t4.lvl1upperlimit,                                         " +
+            //$"   t4.repdetlimit,                                            " +
+            //$"   t2.formattedvalue,                                         " +
+            //$"   t7.sam_description,                                        " +
+            //$"   t7.SAM_REMARKS,                                            " +
+            //$"   t7.DESCRIPTION_4,                                          " +
+            //$"   t6.WEIGHT                                                  " +
+            //$"	    FROM   KRCTS01.dbo.profjob t1                           " +
+            //$"		   JOIN KRCTS01.dbo.PROFJOB_CUID t5                     " +
+            //$"			 ON ( t1.LABCODE = t5.LABCODE                       " +
+            //$"				  AND t1.PRO_JOB = t5.PRO_JOB )                 " +
+            //$"		   JOIN KRCTS01.dbo.PROFJOB_CUID_SCHEME t6              " +
+            //$"			 ON ( t5.LABCODE = t6.LABCODE                       " +
+            //$"				  AND t5.PRO_JOB = t6.PRO_JOB                   " +
+            //$"				  AND t5.CUID = t6.CUID )                       " +
+            //$"		   JOIN KRCTS01.dbo.PROFJOB_CUIDUSER t7                 " +
+            //$"			 ON ( t7.labcode = t5.labcode                       " +
+            //$"				  AND t7.PRO_JOB = t5.PRO_JOB                   " +
+            //$"				  AND t7.CUID = t5.CUID )                       " +
+            //$"		   JOIN KRCTS01.dbo.profjob_cuid_scheme_analyte t2      " +
+            //$"			 ON ( t6.LABCODE = t2.LABCODE                       " +
+            //$"				  AND t6.pro_job = t2.pro_job                   " +
+            //$"				  AND t6.CUID = t2.CUID                         " +
+            //$"				  AND t6.SCH_CODE = t2.SCH_CODE                 " +
+            //$"				  AND t6.SCHVERSION = t2.SCHVERSION)            " +
+            //$"		   JOIN KRCTS01.dbo.profjob_scheme_analyte t3           " +
+            //$"			 ON ( t3.labcode = t2.labcode                       " +
+            //$"				  AND t3.pro_job = t2.pro_job                   " +
+            //$"				  AND t3.sch_code = t2.sch_code                 " +
+            //$"				  AND t3.analytecode = t2.analytecode )         " +
+            //$"		   JOIN KRCTS01.dbo.scheme_analyte t4                   " +
+            //$"			 ON ( t4.labcode = t2.labcode                       " +
+            //$"				  AND t4.sch_code = t2.sch_code                 " +
+            //$"				  AND t4.schversion = t2.schversion             " +
+            //$"				  AND t4.analytecode = t2.analytecode )         " +
+            //$"	WHERE  t1.pro_job = '{JobNo}'                               " +
+            //$"	       AND t5.SAMPLEIDENT = '{SAMPLEIDENT}'                 " +
+            //$"		   AND t1.completed > '2000-01-01'                      " +
+            //$"		   --AND t2.FORMATTEDVALUE <> 'N.A.'                      " +
+            //$"		   AND t4.sch_code = '{Sch_Code}'                       " +
+            //$"	ORDER  BY t3.repsequence ASC                                ";
             $"   SELECT t1.pro_job,											" +
             $"   t1.PRO_PROJ,                                               " +
             $"   t5.CUID,                                                   " +
@@ -10822,6 +10919,7 @@ namespace Sgs.ReportIntegration
             $"   t4.description,                                            " +
             $"   t4.lvl1lowerlimit,                                         " +
             $"   t4.lvl1upperlimit,                                         " +
+            $"   t2.FINALVALUE,                                             " +
             $"   t4.repdetlimit,                                            " +
             $"   t2.formattedvalue,                                         " +
             $"   t7.sam_description,                                        " +
@@ -10859,7 +10957,6 @@ namespace Sgs.ReportIntegration
             $"	WHERE  t1.pro_job = '{JobNo}'                               " +
             $"	       AND t5.SAMPLEIDENT = '{SAMPLEIDENT}'                 " +
             $"		   AND t1.completed > '2000-01-01'                      " +
-            $"		   AND t2.FORMATTEDVALUE <> 'N.A.'                      " +
             $"		   AND t4.sch_code = '{Sch_Code}'                       " +
             $"	ORDER  BY t3.repsequence ASC                                ";
 

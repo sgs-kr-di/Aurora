@@ -2,19 +2,27 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-
+using LoadingIndicator.WinForms;
 using DevExpress.XtraEditors;
-
 using Ulee.Controls;
 
 namespace Sgs.ReportIntegration
-{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+{
     public partial class CtrlEditRight : UlUserControlEng
     {
+        private LongOperation _longOperation;
+
         public CtrlEditRight()
         {
             InitializeComponent();
             Initialize();
+
+            // Initialize long operation with control which will
+            // be overlayed during long operations
+            _longOperation = new LongOperation(this);
+
+            // You can pass settings to customize indicator view/behavior
+            // _longOperation = new LongOperation(this, LongOperationSettings.Default);
         }
 
         private void Initialize()
@@ -64,18 +72,21 @@ namespace Sgs.ReportIntegration
 
         private void bomImportButton_Click(object sender, EventArgs e)
         {
-            string fName = OpenBomFile();
-            if (string.IsNullOrWhiteSpace(fName) == false)
+            using (_longOperation.Start())
             {
-                EReportArea area = EReportArea.None;
-                string dirName = Path.GetDirectoryName(fName);
-
-                if (dirName.EndsWith("AURORA ASTM") == true) area = EReportArea.US;
-                else if (dirName.EndsWith("AURORA EN") == true) area = EReportArea.EU;
-
-                if (area != EReportArea.None)
+                string fName = OpenBomFile();
+                if (string.IsNullOrWhiteSpace(fName) == false)
                 {
-                    (DefMenu.Controls(0) as CtrlEditBom).Import(area, fName);
+                    EReportArea area = EReportArea.None;
+                    string dirName = Path.GetDirectoryName(fName);
+
+                    if (dirName.EndsWith("AURORA ASTM") == true) area = EReportArea.US;
+                    else if (dirName.EndsWith("AURORA EN") == true) area = EReportArea.EU;
+
+                    if (area != EReportArea.None)
+                    {
+                        (DefMenu.Controls(0) as CtrlEditBom).Import(area, fName);
+                    }
                 }
             }
         }

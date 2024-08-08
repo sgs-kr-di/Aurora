@@ -32,6 +32,8 @@
             this.chemicalCheckEdit = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
             this.viewSplit = new System.Windows.Forms.SplitContainer();
             this.gridPanel = new Ulee.Controls.UlPanel();
+            this.OmNoEdit = new DevExpress.XtraEditors.TextEdit();
+            this.label7 = new System.Windows.Forms.Label();
             this.jobNoEdit = new DevExpress.XtraEditors.TextEdit();
             this.label6 = new System.Windows.Forms.Label();
             this.approvalCombo = new System.Windows.Forms.ComboBox();
@@ -63,8 +65,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.reportNoEdit = new DevExpress.XtraEditors.TextEdit();
             this.label1 = new System.Windows.Forms.Label();
-            this.OmNoEdit = new DevExpress.XtraEditors.TextEdit();
-            this.label7 = new System.Windows.Forms.Label();
             this.bgPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chemicalCheckEdit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.viewSplit)).BeginInit();
@@ -72,6 +72,7 @@
             this.viewSplit.Panel2.SuspendLayout();
             this.viewSplit.SuspendLayout();
             this.gridPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.OmNoEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.jobNoEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chemicalGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chemicalGridView)).BeginInit();
@@ -81,7 +82,6 @@
             this.ulPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.issuedDateEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.reportNoEdit.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.OmNoEdit.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // bgPanel
@@ -166,6 +166,31 @@
             this.gridPanel.TextVAlign = Ulee.Controls.EUlVertAlign.Middle;
             this.gridPanel.Resize += new System.EventHandler(this.gridPanel_Resize);
             // 
+            // OmNoEdit
+            // 
+            this.OmNoEdit.EditValue = "";
+            this.OmNoEdit.ImeMode = System.Windows.Forms.ImeMode.Alpha;
+            this.OmNoEdit.Location = new System.Drawing.Point(174, 116);
+            this.OmNoEdit.Name = "OmNoEdit";
+            this.OmNoEdit.Properties.Appearance.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OmNoEdit.Properties.Appearance.Options.UseFont = true;
+            this.OmNoEdit.Properties.AppearanceFocused.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OmNoEdit.Properties.AppearanceFocused.Options.UseFont = true;
+            this.OmNoEdit.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OmNoEdit.Properties.AppearanceReadOnly.Options.UseFont = true;
+            this.OmNoEdit.Properties.MaxLength = 20;
+            this.OmNoEdit.Size = new System.Drawing.Size(86, 22);
+            this.OmNoEdit.TabIndex = 107;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(120, 115);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 22);
+            this.label7.TabIndex = 108;
+            this.label7.Text = "OM No.";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // jobNoEdit
             // 
             this.jobNoEdit.EditValue = "";
@@ -233,6 +258,8 @@
             // 
             // dateCheck
             // 
+            this.dateCheck.Checked = true;
+            this.dateCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.dateCheck.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateCheck.Location = new System.Drawing.Point(4, 5);
             this.dateCheck.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -703,38 +730,12 @@
             this.label1.Text = "Test Report No.";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // OmNoEdit
-            // 
-            this.OmNoEdit.EditValue = "";
-            this.OmNoEdit.ImeMode = System.Windows.Forms.ImeMode.Alpha;
-            this.OmNoEdit.Location = new System.Drawing.Point(174, 116);
-            this.OmNoEdit.Name = "OmNoEdit";
-            this.OmNoEdit.Properties.Appearance.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OmNoEdit.Properties.Appearance.Options.UseFont = true;
-            this.OmNoEdit.Properties.AppearanceFocused.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OmNoEdit.Properties.AppearanceFocused.Options.UseFont = true;
-            this.OmNoEdit.Properties.AppearanceReadOnly.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OmNoEdit.Properties.AppearanceReadOnly.Options.UseFont = true;
-            this.OmNoEdit.Properties.MaxLength = 20;
-            this.OmNoEdit.Size = new System.Drawing.Size(86, 22);
-            this.OmNoEdit.TabIndex = 107;
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(120, 115);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(53, 22);
-            this.label7.TabIndex = 108;
-            this.label7.Text = "OM No.";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // CtrlEditChemical
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "CtrlEditChemical";
             this.Size = new System.Drawing.Size(820, 568);
-            this.Load += new System.EventHandler(this.CtrlEditChemical_Enter);
             this.Enter += new System.EventHandler(this.CtrlEditChemical_Enter);
             this.bgPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chemicalCheckEdit)).EndInit();
@@ -744,6 +745,7 @@
             this.viewSplit.ResumeLayout(false);
             this.gridPanel.ResumeLayout(false);
             this.gridPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.OmNoEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.jobNoEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chemicalGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chemicalGridView)).EndInit();
@@ -753,7 +755,6 @@
             this.ulPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.issuedDateEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.reportNoEdit.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.OmNoEdit.Properties)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

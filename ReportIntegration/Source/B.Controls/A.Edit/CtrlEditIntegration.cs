@@ -10,7 +10,7 @@ using DevExpress.Data;
 using DevExpress.Utils;
 using DevExpress.XtraPrinting;
 using DevExpress.XtraReports.UI;
-
+using LoadingIndicator.WinForms;
 using Ulee.Controls;
 using Ulee.Utils;
 
@@ -79,6 +79,8 @@ namespace Sgs.ReportIntegration
         private CtrlEditIntegrationEu ctrlEu;
 
         private IntegrationQuery integQuery;
+
+        private LongOperation _longOperation;
 
         public CtrlEditIntegration(CtrlEditRight parent)
         {
@@ -201,10 +203,13 @@ namespace Sgs.ReportIntegration
             areaCombo.ValueMember = "Value";
 
             SetControl(null);
-        }
 
-        private void CtrlEditIntegration_Load(object sender, EventArgs e)
-        {
+            // Initialize long operation with control which will
+            // be overlayed during long operations
+            _longOperation = new LongOperation(this);
+
+            // You can pass settings to customize indicator view/behavior
+            // _longOperation = new LongOperation(this, LongOperationSettings.Default);
         }
 
         private void CtrlEditIntegration_Enter(object sender, EventArgs e)
@@ -218,17 +223,25 @@ namespace Sgs.ReportIntegration
             
             set.From = "";
             set.To = "";
-
-            set.AreaNo = (EReportArea)Program.iGetPhysicalAreano();
-            set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
-            set.ProductNo = Program.sGetPhysicalCode();
             set.RecNo = Program.sGetPhysicalIntegJobno();
-            set.Select();
 
-            AppHelper.SetGridDataSource(integrationGrid, set);
+            if (!string.IsNullOrEmpty(set.RecNo))
+            {
+                set.AreaNo = (EReportArea)Program.iGetPhysicalAreano();
+                set.ReportApproval = (EReportApproval)approvalCombo.SelectedValue;
+                set.ProductNo = Program.sGetPhysicalCode();
 
-            bookmark.Goto();
-            integrationGrid.Focus();
+                set.Select();
+
+                AppHelper.SetGridDataSource(integrationGrid, set);
+
+                bookmark.Goto();
+                integrationGrid.Focus();
+            }
+
+            DateTime MonthFirstDay = DateTime.Now.AddDays(1 - DateTime.Now.Day);
+            fromDateEdit.Text = MonthFirstDay.ToString("yyyy-MM-dd");
+            //fromDateEdit.Text = MonthFirstDay.ToString("yyyy-01-dd");   // 1월 1일로 변경 요청 - 조재식 과장
 
             //parent.SetMenu(3);
             //resetButton.PerformClick();
@@ -422,217 +435,231 @@ namespace Sgs.ReportIntegration
 
         public void Print()
         {
-            if (integrationGridView.FocusedRowHandle < 0) return;
-
-            this.Cursor = Cursors.WaitCursor;
-
-            integReportSet.RecNo = integMainSet.RecNo;
-            integReportSet.RecNo_Chemical = profJobSet.JobNo;
-            integReportSet.Pro_proj = integMainSet.P1FileNo;
-
-            if (integMainSet.AreaNo == EReportArea.EU)
+            using (_longOperation.Start())
             {
-                integReportSet.Select();
+                if (integrationGridView.FocusedRowHandle < 0) return;
 
-                integReportSet.DataSet.Tables[0].TableName = "P1";
-                integReportSet.DataSet.Tables[1].TableName = "T1";
-                integReportSet.DataSet.Tables[2].TableName = "T2";
-                integReportSet.DataSet.Tables[3].TableName = "T3";
-                integReportSet.DataSet.Tables[4].TableName = "T4";
-                integReportSet.DataSet.Tables[5].TableName = "T5";
-                integReportSet.DataSet.Tables[6].TableName = "T6";
-                integReportSet.DataSet.Tables[7].TableName = "T7";
-                integReportSet.DataSet.Tables[8].TableName = "LT_EU";
-                integReportSet.DataSet.Tables[9].TableName = "RT_EU";
-                integReportSet.DataSet.Tables[10].TableName = "SFLEADLT_US";
-                integReportSet.DataSet.Tables[11].TableName = "SFLEADRT_US";
-                integReportSet.DataSet.Tables[12].TableName = "SFLT_US";
-                integReportSet.DataSet.Tables[13].TableName = "SFRT_US";
-                integReportSet.DataSet.Tables[14].TableName = "SBLEADLT_US";
-                integReportSet.DataSet.Tables[15].TableName = "SBLEADRT_US";
-                integReportSet.DataSet.Tables[16].TableName = "SBLT_US";
-                integReportSet.DataSet.Tables[17].TableName = "SBRT_US";
-                integReportSet.DataSet.Tables[18].TableName = "Image";
-                integReportSet.DataSet.Tables[19].TableName = "RT_EU6";
-                integReportSet.DataSet.Tables[20].TableName = "RT_EU11";
-                integReportSet.DataSet.Tables[21].TableName = "RT_EU16";
-                integReportSet.DataSet.Tables[22].TableName = "RT_EU21";
-                integReportSet.DataSet.Tables[23].TableName = "RT_EU26";
+                this.Cursor = Cursors.WaitCursor;
 
-                integReportSet.DataSet.Tables[24].TableName = "LT_Al";
-                integReportSet.DataSet.Tables[25].TableName = "LT_As";
-                integReportSet.DataSet.Tables[26].TableName = "LT_B";
-                integReportSet.DataSet.Tables[27].TableName = "LT_Ba";
-                integReportSet.DataSet.Tables[28].TableName = "LT_Cd";
-                integReportSet.DataSet.Tables[29].TableName = "LT_Co";
-                integReportSet.DataSet.Tables[30].TableName = "LT_Cr";
-                integReportSet.DataSet.Tables[31].TableName = "LT_lll";
-                integReportSet.DataSet.Tables[32].TableName = "LT_Vl";
-                integReportSet.DataSet.Tables[33].TableName = "LT_Cu";
-                integReportSet.DataSet.Tables[34].TableName = "LT_Hg";
-                integReportSet.DataSet.Tables[35].TableName = "LT_Mn";
-                integReportSet.DataSet.Tables[36].TableName = "LT_Ni";
-                integReportSet.DataSet.Tables[37].TableName = "LT_Pb";
-                integReportSet.DataSet.Tables[38].TableName = "LT_Sb";
-                integReportSet.DataSet.Tables[39].TableName = "LT_Se";
-                integReportSet.DataSet.Tables[40].TableName = "LT_Sn";
-                integReportSet.DataSet.Tables[41].TableName = "LT_Sr";
-                integReportSet.DataSet.Tables[42].TableName = "LT_Zn";
-                integReportSet.DataSet.Tables[43].TableName = "LT_Organic";
-                integReportSet.DataSet.Tables[44].TableName = "SBLEADLT_Metal_US";
-                integReportSet.DataSet.Tables[45].TableName = "SBLEADRT_Metal_US";
-                integReportSet.DataSet.Tables[46].TableName = "T61";
-                integReportSet.DataSet.Tables[47].TableName = "RT_TIN";
-                integReportSet.DataSet.Tables[48].TableName = "RT_TIN2";
-                integReportSet.DataSet.Tables[49].TableName = "RT_TIN3";
-                integReportSet.DataSet.Tables[50].TableName = "RT_TIN4";
-                integReportSet.DataSet.Tables[51].TableName = "RT_TIN5";
-                integReportSet.DataSet.Tables[52].TableName = "RT_TIN6";
+                integReportSet.RecNo = integMainSet.RecNo;
+                integReportSet.RecNo_Chemical = profJobSet.JobNo;
+                integReportSet.Pro_proj = integMainSet.P1FileNo;
 
-                integReportSet.DataSet.Tables[53].TableName = "LT_MET";
-                integReportSet.DataSet.Tables[54].TableName = "LT_DBT";
-                integReportSet.DataSet.Tables[55].TableName = "LT_TBT";
-                integReportSet.DataSet.Tables[56].TableName = "LT_TeBT";
-                integReportSet.DataSet.Tables[57].TableName = "LT_MOT";
-                integReportSet.DataSet.Tables[58].TableName = "LT_DOT";
-                integReportSet.DataSet.Tables[59].TableName = "LT_DProT";
-                integReportSet.DataSet.Tables[60].TableName = "LT_DPhT";
-                integReportSet.DataSet.Tables[61].TableName = "LT_TPhT";
-                integReportSet.DataSet.Tables[62].TableName = "LT_DMT";
-                integReportSet.DataSet.Tables[63].TableName = "LT_MBT";
+                if (integMainSet.AreaNo == EReportArea.EU)
+                {
+                    integReportSet.Select();
 
-                integReportSet.DataSet.Tables[64].TableName = "RT_TIN_Long_1";
-                integReportSet.DataSet.Tables[65].TableName = "RT_TIN_Long_6";
-                integReportSet.DataSet.Tables[66].TableName = "RT_TIN_Long_11";
-                integReportSet.DataSet.Tables[67].TableName = "RT_TIN_Long_16";
-                integReportSet.DataSet.Tables[68].TableName = "RT_TIN_Long_21";
-                integReportSet.DataSet.Tables[69].TableName = "T7_EU16";
-                integReportSet.DataSet.Tables[70].TableName = "T2_Clause4";
-                integReportSet.DataSet.Tables[71].TableName = "T2_Clause5";
-                integReportSet.DataSet.Tables[72].TableName = "NoCoating_NoLead_Limit";
-                integReportSet.DataSet.Tables[73].TableName = "NoCoating_NoLead_Result";
-                integReportSet.DataSet.Tables[74].TableName = "RT_PHY";
-            }
-            else 
-            {
-                integReportSet.Select_US();
+                    integReportSet.DataSet.Tables[0].TableName = "P1";
+                    integReportSet.DataSet.Tables[1].TableName = "T1";
+                    integReportSet.DataSet.Tables[2].TableName = "T2";
+                    integReportSet.DataSet.Tables[3].TableName = "T3";
+                    integReportSet.DataSet.Tables[4].TableName = "T4";
+                    integReportSet.DataSet.Tables[5].TableName = "T5";
+                    integReportSet.DataSet.Tables[6].TableName = "T6";
+                    integReportSet.DataSet.Tables[7].TableName = "T7";
+                    integReportSet.DataSet.Tables[8].TableName = "LT_EU";
+                    integReportSet.DataSet.Tables[9].TableName = "RT_EU";
+                    integReportSet.DataSet.Tables[10].TableName = "SFLEADLT_US";
+                    integReportSet.DataSet.Tables[11].TableName = "SFLEADRT_US";
+                    integReportSet.DataSet.Tables[12].TableName = "SFLT_US";
+                    integReportSet.DataSet.Tables[13].TableName = "SFRT_US";
+                    integReportSet.DataSet.Tables[14].TableName = "SBLEADLT_US";
+                    integReportSet.DataSet.Tables[15].TableName = "SBLEADRT_US";
+                    integReportSet.DataSet.Tables[16].TableName = "SBLT_US";
+                    integReportSet.DataSet.Tables[17].TableName = "SBRT_US";
+                    integReportSet.DataSet.Tables[18].TableName = "Image";
+                    integReportSet.DataSet.Tables[19].TableName = "RT_EU6";
+                    integReportSet.DataSet.Tables[20].TableName = "RT_EU11";
+                    integReportSet.DataSet.Tables[21].TableName = "RT_EU16";
+                    integReportSet.DataSet.Tables[22].TableName = "RT_EU21";
+                    integReportSet.DataSet.Tables[23].TableName = "RT_EU26";
 
-                integReportSet.DataSet.Tables[0].TableName = "P1";
-                integReportSet.DataSet.Tables[1].TableName = "T1";
-                integReportSet.DataSet.Tables[2].TableName = "T2";
-                integReportSet.DataSet.Tables[3].TableName = "T3";
-                integReportSet.DataSet.Tables[4].TableName = "T4";
-                integReportSet.DataSet.Tables[5].TableName = "T5";
-                integReportSet.DataSet.Tables[6].TableName = "T6";
-                integReportSet.DataSet.Tables[7].TableName = "T7";
-                integReportSet.DataSet.Tables[8].TableName = "LT_EU";
-                integReportSet.DataSet.Tables[9].TableName = "RT_EU";
-                integReportSet.DataSet.Tables[10].TableName = "SFLEADLT_US";
-                integReportSet.DataSet.Tables[11].TableName = "SFLEADRT_US";
-                integReportSet.DataSet.Tables[12].TableName = "SFLT_US";
-                integReportSet.DataSet.Tables[13].TableName = "SFRT_US";
-                integReportSet.DataSet.Tables[14].TableName = "SBLEADLT_US";
-                integReportSet.DataSet.Tables[15].TableName = "SBLEADRT_US";
-                integReportSet.DataSet.Tables[16].TableName = "SBLT_US";
-                integReportSet.DataSet.Tables[17].TableName = "SBRT_US";
-                integReportSet.DataSet.Tables[18].TableName = "Image";
-                integReportSet.DataSet.Tables[19].TableName = "RT_EU6";
-                integReportSet.DataSet.Tables[20].TableName = "RT_EU11";
-                integReportSet.DataSet.Tables[21].TableName = "RT_EU16";
-                integReportSet.DataSet.Tables[22].TableName = "RT_EU21";
-                integReportSet.DataSet.Tables[23].TableName = "RT_EU26";
+                    integReportSet.DataSet.Tables[24].TableName = "LT_Al";
+                    integReportSet.DataSet.Tables[25].TableName = "LT_As";
+                    integReportSet.DataSet.Tables[26].TableName = "LT_B";
+                    integReportSet.DataSet.Tables[27].TableName = "LT_Ba";
+                    integReportSet.DataSet.Tables[28].TableName = "LT_Cd";
+                    integReportSet.DataSet.Tables[29].TableName = "LT_Co";
+                    integReportSet.DataSet.Tables[30].TableName = "LT_Cr";
+                    integReportSet.DataSet.Tables[31].TableName = "LT_lll";
+                    integReportSet.DataSet.Tables[32].TableName = "LT_Vl";
+                    integReportSet.DataSet.Tables[33].TableName = "LT_Cu";
+                    integReportSet.DataSet.Tables[34].TableName = "LT_Hg";
+                    integReportSet.DataSet.Tables[35].TableName = "LT_Mn";
+                    integReportSet.DataSet.Tables[36].TableName = "LT_Ni";
+                    integReportSet.DataSet.Tables[37].TableName = "LT_Pb";
+                    integReportSet.DataSet.Tables[38].TableName = "LT_Sb";
+                    integReportSet.DataSet.Tables[39].TableName = "LT_Se";
+                    integReportSet.DataSet.Tables[40].TableName = "LT_Sn";
+                    integReportSet.DataSet.Tables[41].TableName = "LT_Sr";
+                    integReportSet.DataSet.Tables[42].TableName = "LT_Zn";
+                    integReportSet.DataSet.Tables[43].TableName = "LT_Organic";
+                    integReportSet.DataSet.Tables[44].TableName = "SBLEADLT_Metal_US";
+                    integReportSet.DataSet.Tables[45].TableName = "SBLEADRT_Metal_US";
+                    integReportSet.DataSet.Tables[46].TableName = "T61";
+                    integReportSet.DataSet.Tables[47].TableName = "RT_TIN";
+                    integReportSet.DataSet.Tables[48].TableName = "RT_TIN2";
+                    integReportSet.DataSet.Tables[49].TableName = "RT_TIN3";
+                    integReportSet.DataSet.Tables[50].TableName = "RT_TIN4";
+                    integReportSet.DataSet.Tables[51].TableName = "RT_TIN5";
+                    integReportSet.DataSet.Tables[52].TableName = "RT_TIN6";
 
-                integReportSet.DataSet.Tables[24].TableName = "LT_Al";
-                integReportSet.DataSet.Tables[25].TableName = "LT_As";
-                integReportSet.DataSet.Tables[26].TableName = "LT_B";
-                integReportSet.DataSet.Tables[27].TableName = "LT_Ba";
-                integReportSet.DataSet.Tables[28].TableName = "LT_Cd";
-                integReportSet.DataSet.Tables[29].TableName = "LT_Co";
-                integReportSet.DataSet.Tables[30].TableName = "LT_Cr";
-                integReportSet.DataSet.Tables[31].TableName = "LT_lll";
-                integReportSet.DataSet.Tables[32].TableName = "LT_Vl";
-                integReportSet.DataSet.Tables[33].TableName = "LT_Cu";
-                integReportSet.DataSet.Tables[34].TableName = "LT_Hg";
-                integReportSet.DataSet.Tables[35].TableName = "LT_Mn";
-                integReportSet.DataSet.Tables[36].TableName = "LT_Ni";
-                integReportSet.DataSet.Tables[37].TableName = "LT_Pb";
-                integReportSet.DataSet.Tables[38].TableName = "LT_Sb";
-                integReportSet.DataSet.Tables[39].TableName = "LT_Se";
-                integReportSet.DataSet.Tables[40].TableName = "LT_Sn";
-                integReportSet.DataSet.Tables[41].TableName = "LT_Sr";
-                integReportSet.DataSet.Tables[42].TableName = "LT_Zn";
-                integReportSet.DataSet.Tables[43].TableName = "LT_Organic";
-                integReportSet.DataSet.Tables[44].TableName = "SBLEADLT_Metal_US";
-                integReportSet.DataSet.Tables[45].TableName = "SBLEADRT_Metal_US";
-                integReportSet.DataSet.Tables[46].TableName = "T61";
-                integReportSet.DataSet.Tables[47].TableName = "RT_TIN";
-                integReportSet.DataSet.Tables[48].TableName = "RT_TIN2";
-                integReportSet.DataSet.Tables[49].TableName = "RT_TIN3";
-                integReportSet.DataSet.Tables[50].TableName = "RT_TIN4";
-                integReportSet.DataSet.Tables[51].TableName = "RT_TIN5";
-                integReportSet.DataSet.Tables[52].TableName = "RT_TIN6";
+                    integReportSet.DataSet.Tables[53].TableName = "LT_MET";
+                    integReportSet.DataSet.Tables[54].TableName = "LT_DBT";
+                    integReportSet.DataSet.Tables[55].TableName = "LT_TBT";
+                    integReportSet.DataSet.Tables[56].TableName = "LT_TeBT";
+                    integReportSet.DataSet.Tables[57].TableName = "LT_MOT";
+                    integReportSet.DataSet.Tables[58].TableName = "LT_DOT";
+                    integReportSet.DataSet.Tables[59].TableName = "LT_DProT";
+                    integReportSet.DataSet.Tables[60].TableName = "LT_DPhT";
+                    integReportSet.DataSet.Tables[61].TableName = "LT_TPhT";
+                    integReportSet.DataSet.Tables[62].TableName = "LT_DMT";
+                    integReportSet.DataSet.Tables[63].TableName = "LT_MBT";
 
-                integReportSet.DataSet.Tables[53].TableName = "LT_MET";
-                integReportSet.DataSet.Tables[54].TableName = "LT_DBT";
-                integReportSet.DataSet.Tables[55].TableName = "LT_TBT";
-                integReportSet.DataSet.Tables[56].TableName = "LT_TeBT";
-                integReportSet.DataSet.Tables[57].TableName = "LT_MOT";
-                integReportSet.DataSet.Tables[58].TableName = "LT_DOT";
-                integReportSet.DataSet.Tables[59].TableName = "LT_DProT";
-                integReportSet.DataSet.Tables[60].TableName = "LT_DPhT";
-                integReportSet.DataSet.Tables[61].TableName = "LT_TPhT";
-                integReportSet.DataSet.Tables[62].TableName = "LT_DMT";
-                integReportSet.DataSet.Tables[63].TableName = "LT_MBT";
+                    integReportSet.DataSet.Tables[64].TableName = "RT_TIN_Long_1";
+                    integReportSet.DataSet.Tables[65].TableName = "RT_TIN_Long_6";
+                    integReportSet.DataSet.Tables[66].TableName = "RT_TIN_Long_11";
+                    integReportSet.DataSet.Tables[67].TableName = "RT_TIN_Long_16";
+                    integReportSet.DataSet.Tables[68].TableName = "RT_TIN_Long_21";
+                    integReportSet.DataSet.Tables[69].TableName = "T7_EU16";
+                    integReportSet.DataSet.Tables[70].TableName = "T2_Clause4";
+                    integReportSet.DataSet.Tables[71].TableName = "T2_Clause5";
+                    integReportSet.DataSet.Tables[72].TableName = "NoCoating_NoLead_Limit";
+                    integReportSet.DataSet.Tables[73].TableName = "NoCoating_NoLead_Result";
+                    integReportSet.DataSet.Tables[74].TableName = "RT_PHY";
+                }
+                else
+                {
+                    integReportSet.Select_US();
 
-                integReportSet.DataSet.Tables[64].TableName = "RT_TIN_Long_1";
-                integReportSet.DataSet.Tables[65].TableName = "RT_TIN_Long_6";
-                integReportSet.DataSet.Tables[66].TableName = "RT_TIN_Long_11";
-                integReportSet.DataSet.Tables[67].TableName = "RT_TIN_Long_16";
-                integReportSet.DataSet.Tables[68].TableName = "RT_TIN_Long_21";
-                integReportSet.DataSet.Tables[69].TableName = "T7_EU16";
-                integReportSet.DataSet.Tables[70].TableName = "T2_Clause4";
-                integReportSet.DataSet.Tables[71].TableName = "T2_Clause5";
+                    integReportSet.DataSet.Tables[0].TableName = "P1";
+                    integReportSet.DataSet.Tables[1].TableName = "T1";
+                    integReportSet.DataSet.Tables[2].TableName = "T2";
+                    integReportSet.DataSet.Tables[3].TableName = "T3";
+                    integReportSet.DataSet.Tables[4].TableName = "T4";
+                    integReportSet.DataSet.Tables[5].TableName = "T5";
+                    integReportSet.DataSet.Tables[6].TableName = "T6";
+                    integReportSet.DataSet.Tables[7].TableName = "T7";
+                    integReportSet.DataSet.Tables[8].TableName = "LT_EU";
+                    integReportSet.DataSet.Tables[9].TableName = "RT_EU";
+                    integReportSet.DataSet.Tables[10].TableName = "SFLEADLT_US";
+                    integReportSet.DataSet.Tables[11].TableName = "SFLEADRT_US";
+                    integReportSet.DataSet.Tables[12].TableName = "SFLT_US";
+                    integReportSet.DataSet.Tables[13].TableName = "SFRT_US";
+                    integReportSet.DataSet.Tables[14].TableName = "SBLEADLT_US";
+                    integReportSet.DataSet.Tables[15].TableName = "SBLEADRT_US";
+                    integReportSet.DataSet.Tables[16].TableName = "SBLT_US";
+                    integReportSet.DataSet.Tables[17].TableName = "SBRT_US";
+                    integReportSet.DataSet.Tables[18].TableName = "Image";
+                    //integReportSet.DataSet.Tables[19].TableName = "RT_EU6";
+                    //integReportSet.DataSet.Tables[20].TableName = "RT_EU11";
+                    //integReportSet.DataSet.Tables[21].TableName = "RT_EU16";
+                    //integReportSet.DataSet.Tables[22].TableName = "RT_EU21";
+                    //integReportSet.DataSet.Tables[23].TableName = "RT_EU26";
 
-                integReportSet.DataSet.Tables[72].TableName = "Coating_Lead_Limit";
-                integReportSet.DataSet.Tables[73].TableName = "NoCoating_Lead_Limit_Plastic";
-                integReportSet.DataSet.Tables[74].TableName = "NoCoating_Lead_Limit_Metal";
+                    //integReportSet.DataSet.Tables[24].TableName = "LT_Al";
+                    //integReportSet.DataSet.Tables[25].TableName = "LT_As";
+                    //integReportSet.DataSet.Tables[26].TableName = "LT_B";
+                    //integReportSet.DataSet.Tables[27].TableName = "LT_Ba";
+                    //integReportSet.DataSet.Tables[28].TableName = "LT_Cd";
+                    //integReportSet.DataSet.Tables[29].TableName = "LT_Co";
+                    //integReportSet.DataSet.Tables[30].TableName = "LT_Cr";
+                    //integReportSet.DataSet.Tables[31].TableName = "LT_lll";
+                    //integReportSet.DataSet.Tables[32].TableName = "LT_Vl";
+                    //integReportSet.DataSet.Tables[33].TableName = "LT_Cu";
+                    //integReportSet.DataSet.Tables[34].TableName = "LT_Hg";
+                    //integReportSet.DataSet.Tables[35].TableName = "LT_Mn";
+                    //integReportSet.DataSet.Tables[36].TableName = "LT_Ni";
+                    //integReportSet.DataSet.Tables[37].TableName = "LT_Pb";
+                    //integReportSet.DataSet.Tables[38].TableName = "LT_Sb";
+                    //integReportSet.DataSet.Tables[39].TableName = "LT_Se";
+                    //integReportSet.DataSet.Tables[40].TableName = "LT_Sn";
+                    //integReportSet.DataSet.Tables[41].TableName = "LT_Sr";
+                    //integReportSet.DataSet.Tables[42].TableName = "LT_Zn";
+                    //integReportSet.DataSet.Tables[43].TableName = "LT_Organic";
 
-                integReportSet.DataSet.Tables[75].TableName = "Coating_Lead_Result";
-                integReportSet.DataSet.Tables[76].TableName = "NoCoating_Lead_Result_Plastic";
-                integReportSet.DataSet.Tables[77].TableName = "NoCoating_Lead_Result_Metal";
+                    //integReportSet.DataSet.Tables[44].TableName = "SBLEADLT_Metal_US";
+                    //integReportSet.DataSet.Tables[45].TableName = "SBLEADRT_Metal_US";
 
-                integReportSet.DataSet.Tables[78].TableName = "Coating_NoLead_Limit";
-                integReportSet.DataSet.Tables[79].TableName = "NoCoating_NoLead_Limit";
+                    //integReportSet.DataSet.Tables[46].TableName = "T61";
+                    //integReportSet.DataSet.Tables[47].TableName = "RT_TIN";
+                    //integReportSet.DataSet.Tables[48].TableName = "RT_TIN2";
+                    //integReportSet.DataSet.Tables[49].TableName = "RT_TIN3";
+                    //integReportSet.DataSet.Tables[50].TableName = "RT_TIN4";
+                    //integReportSet.DataSet.Tables[51].TableName = "RT_TIN5";
+                    //integReportSet.DataSet.Tables[52].TableName = "RT_TIN6";
 
-                integReportSet.DataSet.Tables[80].TableName = "Coating_NoLead_Result";
-                integReportSet.DataSet.Tables[81].TableName = "NoCoating_NoLead_Result";
+                    //integReportSet.DataSet.Tables[53].TableName = "LT_MET";
+                    //integReportSet.DataSet.Tables[54].TableName = "LT_DBT";
+                    //integReportSet.DataSet.Tables[55].TableName = "LT_TBT";
+                    //integReportSet.DataSet.Tables[56].TableName = "LT_TeBT";
+                    //integReportSet.DataSet.Tables[57].TableName = "LT_MOT";
+                    //integReportSet.DataSet.Tables[58].TableName = "LT_DOT";
+                    //integReportSet.DataSet.Tables[59].TableName = "LT_DProT";
+                    //integReportSet.DataSet.Tables[60].TableName = "LT_DPhT";
+                    //integReportSet.DataSet.Tables[61].TableName = "LT_TPhT";
+                    //integReportSet.DataSet.Tables[62].TableName = "LT_DMT";
+                    //integReportSet.DataSet.Tables[63].TableName = "LT_MBT";
 
-                integReportSet.DataSet.Tables[82].TableName = "NoCoating_Lead_Result";
+                    //integReportSet.DataSet.Tables[64].TableName = "RT_TIN_Long_1";
+                    //integReportSet.DataSet.Tables[65].TableName = "RT_TIN_Long_6";
+                    //integReportSet.DataSet.Tables[66].TableName = "RT_TIN_Long_11";
+                    //integReportSet.DataSet.Tables[67].TableName = "RT_TIN_Long_16";
+                    //integReportSet.DataSet.Tables[68].TableName = "RT_TIN_Long_21";
 
-                integReportSet.DataSet.Tables[83].TableName = "RT_PHY";
-            }
+                    //integReportSet.DataSet.Tables[69].TableName = "T7_EU16";
 
-            BindingSource bind = new BindingSource();
-            bind.DataSource = integReportSet.DataSet;
+                    integReportSet.DataSet.Tables[19].TableName = "T2_Clause4";
+                    integReportSet.DataSet.Tables[20].TableName = "T2_Clause5";
 
-            XtraReport report;
+                    integReportSet.DataSet.Tables[21].TableName = "Coating_Lead_Limit";
+                    integReportSet.DataSet.Tables[22].TableName = "NoCoating_Lead_Limit_Plastic";
+                    integReportSet.DataSet.Tables[23].TableName = "NoCoating_Lead_Limit_Metal";
 
-            if (integMainSet.AreaNo == EReportArea.US)
-                report = new ReportUsIntegration();
-            else
-                report = new ReportEuIntegration();
+                    integReportSet.DataSet.Tables[24].TableName = "Coating_Lead_Result";
+                    integReportSet.DataSet.Tables[25].TableName = "NoCoating_Lead_Result_Plastic";
+                    integReportSet.DataSet.Tables[26].TableName = "NoCoating_Lead_Result_Metal";
 
-            ReportPrintTool tool = new ReportPrintTool(report);
+                    integReportSet.DataSet.Tables[27].TableName = "Coating_NoLead_Limit";
+                    integReportSet.DataSet.Tables[28].TableName = "NoCoating_NoLead_Limit";
 
-            report.DataSource = bind;
-            report.CreateDocument();
+                    integReportSet.DataSet.Tables[29].TableName = "Coating_NoLead_Result";
+                    integReportSet.DataSet.Tables[30].TableName = "NoCoating_NoLead_Result";
 
-            this.Cursor = Cursors.Default;
+                    integReportSet.DataSet.Tables[31].TableName = "NoCoating_Lead_Result";
 
-            DialogReportPreview dialog = new DialogReportPreview();
-            dialog.Source = report;
-            dialog.WindowState = FormWindowState.Maximized;
-            dialog.ShowDialog();
+                    integReportSet.DataSet.Tables[32].TableName = "RT_PHY";
+
+                    integReportSet.DataSet.Tables[33].TableName = "T7_2";
+
+                    integReportSet.DataSet.Tables[34].TableName = "NoCoating_NoLead_Result_20_39";
+                    integReportSet.DataSet.Tables[35].TableName = "NoCoating_NoLead_Result_40_59";
+
+                    integReportSet.DataSet.Tables[36].TableName = "RT_PHY_3";
+                }
+
+                BindingSource bind = new BindingSource();
+                bind.DataSource = integReportSet.DataSet;
+
+                XtraReport report;
+
+                if (integMainSet.AreaNo == EReportArea.US)
+                    report = new ReportUsIntegration();
+                else
+                    report = new ReportEuIntegration();
+
+                ReportPrintTool tool = new ReportPrintTool(report);
+
+                report.DataSource = bind;
+                report.CreateDocument();
+
+                this.Cursor = Cursors.Default;
+
+                DialogReportPreview dialog = new DialogReportPreview();
+                dialog.Source = report;
+                dialog.WindowState = FormWindowState.Maximized;
+                dialog.ShowDialog();
+            }            
         }
 
         public void Save()

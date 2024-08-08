@@ -163,7 +163,6 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                     if (!p.Text.ToUpper().Trim().Contains("PASS"))
                     {
                         dtrow[2] = "Remark";
-
                     }
                     else
                     {
@@ -181,7 +180,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                         dtrow[2] = p.Text;
                     }
 
-                    dtrow[3] = "(Remark: Toys containing non-replaceable batteries shall be labeled in accordance with 5.15.)";
+                    dtrow[3] = "(Remark: Battery-operated toys shall meet the requirements of 6.5 for instructions on safe battery usage.)";
                     break;
                 }
                 else if (p.Text.ToUpper().Trim().Contains("RE 3"))
@@ -193,7 +192,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                         dtrow[2] = p.Text;
                     }
 
-                    dtrow[3] = "(Remark: Toys with non-replaceable batteries that are accessible with the use of a coin, screwdriver, or other common household tool shall bear a statement that the battery is not replaceable)";
+                    dtrow[3] = "(Remark: The toy or package should be age labeled.)";
 
                     break;
                 }
@@ -206,7 +205,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                         dtrow[2] = p.Text;
                     }
 
-                    dtrow[3] = "(Remark: The toy or package should be age labeled)";
+                    dtrow[3] = "(Remark: For toys that use more than one battery per circuit, the instructions or the toy shall be marked with the following (or equivalent) information. 'Do not mix old and new batteries.', 'Do not mix alkaline, standard (carbon-zinc), or rechargeable batteries.)";
                     break;
                 }
                 else if (p.Text.ToUpper().Trim().Contains("RE 5"))
@@ -218,7 +217,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                         dtrow[2] = p.Text;
                     }
 
-                    dtrow[3] = "(Remark: It is drawn to your attention that the toy or its packaging shall be marked with appropriate small part warning in accordance with 16 CFR 1500.19)";
+                    dtrow[3] = "(Remark: The toy should be marked with name and address of the producer or the distributor.)";
                     break;
                 }
                 else if (p.Text.ToUpper().Trim().Contains("RE 6"))
@@ -230,7 +229,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
                         dtrow[2] = p.Text;
                     }
 
-                    dtrow[3] = "(Remark: The toy should be marked with name and address of the producer or the distributor)";
+                    dtrow[3] = "(Remark: Washing was conducted in one trial as per client’s request.)";
                     break;
                 }
                 else if (p.Text.ToUpper().Trim().Contains("RE 7"))
@@ -425,6 +424,7 @@ namespace Sgs.ReportIntegration.Source.A.Forms.B.Dialog
             dt2.Columns.Add(new DataColumn("Description", typeof(string)));
             dt2.Columns.Add(new DataColumn("Result", typeof(string)));
             dt2.Columns.Add(new DataColumn("Remark", typeof(string)));
+
             foreach (Section sec in document.Sections)
             {
                 for (int i = 0; i < sec.Tables.Count; i++)

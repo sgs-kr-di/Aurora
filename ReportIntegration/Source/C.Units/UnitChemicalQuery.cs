@@ -35,7 +35,9 @@ namespace Sgs.ReportIntegration
 
         private PartDataSet partSet;
 
-        bool chkCoating = false, chkPlastic = false, chkMetal = false, chkTextile = false, chkPhthalates = false, chkCoatingLimit = false, chkNoCoatingLimit = false;
+        public bool ChkErr;
+
+        bool chkCoating = false, chkPlastic = false, chkMetal = false, chkTextile = false, chkPhthalates = false, chkCoatingLimit = false, chkNoCoatingLimit = false;        
 
         public ChemicalQuery(bool local = false)
         {
@@ -54,9 +56,10 @@ namespace Sgs.ReportIntegration
                 CtrlUs = null;
                 CtrlEu = null;
             }
-            
+
             productSet = new ProductDataSet(AppRes.DB.Connect, null, null);
             partSet = new PartDataSet(AppRes.DB.Connect, null, null);
+            ChkErr = false;
         }
 
         public void Insert(EReportArea AreaNo, string extendJobNo, SqlTransaction trans = null)
@@ -392,7 +395,8 @@ namespace Sgs.ReportIntegration
             catch (Exception e)
             {
                 if (local == false)
-                {
+                {                    
+                    ChkErr = true;
                     AppRes.DB.RollbackTrans();
                 }
                 else
@@ -754,7 +758,8 @@ namespace Sgs.ReportIntegration
 
                 for (int i = 0; i < ProfJobSchemeSet.RowCount; i++)
                 {
-                    ProfJobSchemeSet.Fetch(i);
+                    //ProfJobSchemeSet.Fetch(i);
+                    ProfJobSchemeSet.Fetch(i, 0, "other");
 
                     // tin은 Mass of trace amount 제외
                     if (i == 0 && ProfJobSchemeSet.Sch_Code != "HCEEORGANOTIN_11_01")
@@ -768,14 +773,31 @@ namespace Sgs.ReportIntegration
                         P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
                         P2Set.Pro_Proj = ProfJobSchemeSet.fileNo;
 
-                        if (string.IsNullOrWhiteSpace(ProfJobSchemeSet.DESCRIPTION_4) == true)
+                        try
                         {
-                            P2Set.FormatValue = "--";
+                            if (Convert.ToDouble(ProfJobSchemeSet.WEIGHT) <= 0.0999)
+                            {
+                                P2Set.FormatValue = (Convert.ToDouble(ProfJobSchemeSet.WEIGHT) * 1000).ToString();
+                            }
+                            else
+                            {
+                                P2Set.FormatValue = "--";
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
-                            P2Set.FormatValue = ProfJobSchemeSet.DESCRIPTION_4;
+                            //P2Set.Mg = (Convert.ToDouble(ProfJobSchemeSet.WEIGHT) * 1000).ToString();
+                            P2Set.FormatValue = ProfJobSchemeSet.WEIGHT.ToString();
                         }
+
+                        //if (string.IsNullOrWhiteSpace(ProfJobSchemeSet.DESCRIPTION_4) == true)
+                        //{
+                        //    P2Set.FormatValue = "--";
+                        //}
+                        //else
+                        //{
+                        //    P2Set.FormatValue = ProfJobSchemeSet.DESCRIPTION_4;
+                        //}
                         P2Set.Insert(trans);
                     }
                     if (area == EReportArea.EU)
@@ -786,15 +808,51 @@ namespace Sgs.ReportIntegration
                             continue;
                         }
                     }
+                    try
+                    {
+                        if (Convert.ToDouble(ProfJobSchemeSet.FINALVALUE) < Convert.ToDouble(ProfJobSchemeSet.ReportValue))
+                        {
+                            ProfJobSchemeSet.FormatValue = "N.D.";
+                        }
+                        else
+                        {
+                            ProfJobSchemeSet.FormatValue = ProfJobSchemeSet.FINALVALUE;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        ProfJobSchemeSet.FormatValue = ProfJobSchemeSet.FINALVALUE;
+                    }
+                    
 
                     P2Set.MainNo = ProfJobSchemeSet.JobNo;
                     P2Set.Name = ProfJobSchemeSet.Name.Trim();
                     P2Set.LoValue = ProfJobSchemeSet.LoValue;
                     P2Set.HiValue = ProfJobSchemeSet.HiValue;
                     P2Set.ReportValue = ProfJobSchemeSet.ReportValue;
-                    P2Set.FormatValue = string.Format("{0:N0}", ProfJobSchemeSet.FormatValue); // 1000자리마다 , 생성 (자릿수 0은 소수점 이하 버림) ex) 1,000
+
+                    try
+                    {
+                        // CHEMICAL 결과 소수점 첫째짜리까지 출력 요청 - 24.07.10 김은지님 요청
+                        P2Set.FormatValue = Math.Round(Convert.ToDouble(ProfJobSchemeSet.FormatValue), 1).ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        P2Set.FormatValue = ProfJobSchemeSet.FormatValue;
+                    }
+
                     P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
                     P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
+                    P2Set.Pro_Proj = ProfJobSchemeSet.fileNo;
+
+                    //P2Set.MainNo = ProfJobSchemeSet.JobNo;
+                    //P2Set.Name = ProfJobSchemeSet.Name.Trim();
+                    //P2Set.LoValue = ProfJobSchemeSet.LoValue;
+                    //P2Set.HiValue = ProfJobSchemeSet.HiValue;
+                    //P2Set.ReportValue = ProfJobSchemeSet.ReportValue;
+                    //P2Set.FormatValue = string.Format("{0:N0}", ProfJobSchemeSet.FormatValue); // 1000자리마다 , 생성 (자릿수 0은 소수점 이하 버림) ex) 1,000
+                    //P2Set.Sch_Code = ProfJobSchemeSet.Sch_Code;
+                    //P2Set.Sampleident = ProfJobSchemeSet.SAMPLEIDENT;
 
                     if (P2Set.Name.Trim().Contains("Organic Tin"))
                     {
@@ -903,7 +961,7 @@ namespace Sgs.ReportIntegration
                             }
                             else if (P2Set.Name.Contains("Organic Tin"))
                             {
-                                if (P2Set.FormatValue.Equals("N.D.") || P2Set.FormatValue.Equals("0.00"))
+                                if (P2Set.FormatValue.Equals("N.D.") || P2Set.FormatValue.Equals("0.00") || P2Set.FormatValue.Equals("0"))
                                 {
                                     P2Set.OrgTin = "--";
                                     //P2Set.OrgTin = "N.D."; 
@@ -923,6 +981,7 @@ namespace Sgs.ReportIntegration
                             }
                         }
                         P2Set.SampleDescription = ProfJobSchemeSet.SampleDescription;
+                        P2Set.Result = "PASS";
                         P2Set.Insert_Result(trans);
                     }
                     // Yes tin
@@ -1029,7 +1088,8 @@ namespace Sgs.ReportIntegration
 
                     try
                     {
-                        P2Set.FormatValue = Math.Round(Convert.ToDouble(ProfJobSchemeSet.FormatValue), 2).ToString();
+                        // CHEMICAL 결과 소수점 첫째짜리까지 출력 요청 - 24.07.10 김은지님 요청
+                        P2Set.FormatValue = Math.Round(Convert.ToDouble(ProfJobSchemeSet.FormatValue), 1).ToString();
                     }
                     catch (Exception e)
                     {
@@ -1578,7 +1638,7 @@ namespace Sgs.ReportIntegration
             if (area == EReportArea.US)
                 CtrlUs.SetControlToDataSet();
             else
-                CtrlEu.SetControlToDataSet();
+                CtrlEu.SetControlToDataSet();            
 
             MainSet.Update(trans);
         }

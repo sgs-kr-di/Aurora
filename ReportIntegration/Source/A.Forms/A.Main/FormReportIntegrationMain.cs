@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LoadingIndicator.WinForms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,7 +10,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using Ulee.Controls;
 using Ulee.Utils;
 
@@ -29,12 +29,14 @@ namespace Sgs.ReportIntegration
 
         private InvalidThread invalidThread;
 
+        private LongOperation _longOperation;
+
         public FormReportIntegrationMain()
         {
             InitializeComponent();
-            Initialize();
+            Initialize();            
         }
-
+        
         private void Initialize()
         {
             First = true;
@@ -50,23 +52,33 @@ namespace Sgs.ReportIntegration
 
             AppRes.TotalLog[ELogTag.Note] = "Create application mainform";
             AppRes.DbLog[ELogTag.Note] = $"MS-SQL Server ConnectionString - '{AppRes.DB.ConnectString}'";
+
+            // Initialize long operation with control which will
+            // be overlayed during long operations
+            _longOperation = new LongOperation(this);
+
+            // You can pass settings to customize indicator view/behavior
+            // _longOperation = new LongOperation(this, LongOperationSettings.Default);
         }
 
         private void FormReportIntegrationMain_Load(object sender, EventArgs e)
         {
-            if (IsLogin() == false)
-            {
-                Close();
-                return;
+            using (_longOperation.Start())
+            {                
+                if (IsLogin() == false)
+                {
+                    Close();
+                    return;
+                }
+
+                First = false;
+                DispCaption();
+
+                AppRes.TotalLog[ELogTag.Note] = "Resume screen invalidation thread";
+                invalidThread = new InvalidThread(csInvalidTime);
+                invalidThread.InvalidControls += InvalidForm;
+                invalidThread.Resume();
             }
-
-            First = false;
-            DispCaption();
-
-            AppRes.TotalLog[ELogTag.Note] = "Resume screen invalidation thread";
-            invalidThread = new InvalidThread(csInvalidTime);
-            invalidThread.InvalidControls += InvalidForm;
-            invalidThread.Resume();
         }
 
         private void FormReportIntegrationMain_Leave(object sender, EventArgs e)

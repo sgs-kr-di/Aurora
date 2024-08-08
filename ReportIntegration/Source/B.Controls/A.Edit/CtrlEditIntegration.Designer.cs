@@ -183,7 +183,7 @@
             this.integItemNoColumn,
             this.integJobNoColumn,
             this.integProductColumn});
-            this.integrationGridView.CustomizationFormBounds = new System.Drawing.Rectangle(2884, 580, 210, 186);
+            this.integrationGridView.CustomizationFormBounds = new System.Drawing.Rectangle(1710, 580, 210, 186);
             this.integrationGridView.GridControl = this.integrationGrid;
             this.integrationGridView.Name = "integrationGridView";
             this.integrationGridView.OptionsBehavior.Editable = false;
@@ -477,6 +477,8 @@
             // 
             // dateCheck
             // 
+            this.dateCheck.Checked = true;
+            this.dateCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.dateCheck.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateCheck.Location = new System.Drawing.Point(4, 5);
             this.dateCheck.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -693,7 +695,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.Name = "CtrlEditIntegration";
             this.Size = new System.Drawing.Size(820, 568);
-            this.Load += new System.EventHandler(this.CtrlEditIntegration_Load);
             this.Enter += new System.EventHandler(this.CtrlEditIntegration_Enter);
             this.bgPanel.ResumeLayout(false);
             this.viewSplit.Panel1.ResumeLayout(false);

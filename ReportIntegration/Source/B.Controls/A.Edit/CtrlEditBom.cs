@@ -508,6 +508,7 @@ namespace Sgs.ReportIntegration
             integQuery.ProfJobSet.AreaNo = bomRec.AreaNo;
             integQuery.ProfJobSet.ItemNo = col.Code;
             integQuery.ProfJobSet.ExtendASTM = false;
+            integQuery.ProfJobSet.FName = bomRec.FName;
             //integQuery.ProfJobSet.Select(trans);
             //integQuery.ProfJobSet.Select_Aurora(trans);
             integQuery.ProfJobSet.Select_KRSCT01(trans);
@@ -560,6 +561,8 @@ namespace Sgs.ReportIntegration
             phyQuery.ProfJobSet.AreaNo = bomSet.AreaNo;
             phyQuery.ProfJobSet.ItemNo = col.Code;
             phyQuery.ProfJobSet.ExtendASTM = false;
+            phyQuery.ProfJobSet.AreaNo = bomSet.AreaNo;
+            phyQuery.ProfJobSet.FName = bomSet.FName;
             //phyQuery.ProfJobSet.Select(trans);
             //phyQuery.ProfJobSet.Select_Aurora(trans);
             phyQuery.ProfJobSet.Select_KRSCT01(trans);
@@ -611,6 +614,7 @@ namespace Sgs.ReportIntegration
                 cheQuery.ProfJobSet.JobNo = "";
                 cheQuery.ProfJobSet.AreaNo = bomSet.AreaNo;
                 cheQuery.ProfJobSet.ItemNo = col.MaterialNo;
+                cheQuery.ProfJobSet.FName = bomSet.FName;
                 //cheQuery.ProfJobSet.ExtendASTM = true;
 
                 //cheQuery.ProfJobSet.Select_Aurora(trans);
